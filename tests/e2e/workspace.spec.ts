@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
+import { Pool } from 'pg';
 
 async function createDocument(page: Page, title: string) {
   await page.goto('/');
@@ -61,8 +62,10 @@ test('offline edits merge on reconnect and IndexedDB restores content without We
   await peer.goto(url);
   const peerEditor = peer.getByRole('textbox', { name: 'Document editor' });
   await expect(peerEditor).toContainText('Starting point.');
+  await expect(page.getByTestId('database-save-status')).toHaveText('Saved to database');
   await context.setOffline(true);
   await expect(page.getByText('Offline mode', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('database-save-status')).toHaveText('Database save unconfirmed');
   await editor.click();
   await editor.press('End');
   await editor.pressSequentially(' Offline thought.');
@@ -73,6 +76,7 @@ test('offline edits merge on reconnect and IndexedDB restores content without We
   await expect(peerEditor).toContainText('Offline thought.');
   await expect(editor).toContainText('Online thought.');
   await expect(page.getByText('Changes synced', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('database-save-status')).toHaveText('Saved to database');
   await expect(page.getByText('Offline copy enabled', { exact: false })).toBeVisible();
   await page.routeWebSocket('**/collaboration', (socket) => socket.close());
   await page.reload();
@@ -120,9 +124,121 @@ test('mobile workspace and editor fit the viewport', async ({ page }) => {
   await expect(page.getByRole('textbox', { name: 'Document editor' })).toContainText(
     'A thought on the go.',
   );
+  await expect(page.getByTestId('database-save-status')).toHaveText('Saved to database');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
   if (process.env.CAPTURE_SCREENSHOTS)
     await page.screenshot({ path: 'docs/screenshots/mobile.png', fullPage: true });
+});
+
+test('database confirmation includes deletions and survives a fresh browser session', async ({
+  page,
+  browser,
+}) => {
+  const url = await createDocument(page, 'Confirmed deletions');
+  const editor = page.getByRole('textbox', { name: 'Document editor' });
+  await editor.fill('abcdef');
+  await expect(page.getByTestId('database-save-status')).toHaveText('Saved to database');
+  await editor.evaluate((element) => {
+    element.focus();
+    const text = element.querySelector('p')!.firstChild!;
+    const range = document.createRange();
+    range.setStart(text, 1);
+    range.setEnd(text, 3);
+    const selection = window.getSelection()!;
+    selection.removeAllRanges();
+    selection.addRange(range);
+  });
+  await editor.press('Backspace');
+  await expect(editor).toHaveText('adef');
+  await expect(page.getByTestId('database-save-status')).toHaveText('Saved to database');
+  // Close the original editor so remote cursor-name decorations do not become
+  // part of the fresh editor's DOM text assertion.
+  await page.close();
+  const freshContext = await browser.newContext();
+  try {
+    const fresh = await freshContext.newPage();
+    await fresh.goto(url);
+    await expect(fresh.getByRole('textbox', { name: 'Document editor' })).toHaveText('adef');
+    await expect(fresh.getByTestId('database-save-status')).toHaveText('Saved to database');
+  } finally {
+    await freshContext.close();
+  }
+});
+
+test('shows a delayed database save while collaboration continues, then retries without another edit', async ({
+  page,
+}) => {
+  const databaseUrl = process.env.DATABASE_URL;
+  test.skip(
+    !databaseUrl || !new URL(databaseUrl).pathname.endsWith('_test'),
+    'Fault injection requires an isolated test database',
+  );
+  const url = await createDocument(page, 'Database retry status');
+  const id = new URL(url).pathname.split('/').at(-1)!;
+  const name = 'e2e_fail_save_' + id.replaceAll('-', '');
+  const pool = new Pool({ connectionString: databaseUrl });
+  await expect(page.getByTestId('database-save-status')).toHaveText('Saved to database');
+  try {
+    await pool.query(`CREATE FUNCTION ${name}() RETURNS trigger LANGUAGE plpgsql AS $$
+      BEGIN IF NEW.id = '${id}'::uuid THEN RAISE EXCEPTION 'Injected browser save failure'; END IF; RETURN NEW; END $$`);
+    await pool.query(
+      `CREATE TRIGGER ${name} BEFORE UPDATE OF state ON documents FOR EACH ROW EXECUTE FUNCTION ${name}()`,
+    );
+    await page
+      .getByRole('textbox', { name: 'Document editor' })
+      .fill('An edit waiting for PostgreSQL.');
+    await expect(page.getByText('Changes synced', { exact: true })).toBeVisible();
+    await expect(page.getByTestId('database-save-status')).toHaveText(
+      'Database save delayed; retrying…',
+    );
+  } finally {
+    await pool.query(`DROP TRIGGER IF EXISTS ${name} ON documents`);
+    await pool.query(`DROP FUNCTION IF EXISTS ${name}()`);
+    await pool.end();
+  }
+  await expect(page.getByTestId('database-save-status')).toHaveText('Saved to database');
+  await page.reload();
+  await expect(page.getByRole('textbox', { name: 'Document editor' })).toHaveText(
+    'An edit waiting for PostgreSQL.',
+  );
+});
+
+test('recovers an open editor after PostgreSQL connections are interrupted', async ({ page }) => {
+  const databaseUrl = process.env.DATABASE_URL;
+  const database = databaseUrl ? new URL(databaseUrl) : null;
+  const name = database?.pathname.slice(1) || '';
+  test.skip(
+    !/^workspace(?:_\w+)?_test$/.test(name),
+    'Connection failure injection requires the dedicated workspace test database',
+  );
+  await createDocument(page, 'Database connection recovery');
+  await expect(page.getByTestId('database-save-status')).toHaveText('Saved to database');
+  // Keep the administrative connection in a different database, so recovery
+  // remains possible while application-database connections are disabled.
+  database!.pathname = '/postgres';
+  const admin = new Pool({ connectionString: database!.toString() });
+  try {
+    await admin.query(`ALTER DATABASE "${name}" ALLOW_CONNECTIONS false`);
+    await admin.query(
+      'SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = $1 AND pid <> pg_backend_pid()',
+      [name],
+    );
+    await page
+      .getByRole('textbox', { name: 'Document editor' })
+      .fill('Recover without another keystroke.');
+    await expect(page.getByText('Changes synced', { exact: true })).toBeVisible();
+    await expect(page.getByTestId('database-save-status')).toHaveText(
+      'Database save delayed; retrying…',
+    );
+  } finally {
+    await admin.query(`ALTER DATABASE "${name}" ALLOW_CONNECTIONS true`);
+    await admin.end();
+  }
+  await expect(page.getByTestId('database-save-status')).toHaveText('Saved to database');
+  await page.reload();
+  await expect(page.getByRole('textbox', { name: 'Document editor' })).toHaveText(
+    'Recover without another keystroke.',
+  );
 });

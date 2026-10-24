@@ -35,6 +35,14 @@ jobs:
         run: npm run test:e2e
       - name: Build Docker images
         run: docker compose -p commonplace build server web
+      - name: Start isolated packaged application
+        run: docker compose -p commonplace-verify -f compose.verify.yaml up -d --build --wait
+      - name: Browser tests against final Docker images
+        env:
+          E2E_EXTERNAL: '1'
+          E2E_BASE_URL: http://localhost:3100
+          DATABASE_URL: postgres://workspace:workspace-local@localhost:15434/workspace_verify_test
+        run: npm run test:e2e
       - name: Upload browser reports
         if: always()
         uses: actions/upload-artifact@v7.0.2
@@ -46,4 +54,6 @@ jobs:
           if-no-files-found: ignore
       - name: Stop test services
         if: always()
-        run: docker compose -p commonplace --profile test down
+        run: |
+          docker compose -p commonplace-verify -f compose.verify.yaml down
+          docker compose -p commonplace --profile test down

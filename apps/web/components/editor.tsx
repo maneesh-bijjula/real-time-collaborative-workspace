@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import * as Y from 'yjs';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import { HocuspocusProvider } from '@hocuspocus/provider';
+import { DatabaseSaveTracker, type DatabaseSaveState } from '@/lib/database-save';
 import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
@@ -53,10 +54,14 @@ export function CollaborativeEditor({
   const [synced, setSynced] = useState(false);
   const [unsynced, setUnsynced] = useState(0);
   const [localCopy, setLocalCopy] = useState(false);
+  const [databaseSave, setDatabaseSave] = useState<DatabaseSaveState>('saving');
   const [people, setPeople] = useState<(Profile & { id: number })[]>([]);
 
   useEffect(() => {
     let disposed = false;
+    setDatabaseSave('saving');
+    setSynced(false);
+    setLocalCopy(false);
     const ydoc = new Y.Doc();
     const persistence = new IndexeddbPersistence(`commonplace:${document.id}`, ydoc);
     const provider = new HocuspocusProvider({
@@ -79,6 +84,9 @@ export function CollaborativeEditor({
           onNotice('Document access was denied. Check your share link.');
         }
       },
+    });
+    const database = new DatabaseSaveTracker(ydoc, provider, (state) => {
+      if (!disposed) setDatabaseSave(state);
     });
     const awareness = provider.awareness;
     const updatePresence = () => {
@@ -113,6 +121,7 @@ export function CollaborativeEditor({
       window.removeEventListener('offline', offline);
       window.removeEventListener('online', online);
       awareness?.off('change', updatePresence);
+      database.destroy();
       provider.destroy();
       void persistence.destroy().finally(() => ydoc.destroy());
     };
@@ -185,6 +194,20 @@ export function CollaborativeEditor({
               <WifiOff size={13} />
               Offline edits will sync when connected
             </>
+          )}
+        </span>
+        <span aria-live="polite" data-testid="database-save-status">
+          {live && databaseSave === 'saved' ? (
+            <>
+              <Check size={13} />
+              Saved to database
+            </>
+          ) : !live ? (
+            'Database save unconfirmed'
+          ) : databaseSave === 'retrying' ? (
+            'Database save delayed; retrying…'
+          ) : (
+            'Saving to database…'
           )}
         </span>
         <span>

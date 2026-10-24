@@ -9,18 +9,20 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.E2E_BASE_URL || 'http://localhost:3000',
     browserName: 'chromium',
     channel: process.env.PLAYWRIGHT_CHANNEL || undefined,
     viewport: { width: 1440, height: 1000 },
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
-  webServer: {
-    command: process.env.E2E_PRODUCTION ? 'npm run start:e2e' : 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-    env: { NEXT_TELEMETRY_DISABLED: '1', HOSTNAME: '127.0.0.1' },
-  },
+  webServer: process.env.E2E_EXTERNAL
+    ? undefined
+    : {
+        command: process.env.E2E_PRODUCTION ? 'npm run start:e2e' : 'npm run dev',
+        url: 'http://localhost:3000',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+        env: { NEXT_TELEMETRY_DISABLED: '1', HOSTNAME: '127.0.0.1' },
+      },
 });

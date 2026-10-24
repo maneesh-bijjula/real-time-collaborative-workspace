@@ -95,6 +95,9 @@ export class DocumentStore {
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
+      // A successful content commit must flush WAL even if a deployment has
+      // changed PostgreSQL's default synchronous_commit setting.
+      await client.query('SET LOCAL synchronous_commit = on');
       const result = await client.query<{ state: Buffer | null }>(
         'SELECT state FROM documents WHERE id = $1 FOR UPDATE',
         [id],

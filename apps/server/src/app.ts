@@ -4,25 +4,30 @@ import express, { type ErrorRequestHandler } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { Pool } from 'pg';
 import { Server } from '@hocuspocus/server';
-import { Database } from '@hocuspocus/extension-database';
-import { Redis } from '@hocuspocus/extension-redis';
 import { ZodError } from 'zod';
 import type { ServerConfig } from './config.js';
 import { createDocumentBody, documentId, DocumentStore } from './documents.js';
 import { migrate } from './migrate.js';
+import { DurableDatabase, SynchronizationRedis } from './persistence.js';
 
-export async function createApplication(config: ServerConfig) {
+export async function createApplication(
+  config: ServerConfig,
+  options: { shutdownTimeoutMs?: number } = {},
+) {
   const pool = new Pool({
     connectionString: config.databaseUrl,
     max: 10,
     connectionTimeoutMillis: 5000,
     statement_timeout: 10000,
+    query_timeout: 10000,
   });
+  pool.on('error', () => console.error('PostgreSQL connection lost; pending saves will retry'));
   await migrate(pool);
   const store = new DocumentStore(pool);
+  const persistence = new DurableDatabase(store);
   const redis = new URL(config.redisUrl);
   const app = express();
-  const redisExtension = new Redis({
+  const redisExtension = new SynchronizationRedis({
     host: redis.hostname,
     port: Number(redis.port || 6379),
     prefix: config.redisPrefix,
@@ -44,13 +49,7 @@ export async function createApplication(config: ServerConfig) {
     quiet: true,
     debounce: 300,
     maxDebounce: 1000,
-    extensions: [
-      redisExtension,
-      new Database({
-        fetch: ({ documentName }) => store.load(documentName),
-        store: ({ documentName, state }) => store.store(documentName, state),
-      }),
-    ],
+    extensions: [redisExtension, persistence],
     async onAuthenticate({ documentName, token }) {
       const document = await store.authorize(documentName, token);
       if (!document) throw new Error('Document access denied');
@@ -116,15 +115,13 @@ export async function createApplication(config: ServerConfig) {
   });
   const errorHandler: ErrorRequestHandler = (error: unknown, _request, response, _next) => {
     if (error instanceof ZodError)
-      return void response
-        .status(400)
-        .json({
-          error: 'Invalid request',
-          issues: error.issues.map((issue) => ({
-            field: issue.path.join('.'),
-            message: issue.message,
-          })),
-        });
+      return void response.status(400).json({
+        error: 'Invalid request',
+        issues: error.issues.map((issue) => ({
+          field: issue.path.join('.'),
+          message: issue.message,
+        })),
+      });
     if (error instanceof SyntaxError && 'body' in error)
       return void response.status(400).json({ error: 'Malformed JSON' });
     if (typeof error === 'object' && error !== null && 'status' in error && error.status === 413)
@@ -135,6 +132,7 @@ export async function createApplication(config: ServerConfig) {
   app.use(errorHandler);
 
   const server = collaborationServer.httpServer;
+  let closing: Promise<void> | undefined;
   return {
     server,
     store,
@@ -147,9 +145,20 @@ export async function createApplication(config: ServerConfig) {
       if (!address || typeof address === 'string') throw new Error('Server has no TCP address');
       return address.port;
     },
-    async close(): Promise<void> {
-      await collaborationServer.destroy();
-      await pool.end();
+    close(): Promise<void> {
+      closing ??= (async () => {
+        const timeout = setTimeout(() => persistence.stop(), options.shutdownTimeoutMs ?? 12000);
+        try {
+          await collaborationServer.destroy();
+          if (persistence.abandonedSaves)
+            throw new Error('Shutdown could not persist all pending document changes');
+        } finally {
+          clearTimeout(timeout);
+          persistence.stop();
+          await pool.end();
+        }
+      })();
+      return closing;
     },
   };
 }

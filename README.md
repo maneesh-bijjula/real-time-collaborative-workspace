@@ -10,6 +10,7 @@ A shared writing workspace built with **TypeScript, Next.js, Node.js, Yjs, WebSo
 - Live document synchronization through Yjs CRDTs and Hocuspocus WebSockets.
 - Shared cursors, selection highlights, participant presence, and editable display names.
 - PostgreSQL storage of Yjs binary state, with transactional merging of concurrent snapshots.
+- Separate database-confirmed save status, automatic persistence retries, and tested application-crash recovery for confirmed saves.
 - Redis synchronization of document changes and presence across server instances.
 - IndexedDB document copies, offline editing in an open page, and automatic merging on reconnect.
 - Private share links, hashed server-side access tokens, document renaming, search, and text export.
@@ -63,7 +64,7 @@ flowchart LR
 
 Tiptap provides the rich text editor; Yjs merges concurrent operations; Hocuspocus handles synchronization, awareness, and WebSocket sessions. The application supplies document APIs, share-link authorization, PostgreSQL persistence, Redis configuration, browser storage, and the workspace interface.
 
-Snapshot writes lock their document row and merge the incoming Yjs state with the stored state before committing. An older snapshot therefore cannot overwrite a newer CRDT history or resurrect deleted text. Migrations run transactionally under an advisory lock and verify checksums of previously applied files.
+Snapshot writes lock their document row and merge the incoming Yjs state with the stored state before committing with `synchronous_commit=on`. An older snapshot therefore cannot overwrite a newer CRDT history or resurrect deleted text. PostgreSQL transactions coordinate persistence across instances; Redis is used for synchronization rather than a best-effort persistence lock. Migrations run transactionally under an advisory lock and verify checksums of previously applied files.
 
 The default Compose topology has one collaboration server. The integration suite also starts two independent server instances and verifies that clients on separate instances exchange edits through Redis.
 
@@ -73,7 +74,17 @@ Each document has a random 256-bit access token. The database stores only its SH
 
 Anyone holding a complete share link can read and edit that document. Display names are participant labels, not verified identities. The application uses document-level access links without user accounts, per-user roles, link revocation, or audit history. Keep share links private.
 
-Server snapshots are debounced for 300 ms, with a maximum debounce of one second. The interface's **Changes synced** label refers to synchronization with the collaboration session, not a synchronous PostgreSQL durability acknowledgement. Graceful shutdown flushes pending stores; an abrupt server crash can still lose updates that have not reached PostgreSQL or another surviving client. Browser-local copies provide an additional recovery path and merge when reconnected.
+Server snapshots are debounced for 300 ms, with a maximum debounce of one second. The interface distinguishes three independent states:
+
+- **Changes synced** means the collaboration provider has acknowledged the current updates.
+- **Saved to database** means an authenticated check read committed PostgreSQL state whose Yjs snapshot matches the editor's current state, including deletions. A new local/remote edit or connection change invalidates that confirmation. While online and awaiting confirmation, checks run every 500 ms; checks stop once the current state is confirmed.
+- **Offline copy enabled** means initial IndexedDB restoration completed. It is not a per-edit browser-disk acknowledgement.
+
+Failed writes retry automatically, with exponential backoff and jitter capped at five seconds, even if no further edits occur or the last editor disconnects. Pending saves keep their server document loaded. Changes received through Redis are also scheduled for persistence. The interface shows **Database save delayed; retrying…** when the database check fails or a failed write is pending, and **Database save unconfirmed** while disconnected.
+
+Graceful shutdown closes collaboration connections, flushes pending stores, and allows retries for up to 12 seconds. If it must abandon a pending save, shutdown reports failure and the process exits unsuccessfully; an outer 15-second process deadline bounds a stalled shutdown. An abrupt server crash can still lose **unconfirmed** edits that have not reached PostgreSQL or another surviving client. Confirmed saves are tested against application-process crashes with PostgreSQL and its storage intact, not database-volume destruction. Browser-local copies provide an additional recovery path and merge when reconnected.
+
+See [the persistence contract](docs/persistence.md) and [Sprint 1 verification](docs/evidence/sprint-1.md) for protocol, failure behavior, and test scope. Rebuild the browser and backend together for this save-confirmation protocol; an older backend cannot provide the new database confirmation.
 
 Offline editing works in an already loaded document. IndexedDB restores local content when the page is available, but the app does not install a service worker to load an uncached page without a network. Clearing browser storage removes local copies and the recent-document list; retain the full share link to reopen a document afterward.
 
@@ -110,6 +121,22 @@ npm run test:e2e
 Integration tests use `workspace_test` on port 5434 and Redis on port 6381. `TEST_DATABASE_URL` and `TEST_REDIS_URL` override these endpoints; the database name must end in `_test`. The suite clears document data in that dedicated test database. Browser tests start the local application automatically and use its configured development database.
 
 Coverage includes authorization, validation, SQL-like input, concurrent CRDT edits, offline merging, presence cleanup, Redis synchronization between instances, transactional snapshot merging, persistence across a server restart, text export, search, and mobile layout. GitHub Actions also checks a production build, runs the browser suite against the built application, and builds both Docker images.
+
+Durability regressions additionally cover deletion-only changes, stale responses, edits during an in-flight write, retries after a PostgreSQL transaction failure, pending saves after the last client disconnects, SIGKILL recovery with fresh clients, and successful/failed graceful shutdown. Browser SQL write-failure injection runs only when `DATABASE_URL` names a database ending in `_test`; connection-failure injection is further restricted to dedicated `workspace*_test` databases and requires the test fixture's administrative privileges.
+
+To test the final Docker images without ordinary application volumes:
+
+```sh
+docker compose -p commonplace-verify -f compose.verify.yaml up -d --build --wait
+E2E_EXTERNAL=1 E2E_BASE_URL=http://localhost:3100 \
+  DATABASE_URL=postgres://workspace:workspace-local@localhost:15434/workspace_verify_test \
+  npm run test:e2e
+docker compose -p commonplace-verify -f compose.verify.yaml down
+```
+
+This disposable stack uses ports 3100 (web), 4100 (API/WebSockets), and 15434 (test PostgreSQL). Its PostgreSQL data is temporary. `E2E_EXTERNAL=1` directs Playwright to the already-running container application. CI runs both native-production and final-image browser suites. Docker build arguments `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_COLLABORATION_URL` configure browser endpoints at build time.
+
+The targets of 50 active editors at under 100 ms p95 propagation latency, synchronization across four independent Node processes, and reconnect convergence under two seconds remain unverified. Current tests establish correctness only for their documented scenarios; a reproducible load/fault benchmark campaign is still planned.
 
 ## Project structure
 

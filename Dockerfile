@@ -20,6 +20,9 @@ CMD ["node", "apps/server/dist/index.js"]
 
 FROM dependencies AS web-build
 COPY apps/web apps/web
+ARG NEXT_PUBLIC_API_URL=http://localhost:4000
+ARG NEXT_PUBLIC_COLLABORATION_URL=ws://localhost:4000/collaboration
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL NEXT_PUBLIC_COLLABORATION_URL=$NEXT_PUBLIC_COLLABORATION_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build -w apps/web
 

@@ -1,0 +1,8 @@
+{
+  "packagedApplication": true,
+  "serverKilledWith": "SIGKILL",
+  "freshBrowserContext": true,
+  "oldBrowserClosedBeforeRestart": true,
+  "databaseAndRedisKeptRunning": true,
+  "confirmedTextRecovered": true
+}
