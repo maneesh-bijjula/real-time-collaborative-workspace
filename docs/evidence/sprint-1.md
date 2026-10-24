@@ -1,6 +1,6 @@
 # Sprint 1: durable saves and persistence recovery
 
-Implemented from baseline `af5365353d81ab3ac43606e717e594e36e56b2a3` on branch `codex/sprint-1-durable-saves`.
+Implemented from baseline `af5365353d81ab3ac43606e717e594e36e56b2a3` with the completed work committed directly to `main`. Subsequent sprints also use `main`, per the project owner's workflow preference.
 
 ## Acceptance coverage
 
