@@ -1,0 +1,56 @@
+# Add to compose.verify.yaml for a disposable four-instance deployment.
+services:
+  server:
+    environment:
+      REDIS_PREFIX: commonplace-cluster
+  server2: &replica
+    build: { context: ., target: server }
+    environment:
+      HOST: 0.0.0.0
+      DATABASE_URL: postgres://workspace:workspace-local@postgres:5432/workspace_verify_test
+      REDIS_URL: redis://redis:6379
+      REDIS_PREFIX: commonplace-cluster
+      ALLOWED_ORIGINS: http://localhost:3100,http://127.0.0.1:3100
+    ports: ['127.0.0.1:4101:4000']
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    stop_grace_period: 20s
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:4000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 2s
+      timeout: 4s
+      retries: 30
+  server3:
+    <<: *replica
+    ports: ['127.0.0.1:4102:4000']
+  server4:
+    <<: *replica
+    ports: ['127.0.0.1:4103:4000']
+  gateway:
+    image: nginx:stable-alpine
+    ports: ['127.0.0.1:4200:80']
+    volumes: ['./ops/nginx.cluster.conf:/etc/nginx/conf.d/default.conf:ro']
+    depends_on:
+      server: { condition: service_healthy }
+      server2: { condition: service_healthy }
+      server3: { condition: service_healthy }
+      server4: { condition: service_healthy }
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1/health']
+      interval: 2s
+      timeout: 4s
+      retries: 30
+  web:
+    build:
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:4200
+        NEXT_PUBLIC_COLLABORATION_URL: ws://localhost:4200/collaboration
+    depends_on:
+      gateway: { condition: service_healthy }

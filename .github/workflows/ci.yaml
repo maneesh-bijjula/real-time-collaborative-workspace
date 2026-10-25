@@ -36,13 +36,16 @@ jobs:
       - name: Build Docker images
         run: docker compose -p commonplace build server web
       - name: Start isolated packaged application
-        run: docker compose -p commonplace-verify -f compose.verify.yaml up -d --build --wait
+        run: docker compose -p commonplace-verify -f compose.verify.yaml -f compose.cluster.yaml up -d --build --wait
       - name: Browser tests against final Docker images
         env:
           E2E_EXTERNAL: '1'
           E2E_BASE_URL: http://localhost:3100
           DATABASE_URL: postgres://workspace:workspace-local@localhost:15434/workspace_verify_test
+          E2E_CLUSTER_WEBSOCKETS: ws://localhost:4100/collaboration,ws://localhost:4101/collaboration,ws://localhost:4102/collaboration,ws://localhost:4103/collaboration
         run: npm run test:e2e
+      - name: Packaged Redis outage and gateway failover verification
+        run: npm run test:cluster:packaged
       - name: Upload browser reports
         if: always()
         uses: actions/upload-artifact@v7.0.2
@@ -55,5 +58,5 @@ jobs:
       - name: Stop test services
         if: always()
         run: |
-          docker compose -p commonplace-verify -f compose.verify.yaml down
+          docker compose -p commonplace-verify -f compose.verify.yaml -f compose.cluster.yaml down
           docker compose -p commonplace --profile test down

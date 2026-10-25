@@ -5,6 +5,7 @@ import * as Y from 'yjs';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import { DatabaseSaveTracker, type DatabaseSaveState } from '@/lib/database-save';
+import { CollaborationSession } from '@/lib/collaboration-session';
 import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
@@ -88,6 +89,7 @@ export function CollaborativeEditor({
     const database = new DatabaseSaveTracker(ydoc, provider, (state) => {
       if (!disposed) setDatabaseSave(state);
     });
+    const connectionSession = new CollaborationSession(provider);
     const awareness = provider.awareness;
     const updatePresence = () => {
       if (disposed || !awareness) return;
@@ -122,6 +124,7 @@ export function CollaborativeEditor({
       window.removeEventListener('online', online);
       awareness?.off('change', updatePresence);
       database.destroy();
+      connectionSession.destroy();
       provider.destroy();
       void persistence.destroy().finally(() => ydoc.destroy());
     };

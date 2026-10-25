@@ -28,6 +28,8 @@ services:
       HOST: 0.0.0.0
       DATABASE_URL: postgres://workspace:${POSTGRES_PASSWORD:-workspace-local}@postgres:5432/workspace
       REDIS_URL: redis://redis:6379
+      REDIS_PREFIX: ${REDIS_PREFIX:-commonplace}
+      REDIS_RECONCILE_INTERVAL_MS: ${REDIS_RECONCILE_INTERVAL_MS:-2000}
       ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
     ports: ['127.0.0.1:4000:4000']
     depends_on:

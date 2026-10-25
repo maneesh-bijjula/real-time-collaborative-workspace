@@ -11,7 +11,7 @@ A shared writing workspace built with **TypeScript, Next.js, Node.js, Yjs, WebSo
 - Shared cursors, selection highlights, participant presence, and editable display names.
 - PostgreSQL storage of Yjs binary state, with transactional merging of concurrent snapshots.
 - Separate database-confirmed save status, automatic persistence retries, and tested application-crash recovery for confirmed saves.
-- Redis synchronization of document changes and presence across server instances.
+- Redis synchronization across server instances, periodic missed-message repair, and tested four-process reconnect recovery.
 - IndexedDB document copies, offline editing in an open page, and automatic merging on reconnect.
 - Private share links, hashed server-side access tokens, document renaming, search, and text export.
 - Responsive interface, Docker services, versioned SQL migrations, and automated CI.
@@ -66,7 +66,7 @@ Tiptap provides the rich text editor; Yjs merges concurrent operations; Hocuspoc
 
 Snapshot writes lock their document row and merge the incoming Yjs state with the stored state before committing with `synchronous_commit=on`. An older snapshot therefore cannot overwrite a newer CRDT history or resurrect deleted text. PostgreSQL transactions coordinate persistence across instances; Redis is used for synchronization rather than a best-effort persistence lock. Migrations run transactionally under an advisory lock and verify checksums of previously applied files.
 
-The default Compose topology has one collaboration server. The integration suite also starts two independent server instances and verifies that clients on separate instances exchange edits through Redis.
+The default Compose topology has one collaboration server. The cluster integration suite starts four independent Node processes and verifies concurrent edits, presence, Redis reconnection, offline migration, and restart recovery. A disposable four-container topology adds a shared nginx gateway; see [synchronization and reconnects](docs/synchronization.md).
 
 ## Access and persistence behavior
 
@@ -95,7 +95,7 @@ Offline editing works in an already loaded document. IndexedDB restores local co
 | POST      | `/api/documents`     | Create a document with `{ "title": "Team notes" }`; returns metadata and its access token |
 | GET       | `/api/documents/:id` | Read metadata with `Authorization: Bearer TOKEN`                                          |
 | PATCH     | `/api/documents/:id` | Rename with the same bearer header and `{ "title": "New title" }`                         |
-| GET       | `/health`            | Check PostgreSQL and Redis connectivity                                                   |
+| GET       | `/health`            | Check PostgreSQL and both Redis transports                                                |
 | WebSocket | `/collaboration`     | Hocuspocus protocol; document ID and token supplied through its provider                  |
 
 Titles are trimmed, limited to 120 characters, and validated before parameterized SQL queries. The API rejects unknown fields and malformed input. Creation is limited to 30 requests per minute per source IP. Browser origins are explicitly allowlisted; access tokens remain the document authorization boundary.
@@ -120,7 +120,7 @@ npm run test:e2e
 
 Integration tests use `workspace_test` on port 5434 and Redis on port 6381. `TEST_DATABASE_URL` and `TEST_REDIS_URL` override these endpoints; the database name must end in `_test`. The suite clears document data in that dedicated test database. Browser tests start the local application automatically and use its configured development database.
 
-Coverage includes authorization, validation, SQL-like input, concurrent CRDT edits, offline merging, presence cleanup, Redis synchronization between instances, transactional snapshot merging, persistence across a server restart, text export, search, and mobile layout. GitHub Actions also checks a production build, runs the browser suite against the built application, and builds both Docker images.
+Coverage includes authorization, validation, SQL-like input, concurrent CRDT edits, offline merging, presence cleanup, four-process Redis recovery, transactional snapshot merging, process-crash recovery, text export, search, and mobile layout. GitHub Actions checks production builds, runs native and final-image browser suites, and verifies a real Redis outage plus gateway failover on the disposable four-container topology.
 
 Durability regressions additionally cover deletion-only changes, stale responses, edits during an in-flight write, retries after a PostgreSQL transaction failure, pending saves after the last client disconnects, SIGKILL recovery with fresh clients, and successful/failed graceful shutdown. Browser SQL write-failure injection runs only when `DATABASE_URL` names a database ending in `_test`; connection-failure injection is further restricted to dedicated `workspace*_test` databases and requires the test fixture's administrative privileges.
 
@@ -136,7 +136,7 @@ docker compose -p commonplace-verify -f compose.verify.yaml down
 
 This disposable stack uses ports 3100 (web), 4100 (API/WebSockets), and 15434 (test PostgreSQL). Its PostgreSQL data is temporary. `E2E_EXTERNAL=1` directs Playwright to the already-running container application. CI runs both native-production and final-image browser suites. Docker build arguments `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_COLLABORATION_URL` configure browser endpoints at build time.
 
-The targets of 50 active editors at under 100 ms p95 propagation latency, synchronization across four independent Node processes, and reconnect convergence under two seconds remain unverified. Current tests establish correctness only for their documented scenarios; a reproducible load/fault benchmark campaign is still planned.
+Functional synchronization and recovery across four independent Node processes and four packaged server containers are tested. The performance targets of 50 active editors at under 100 ms p95 propagation latency and reconnect convergence under two seconds remain unverified. Current tests establish correctness only for their documented small scenarios; Sprint 4 provides the reproducible load/fault benchmark campaign. See [Sprint 2 evidence](docs/evidence/sprint-2.md) and the [four-instance verification commands](docs/synchronization.md#disposable-four-container-deployment).
 
 ## Project structure
 

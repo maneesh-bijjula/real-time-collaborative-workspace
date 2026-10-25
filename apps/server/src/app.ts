@@ -8,7 +8,8 @@ import { ZodError } from 'zod';
 import type { ServerConfig } from './config.js';
 import { createDocumentBody, documentId, DocumentStore } from './documents.js';
 import { migrate } from './migrate.js';
-import { DurableDatabase, SynchronizationRedis } from './persistence.js';
+import { DurableDatabase } from './persistence.js';
+import { SynchronizationRedis } from './synchronization.js';
 
 export async function createApplication(
   config: ServerConfig,
@@ -27,19 +28,23 @@ export async function createApplication(
   const persistence = new DurableDatabase(store);
   const redis = new URL(config.redisUrl);
   const app = express();
-  const redisExtension = new SynchronizationRedis({
-    host: redis.hostname,
-    port: Number(redis.port || 6379),
-    prefix: config.redisPrefix,
-    options: {
-      username: redis.username ? decodeURIComponent(redis.username) : undefined,
-      password: redis.password ? decodeURIComponent(redis.password) : undefined,
-      db: Number(redis.pathname.slice(1) || 0),
-      ...(redis.protocol === 'rediss:' ? { tls: {} } : {}),
-      connectTimeout: 5000,
-      maxRetriesPerRequest: 1,
+  const redisExtension = new SynchronizationRedis(
+    {
+      host: redis.hostname,
+      port: Number(redis.port || 6379),
+      prefix: config.redisPrefix,
+      options: {
+        username: redis.username ? decodeURIComponent(redis.username) : undefined,
+        password: redis.password ? decodeURIComponent(redis.password) : undefined,
+        db: Number(redis.pathname.slice(1) || 0),
+        ...(redis.protocol === 'rediss:' ? { tls: {} } : {}),
+        connectTimeout: 5000,
+        maxRetriesPerRequest: 1,
+      },
     },
-  });
+    store,
+    config.redisReconcileIntervalMs,
+  );
   const collaborationServer = new Server({
     port: config.port,
     address: config.host,
@@ -80,6 +85,8 @@ export async function createApplication(
     next();
   });
   app.get('/health', async (_request, response) => {
+    if (redisExtension.pub.status !== 'ready' || redisExtension.sub.status !== 'ready')
+      return void response.status(503).json({ status: 'unavailable' });
     await pool.query('SELECT 1');
     await redisExtension.pub.ping();
     response.json({ status: 'ok' });
@@ -138,6 +145,7 @@ export async function createApplication(
     store,
     pool,
     collaboration: collaborationServer.hocuspocus,
+    synchronization: redisExtension,
     async listen(): Promise<number> {
       await redisExtension.pub.ping();
       await collaborationServer.listen();

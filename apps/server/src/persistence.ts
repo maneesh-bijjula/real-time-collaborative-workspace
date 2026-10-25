@@ -1,6 +1,5 @@
 import { setTimeout as delay } from 'node:timers/promises';
 import { Database } from '@hocuspocus/extension-database';
-import { Redis } from '@hocuspocus/extension-redis';
 import {
   isTransactionOrigin,
   type onChangePayload,
@@ -9,13 +8,6 @@ import {
 } from '@hocuspocus/server';
 import * as Y from 'yjs';
 import type { DocumentStore } from './documents.js';
-
-// PostgreSQL's row lock and CRDT merge own persistence coordination. Redis's
-// best-effort store lock can skip a unique snapshot on another instance.
-export class SynchronizationRedis extends Redis {
-  override async onStoreDocument(): Promise<void> {}
-  override async afterStoreDocument(): Promise<void> {}
-}
 
 export class DurableDatabase extends Database {
   private readonly stopping = new AbortController();
