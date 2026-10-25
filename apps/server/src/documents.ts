@@ -65,10 +65,11 @@ export class DocumentStore {
   }
 
   async authorize(id: string, token: string): Promise<DocumentMetadata | null> {
-    if (!documentId.safeParse(id).success) return null;
-    const result = await this.pool.query<DocumentRow>('SELECT * FROM documents WHERE id = $1', [
-      id,
-    ]);
+    if (!documentId.safeParse(id).success || !/^[A-Za-z0-9_-]{43}$/.test(token)) return null;
+    const result = await this.pool.query<DocumentRow>(
+      'SELECT id, title, access_token_hash, created_at, updated_at FROM documents WHERE id = $1',
+      [id],
+    );
     const row = result.rows[0];
     return row && validToken(token, row.access_token_hash) ? metadata(row) : null;
   }

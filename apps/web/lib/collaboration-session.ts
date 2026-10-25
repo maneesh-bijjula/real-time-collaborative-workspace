@@ -5,8 +5,16 @@ export class CollaborationSession {
   private authenticatedSession = false;
   private disposed = false;
   private restartPending = false;
+  private completedSessions = 0;
+  private paused = false;
+  get blocked() {
+    return this.paused;
+  }
 
-  constructor(private readonly provider: HocuspocusProvider) {
+  constructor(
+    private readonly provider: HocuspocusProvider,
+    private readonly onPolicyBlocked: () => void = () => {},
+  ) {
     provider.on('synced', this.synced);
     provider.on('close', this.closed);
     provider.on('status', this.statusChanged);
@@ -14,6 +22,12 @@ export class CollaborationSession {
 
   private synced = ({ state }: { state: boolean }) => {
     if (!state) return;
+    if (!this.authenticatedSession) {
+      this.provider.sendStateless(
+        JSON.stringify({ type: 'session:ready:v1', reconnected: this.completedSessions > 0 }),
+      );
+      this.completedSessions++;
+    }
     this.authenticatedSession = true;
     const awareness = this.provider.awareness;
     const local = awareness?.getLocalState();
@@ -22,7 +36,7 @@ export class CollaborationSession {
     if (local) awareness?.setLocalState(local);
   };
 
-  private closed = () => {
+  private closed = ({ event }: { event?: { code?: number } } = {}) => {
     const awareness = this.provider.awareness;
     // The provider removes remote states on close but retains their clocks.
     // A reconnect's unchanged peer snapshot would then be ignored until that
@@ -33,6 +47,14 @@ export class CollaborationSession {
         if (id !== this.provider.document.clientID && !awareness.getStates().has(id))
           awareness.meta.delete(id);
       }
+    }
+    if (event?.code === 1008 || event?.code === 1009) {
+      this.paused = true;
+      this.restartPending = false;
+      this.authenticatedSession = false;
+      this.provider.disconnect();
+      this.onPolicyBlocked();
+      return;
     }
     const socket = this.provider.configuration.websocketProvider;
     const logicalClose = this.authenticatedSession && socket.status === 'connected';

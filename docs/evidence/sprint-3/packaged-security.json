@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-25T02:58:06.154Z",
+  "instances": 4,
+  "checks": [
+    "Warm HTTP and WebSocket authorization rejects incorrect capabilities on all four final-image servers",
+    "Rejected clients receive no document content or awareness, and legitimate peers remain usable with confirmed saves",
+    "Each instance exposes liveness, readiness, and separately authenticated metrics without document/token labels",
+    "Unapproved HTTP origins are rejected; the gateway blocks metrics access"
+  ],
+  "scope": "Small single-host functional security and operational checks; not an independent penetration test or performance benchmark."
+}

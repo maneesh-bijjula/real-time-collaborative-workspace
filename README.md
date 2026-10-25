@@ -14,6 +14,7 @@ A shared writing workspace built with **TypeScript, Next.js, Node.js, Yjs, WebSo
 - Redis synchronization across server instances, periodic missed-message repair, and tested four-process reconnect recovery.
 - IndexedDB document copies, offline editing in an open page, and automatic merging on reconnect.
 - Private share links, hashed server-side access tokens, document renaming, search, and text export.
+- Bounded socket/authentication/message/document admission, protected Prometheus metrics, dependency readiness, and structured logs.
 - Responsive interface, Docker services, versioned SQL migrations, and automated CI.
 
 ## Run with Docker
@@ -95,10 +96,12 @@ Offline editing works in an already loaded document. IndexedDB restores local co
 | POST      | `/api/documents`     | Create a document with `{ "title": "Team notes" }`; returns metadata and its access token |
 | GET       | `/api/documents/:id` | Read metadata with `Authorization: Bearer TOKEN`                                          |
 | PATCH     | `/api/documents/:id` | Rename with the same bearer header and `{ "title": "New title" }`                         |
-| GET       | `/health`            | Check PostgreSQL and both Redis transports                                                |
+| GET       | `/health`, `/ready`  | Check active PostgreSQL/Redis probes, reconciliation, pending-save health, and draining   |
+| GET       | `/live`              | Process liveness without dependency checks                                                |
+| GET       | `/metrics`           | Per-instance Prometheus data with a separate configured operator bearer secret            |
 | WebSocket | `/collaboration`     | Hocuspocus protocol; document ID and token supplied through its provider                  |
 
-Titles are trimmed, limited to 120 characters, and validated before parameterized SQL queries. The API rejects unknown fields and malformed input. Creation is limited to 30 requests per minute per source IP. Browser origins are explicitly allowlisted; access tokens remain the document authorization boundary.
+Titles are trimmed, limited to 120 characters, and validated before parameterized SQL queries. The API rejects unknown fields and malformed input. Per-instance token buckets limit API requests, creation (30/minute with an initial burst of 30), upgrades, and authentication attempts per source IP or IPv6 /64. HTTP and WebSocket origins are explicitly allowlisted when present; access tokens remain the document authorization boundary. The bounded transport validates/stages updates before applying them and rejects cross-document traffic even against warm documents. See the [security contract and limits](docs/security.md) for exact policy, capability limitations, and trusted-proxy settings.
 
 ## Tests
 
@@ -137,6 +140,14 @@ docker compose -p commonplace-verify -f compose.verify.yaml down
 This disposable stack uses ports 3100 (web), 4100 (API/WebSockets), and 15434 (test PostgreSQL). Its PostgreSQL data is temporary. `E2E_EXTERNAL=1` directs Playwright to the already-running container application. CI runs both native-production and final-image browser suites. Docker build arguments `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_COLLABORATION_URL` configure browser endpoints at build time.
 
 Functional synchronization and recovery across four independent Node processes and four packaged server containers are tested. The performance targets of 50 active editors at under 100 ms p95 propagation latency and reconnect convergence under two seconds remain unverified. Current tests establish correctness only for their documented small scenarios; Sprint 4 provides the reproducible load/fault benchmark campaign. See [Sprint 2 evidence](docs/evidence/sprint-2.md) and the [four-instance verification commands](docs/synchronization.md#disposable-four-container-deployment).
+
+## Security and operations
+
+The default topology is a localhost development setup. Public deployments require HTTPS/WSS, private backend networks, strong independent secrets, exact origin configuration, and correctly restricted trusted proxies. Complete-link holders can read/edit their document; display names are not verified identities. The project does not implement accounts, per-user roles, link revocation, or a distributed quota.
+
+Read [capability security and resource limits](docs/security.md) and the [operations runbook](docs/operations.md) before deployment. `/live` and `/ready` serve different purposes; a database failure, stalled Redis command, failed save, or aging persistence debt makes readiness false. Optional `/metrics` requires `METRICS_TOKEN` and must be scraped separately on every private instance. The example gateway blocks operator routes. Validated Prometheus alert rules and failure/healthy fixtures are under `ops/prometheus/`.
+
+Policy rejections pause browser retries and retain local text for export. Limits bound admitted work; their defaults are not benchmark-derived capacity promises. See [Sprint 3 evidence](docs/evidence/sprint-3.md) for authorization, failure, resource, and packaged verification scope.
 
 ## Project structure
 

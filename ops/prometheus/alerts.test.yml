@@ -1,0 +1,45 @@
+rule_files: [alerts.yml]
+evaluation_interval: 15s
+tests:
+  - interval: 15s
+    input_series:
+      - series: 'commonplace_ready{instance="node-1"}'
+        values: '0+0x8'
+      - series: 'commonplace_persistence_failures{instance="node-1"}'
+        values: '1+0x8'
+      - series: 'commonplace_dependency_up{instance="node-1",dependency="redis_subscriber"}'
+        values: '0+0x8'
+    alert_rule_test:
+      - eval_time: 1m
+        alertname: CommonplaceNotReady
+        exp_alerts:
+          - exp_labels: { instance: node-1, severity: critical }
+            exp_annotations:
+              summary: Commonplace instance is not ready
+              action: Inspect dependency_up, persistence_failures, and oldest_dirty_seconds before routing new sessions.
+      - eval_time: 1m
+        alertname: CommonplacePersistenceFailure
+        exp_alerts:
+          - exp_labels: { instance: node-1, severity: critical }
+            exp_annotations:
+              summary: Commonplace cannot confirm pending database saves
+              action: Restore PostgreSQL connectivity and capacity; keep dirty processes running and verify backlog clears.
+      - eval_time: 1m
+        alertname: CommonplaceRedisTransportDown
+        exp_alerts:
+          - exp_labels: { instance: node-1, dependency: redis_subscriber, severity: critical }
+            exp_annotations:
+              summary: Commonplace Redis transport is unavailable
+              action: Restore Redis and verify both transports plus reconciliation return healthy without another edit.
+  - interval: 15s
+    input_series:
+      - series: 'commonplace_ready{instance="node-1"}'
+        values: '1+0x8'
+      - series: 'commonplace_persistence_failures{instance="node-1"}'
+        values: '0+0x8'
+      - series: 'commonplace_dependency_up{instance="node-1",dependency="redis_subscriber"}'
+        values: '1+0x8'
+    alert_rule_test:
+      - { eval_time: 1m, alertname: CommonplaceNotReady, exp_alerts: [] }
+      - { eval_time: 1m, alertname: CommonplacePersistenceFailure, exp_alerts: [] }
+      - { eval_time: 1m, alertname: CommonplaceRedisTransportDown, exp_alerts: [] }

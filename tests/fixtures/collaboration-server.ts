@@ -57,6 +57,11 @@ process.on('message', async (message: { id: string; command: string }) => {
         subscriber: redis.sub.status,
         completedRepairs: redis.completedRepairs,
         documents: application.collaboration.getDocumentsCount(),
+        synchronizationHealthy: redis.healthy,
+        persistenceFailures: application.persistence.failureCount,
+        dependencies: (
+          await application.telemetry.registry.getSingleMetric('commonplace_dependency_up')?.get()
+        )?.values,
       },
     });
   } catch (error) {

@@ -22,7 +22,7 @@ The browser retains its Y.Doc/IndexedDB state while offline. On a successful syn
 
 The server tracks presence IDs whose awareness clock advances on a connection, including returning IDs already known via Redis. Normal connection closure publishes removals even when it was the final local socket. Normal removal/rejoin scenarios have a 10-second functional test deadline. A removal lost during Pub/Sub disruption or abrupt process death can leave a ghost until Yjs awareness expiry: the pinned implementation uses a 30-second stale threshold and periodic scans. Regression tests allow **45 seconds** for that fallback cleanup. Presence is ephemeral, not a database record or verified identity. These tests do not establish a security boundary for participant labels.
 
-`/health` returns 503 while either Redis transport is not ready, or PostgreSQL/the publisher connectivity check fails. This checks dependency connectivity; it does not certify that all documents have completed a repair or that every pending edit is durable. The separate database-save indicator continues to require an exact committed snapshot, including deletions. Liveness/readiness separation and detailed operational metrics belong to Sprint 3.
+`/health` and `/ready` return 503 while a dependency probe fails, either Redis transport is not ready/responsive, reconciliation is unhealthy, persistence has failed or aged beyond policy, or shutdown is draining. `/live` remains a separate process liveness check. This checks dependency connectivity; it does not certify that all documents have completed a repair or that every pending edit is durable. The separate database-save indicator continues to require an exact committed snapshot, including deletions. See [Sprint 3 operations](operations.md) for active probes, protected per-instance metrics, and operational alerts.
 
 ## Disposable four-container deployment
 
@@ -44,7 +44,7 @@ E2E_EXTERNAL=1 E2E_BASE_URL=http://localhost:3100 \
 npm run test:cluster:packaged
 ```
 
-The packaged fault command stops/starts only this stack's Redis, applies divergent edits through four direct endpoints, and verifies convergence/database confirmation without another edit. It then SIGKILLs backends until its fifth, gateway-connected observer must reconnect, verifies recovery **before restarting the killed backend**, and verifies pinned clients after restart. It writes `test-results/cluster-verification.json`. The command permits only `commonplace-verify` or the local `CLUSTER_VERIFY_PROJECT=commonplace-sprint2-verify` project and verifies that PostgreSQL is the temporary verification database with no persistent volume. Do not point fault tests at ordinary application services.
+The packaged fault command stops/starts only this stack's Redis, applies divergent edits through four direct endpoints, and verifies convergence/database confirmation without another edit. It then SIGKILLs backends until its fifth, gateway-connected observer must reconnect, verifies recovery **before restarting the killed backend**, and verifies pinned clients after restart. It writes `test-results/cluster-verification.json`. The command permits only `commonplace-verify` or the local `CLUSTER_VERIFY_PROJECT=commonplace-sprint2-verify` / `commonplace-sprint3-verify` projects and verifies that PostgreSQL is the temporary verification database with no persistent volume. Do not point fault tests at ordinary application services.
 
 Clean up this disposable stack without touching ordinary application volumes:
 

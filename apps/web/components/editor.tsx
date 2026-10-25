@@ -89,7 +89,14 @@ export function CollaborativeEditor({
     const database = new DatabaseSaveTracker(ydoc, provider, (state) => {
       if (!disposed) setDatabaseSave(state);
     });
-    const connectionSession = new CollaborationSession(provider);
+    const connectionSession = new CollaborationSession(provider, () => {
+      if (!disposed) {
+        setStatus((current) => (current === 'denied' ? current : 'limited'));
+        onNotice(
+          'Collaboration paused by workspace limits. Download your text to keep a separate copy.',
+        );
+      }
+    });
     const awareness = provider.awareness;
     const updatePresence = () => {
       if (disposed || !awareness) return;
@@ -102,9 +109,10 @@ export function CollaborativeEditor({
     awareness?.on('change', updatePresence);
     const offline = () => {
       provider.disconnect();
-      setStatus('disconnected');
+      setStatus(connectionSession.blocked ? 'limited' : 'disconnected');
     };
     const online = () => {
+      if (connectionSession.blocked) return;
       void provider.connect().catch(() => onNotice('Trying to reconnect to the workspace…'));
     };
     window.addEventListener('offline', offline);
@@ -140,7 +148,7 @@ export function CollaborativeEditor({
         <div className={`connection-badge ${live ? 'connected' : ''}`}>
           {live ? (
             <span className="small-dot" />
-          ) : status === 'disconnected' ? (
+          ) : status === 'disconnected' || status === 'limited' ? (
             <WifiOff size={13} />
           ) : (
             <LoaderCircle size={13} className="spinning" />
@@ -149,9 +157,11 @@ export function CollaborativeEditor({
             ? 'Live collaboration'
             : status === 'disconnected'
               ? 'Offline mode'
-              : status === 'denied'
-                ? 'Access denied'
-                : 'Connecting…'}
+              : status === 'limited'
+                ? 'Connection paused'
+                : status === 'denied'
+                  ? 'Access denied'
+                  : 'Connecting…'}
         </div>
         <div className="participants">
           <div className="avatar-stack">

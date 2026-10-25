@@ -242,3 +242,74 @@ test('recovers an open editor after PostgreSQL connections are interrupted', asy
     'Recover without another keystroke.',
   );
 });
+
+test('a wrong share capability cannot open a warm private document', async ({ page, browser }) => {
+  const url = await createDocument(page, 'Private browser boundary');
+  const editor = page.getByRole('textbox', { name: 'Document editor' });
+  await editor.fill('private-browser-content-sentinel');
+  await expect(page.getByTestId('database-save-status')).toHaveText('Saved to database');
+  const otherContext = await browser.newContext();
+  try {
+    const other = await otherContext.newPage();
+    const denied = new URL(url);
+    denied.hash = 'key=' + 'x'.repeat(43);
+    const response = await other.goto(denied.toString());
+    expect(response?.headers()['referrer-policy']).toBe('no-referrer');
+    expect(response?.headers()['content-security-policy']).toContain("frame-ancestors 'none'");
+    await expect(
+      other.getByRole('alert').filter({ hasText: 'This link is invalid' }),
+    ).toBeVisible();
+    await expect(other.getByRole('textbox', { name: 'Document editor' })).toHaveCount(0);
+    await expect(other.locator('body')).not.toContainText('private-browser-content-sentinel');
+    await editor.press('End');
+    await editor.pressSequentially(' still works');
+    await expect(page.getByTestId('database-save-status')).toHaveText('Saved to database');
+  } finally {
+    await otherContext.close();
+  }
+});
+
+test('a permanent socket limit pauses retries and retains exportable local text', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const Original = window.WebSocket;
+    const state = { sockets: [] as WebSocket[] };
+    Object.assign(window, { commonplaceSocketTest: state });
+    window.WebSocket = class extends Original {
+      constructor(address: string | URL, protocols?: string | string[]) {
+        super(address, protocols);
+        state.sockets.push(this);
+      }
+    };
+  });
+  await createDocument(page, 'Retained local draft');
+  const editor = page.getByRole('textbox', { name: 'Document editor' });
+  await editor.fill('Keep this local draft.');
+  await expect(page.getByTestId('database-save-status')).toHaveText('Saved to database');
+  await page.evaluate(() => {
+    const state = (window as unknown as { commonplaceSocketTest: { sockets: WebSocket[] } })
+      .commonplaceSocketTest;
+    state.sockets.at(-1)!.send(new Uint8Array(262145));
+  });
+  await expect(page.getByText('Connection paused', { exact: true })).toBeVisible();
+  await expect(page.getByTestId('database-save-status')).toHaveText('Database save unconfirmed');
+  await expect(editor).toContainText('Keep this local draft.');
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download text' }).click();
+  const download = await downloadPromise;
+  const stream = await download.createReadStream();
+  const chunks: Buffer[] = [];
+  for await (const chunk of stream) chunks.push(chunk as Buffer);
+  expect(Buffer.concat(chunks).toString()).toBe('Keep this local draft.');
+  // The provider's normal retry delay is one second. A permanently rejected
+  // client must remain paused instead of reconnecting and resending its data.
+  await page.waitForTimeout(1500);
+  expect(
+    await page.evaluate(
+      () =>
+        (window as unknown as { commonplaceSocketTest: { sockets: WebSocket[] } })
+          .commonplaceSocketTest.sockets.length,
+    ),
+  ).toBe(1);
+});

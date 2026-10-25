@@ -1,0 +1,45 @@
+groups:
+  - name: commonplace
+    rules:
+      - alert: CommonplaceScrapeMissing
+        expr: up{job="commonplace"} == 0
+        for: 30s
+        labels: { severity: critical }
+        annotations:
+          summary: Commonplace telemetry is unreachable
+          action: Check the instance, scrape secret, and private network; do not expose metrics publicly.
+      - alert: CommonplaceNotReady
+        expr: commonplace_ready == 0
+        for: 30s
+        labels: { severity: critical }
+        annotations:
+          summary: Commonplace instance is not ready
+          action: Inspect dependency_up, persistence_failures, and oldest_dirty_seconds before routing new sessions.
+      - alert: CommonplacePersistenceFailure
+        expr: commonplace_persistence_failures > 0
+        for: 15s
+        labels: { severity: critical }
+        annotations:
+          summary: Commonplace cannot confirm pending database saves
+          action: Restore PostgreSQL connectivity and capacity; keep dirty processes running and verify backlog clears.
+      - alert: CommonplaceOldDirtyState
+        expr: commonplace_oldest_dirty_seconds > 15
+        for: 30s
+        labels: { severity: warning }
+        annotations:
+          summary: Commonplace has aging uncommitted changes
+          action: Check write duration and database locks; do not treat Changes synced as a durable save.
+      - alert: CommonplaceRedisTransportDown
+        expr: commonplace_dependency_up{dependency=~"redis_.*"} == 0
+        for: 15s
+        labels: { severity: critical }
+        annotations:
+          summary: Commonplace Redis transport is unavailable
+          action: Restore Redis and verify both transports plus reconciliation return healthy without another edit.
+      - alert: CommonplaceReconciliationStalled
+        expr: time() - commonplace_last_reconciliation_timestamp_seconds > 10
+        for: 30s
+        labels: { severity: warning }
+        annotations:
+          summary: Commonplace reconciliation has stopped succeeding
+          action: Check Redis subscriptions, PostgreSQL reads, and reconciliation failure rate.

@@ -14,7 +14,9 @@ test('packaged Redis outage and gateway failover', async () => {
   // This command intentionally injects faults only into the disposable topology.
   const project = process.env.CLUSTER_VERIFY_PROJECT || 'commonplace-verify';
   assert(
-    ['commonplace-verify', 'commonplace-sprint2-verify'].includes(project),
+    ['commonplace-verify', 'commonplace-sprint2-verify', 'commonplace-sprint3-verify'].includes(
+      project,
+    ),
     'Only the named disposable verification projects are allowed',
   );
   const execute = promisify(execFile);
@@ -103,6 +105,22 @@ test('packaged Redis outage and gateway failover', async () => {
 
     await compose('stop', '-t', '1', 'redis');
     await delay(300);
+    for (const port of [4100, 4101, 4102, 4103]) {
+      assert.equal((await fetch(`http://localhost:${port}/live`)).status, 200);
+      assert.equal((await fetch(`http://localhost:${port}/ready`)).status, 503);
+      const metrics = await fetch(`http://localhost:${port}/metrics`, {
+        headers: { Authorization: 'Bearer commonplace-verification-metrics-only-0123456789' },
+      });
+      assert.equal(metrics.status, 200);
+      assert(
+        (await metrics.text()).includes(
+          'commonplace_dependency_up{dependency="redis_subscriber"} 0',
+        ),
+      );
+    }
+    checks.push(
+      'Every instance stays live, becomes unready and reports unavailable Redis telemetry during the real Redis outage',
+    );
     pinned.forEach((c, i) => {
       c.text.delete(0, 1);
       c.text.insert(0, `partition-${i};`);

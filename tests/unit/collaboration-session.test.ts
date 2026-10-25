@@ -24,6 +24,7 @@ function fixture() {
     },
     on: (event: string, callback: (data?: unknown) => void) => listeners.set(event, callback),
     off: (event: string) => listeners.delete(event),
+    sendStateless: vi.fn((_payload: string) => {}),
     disconnect: vi.fn(),
     connect: vi.fn(async () => {}),
   };
@@ -45,6 +46,22 @@ describe('collaboration connection lifecycle', () => {
     expect([...f.provider.awareness.meta.keys()]).toEqual([1, 3]);
     f.session.destroy();
   });
+  it('reports only completed session rejoins and does not count a sync event twice', () => {
+    const f = fixture();
+    f.emit('synced', { state: true });
+    f.emit('synced', { state: true });
+    expect(f.provider.sendStateless).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(f.provider.sendStateless.mock.calls[0]![0])).toMatchObject({
+      reconnected: false,
+    });
+    f.provider.configuration.websocketProvider.status = 'disconnected';
+    f.emit('close');
+    f.emit('synced', { state: true });
+    expect(JSON.parse(f.provider.sendStateless.mock.calls[1]![0])).toMatchObject({
+      reconnected: true,
+    });
+    f.session.destroy();
+  });
   it('starts a fresh handshake for a logical close of an authenticated session', () => {
     const f = fixture();
     f.emit('synced', { state: true });
@@ -64,6 +81,16 @@ describe('collaboration connection lifecycle', () => {
     f.emit('synced', { state: true });
     f.provider.configuration.websocketProvider.status = 'disconnected';
     f.emit('close');
+    expect(f.provider.connect).not.toHaveBeenCalled();
+    f.session.destroy();
+  });
+  it.each([1008, 1009])('pauses automatic retries after permanent policy close %s', (code) => {
+    const f = fixture();
+    f.emit('synced', { state: true });
+    f.emit('close', { event: { code } });
+    f.emit('status', { status: 'disconnected' });
+    expect(f.session.blocked).toBe(true);
+    expect(f.provider.disconnect).toHaveBeenCalledOnce();
     expect(f.provider.connect).not.toHaveBeenCalled();
     f.session.destroy();
   });

@@ -8,6 +8,15 @@ import { HocuspocusProvider } from '@hocuspocus/provider';
 import { Pool } from 'pg';
 import * as Y from 'yjs';
 import { DatabaseSaveTracker } from '../../apps/web/lib/database-save';
+import {
+  auth,
+  authenticateRaw,
+  frame,
+  messageType,
+  rawClient,
+  stateless,
+  sync,
+} from '../helpers/wire';
 import { CollaborationSession } from '../../apps/web/lib/collaboration-session';
 
 const databaseUrl =
@@ -237,7 +246,10 @@ describe('four independent Node processes', () => {
     await delay(200);
     expect(b.text.toString()).toBe('abcdef');
     await command(nodes[1]!, 'reconnectSubscriber');
-    expect((await fetch(`http://127.0.0.1:${nodes[1]!.port}/health`)).status).toBe(200);
+    expect(
+      (await fetch(`http://127.0.0.1:${nodes[1]!.port}/health`)).status,
+      JSON.stringify(await command(nodes[1]!, 'inspect')),
+    ).toBe(200);
     await converge([a, b]);
     await durable([a, b]);
     expect(b.text.toString()).toBe('adef missed');
@@ -366,6 +378,61 @@ describe('four independent Node processes', () => {
     await durable([fresh]);
     expect(fresh.text.toDelta()).toEqual(expected);
   });
+
+  it('denies missing, wrong and cross-document credentials on every warm instance', async () => {
+    const a = await create(),
+      b = await create();
+    const group = await Promise.all(nodes.slice(0, 4).map((node) => connect(a, node)));
+    group[0]!.text.insert(0, 'private cluster content');
+    group[0]!.provider.setAwarenessField('user', { name: 'Private participant', color: '#7856b6' });
+    await converge(group);
+    await durable(group);
+    for (const node of nodes.slice(0, 4)) {
+      for (const token of ['', 'x'.repeat(43), b.token]) {
+        for (const method of ['GET', 'PATCH']) {
+          const response = await fetch(`http://127.0.0.1:${node.port}/api/documents/${a.id}`, {
+            method,
+            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+            ...(method === 'PATCH'
+              ? { body: JSON.stringify({ title: 'unauthorized rename' }) }
+              : {}),
+          });
+          expect(response.status).toBe(404);
+          expect(await response.text()).not.toContain('private cluster content');
+        }
+        const attacker = await rawClient(node.port);
+        try {
+          attacker.socket.send(auth(a.id, token));
+          attacker.socket.send(sync(a.id, 2, Uint8Array.of(0, 0)));
+          attacker.socket.send(frame(a.id, 3));
+          attacker.socket.send(
+            stateless(a.id, { type: 'persistence:check:v1', requestId: randomUUID() }),
+          );
+          expect(await attacker.closed).toBe(1008);
+          expect(attacker.messages.every((data) => messageType(data) === 2)).toBe(true);
+        } finally {
+          attacker.socket.terminate();
+        }
+      }
+      const switched = await rawClient(node.port);
+      try {
+        await authenticateRaw(switched, b);
+        switched.socket.send(frame(a.id, 3));
+        expect(await switched.closed).toBe(1008);
+        expect(switched.messages.every((data) => !data.includes(Buffer.from(a.id)))).toBe(true);
+      } finally {
+        switched.socket.terminate();
+      }
+      const metadata = await fetch(`http://127.0.0.1:${node.port}/api/documents/${a.id}`, {
+        headers: { Authorization: `Bearer ${a.token}` },
+      });
+      expect((await metadata.json()).title).toBe('Four-process recovery test');
+    }
+    group[1]!.text.insert(group[1]!.text.length, ' still healthy');
+    await converge(group);
+    await durable(group);
+    expect(group[0]!.text.toString()).toBe('private cluster content still healthy');
+  }, 30000);
 
   it('isolates different Redis namespaces while their uncommitted documents are open', async () => {
     const isolated = await start(prefix + ':isolated');

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-25T02:58:04.607Z",
+  "topology": "4 Node containers, 1 nginx gateway, PostgreSQL 17, Redis 8",
+  "clients": 5,
+  "checks": [
+    "Four direct server endpoints and shared gateway synchronize with committed save confirmation",
+    "Every instance stays live, becomes unready and reports unavailable Redis telemetry during the real Redis outage",
+    "Real Redis container stop/start preserves all Node processes and repairs divergent inserts, deletes and formatting without another edit",
+    "Gateway reconnects to a surviving node while its original backend remains stopped; restarted pinned clients recover exact committed state"
+  ],
+  "scope": "Single-host functional fault verification. Polling bounds are test deadlines, not latency percentiles or a resume benchmark."
+}

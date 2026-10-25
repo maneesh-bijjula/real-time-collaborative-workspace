@@ -5,6 +5,8 @@ import {
   type onConfigurePayload,
 } from '@hocuspocus/server';
 import * as Y from 'yjs';
+import { performance } from 'node:perf_hooks';
+import type { Telemetry } from './telemetry.js';
 import type { DocumentStore } from './documents.js';
 
 /** Repairs open documents after transient Pub/Sub loss without requiring edits. */
@@ -14,11 +16,15 @@ export class SynchronizationRedis extends Redis {
   private stopped = false;
   private failed = false;
   completedRepairs = 0;
+  get healthy() {
+    return !this.failed;
+  }
 
   constructor(
     configuration: Partial<Configuration>,
     private readonly store: DocumentStore,
     private readonly intervalMs = 2000,
+    private readonly telemetry?: Telemetry,
   ) {
     super(configuration);
     this.pub.on('ready', this.requestRepair);
@@ -80,8 +86,7 @@ export class SynchronizationRedis extends Redis {
   }
 
   private connectionError = () => {
-    if (!this.stopped && !this.failed)
-      console.error('Redis synchronization interrupted; reconciliation will retry');
+    if (!this.stopped && !this.failed) this.telemetry?.log('synchronization_failed');
     this.failed = true;
   };
 
@@ -97,9 +102,14 @@ export class SynchronizationRedis extends Redis {
       this.sub.status !== 'ready'
     )
       return Promise.resolve();
+    const started = performance.now();
     this.repair ??= this.reconcile()
-      .catch(this.connectionError)
+      .catch(() => {
+        this.telemetry?.count('reconciliation_total', { result: 'failure' });
+        this.connectionError();
+      })
       .finally(() => {
+        this.telemetry?.observe('reconciliation_seconds', (performance.now() - started) / 1000);
         this.repair = undefined;
       });
     return this.repair;
@@ -130,8 +140,11 @@ export class SynchronizationRedis extends Redis {
       if (state && this.instance.documents.get(documentName) === document && !document.isDestroyed)
         Y.applyUpdate(document, state, this.redisTransactionOrigin);
     }
+    if (this.failed) this.telemetry?.log('synchronization_recovered');
     this.failed = false;
     this.completedRepairs++;
+    this.telemetry?.count('reconciliation_total', { result: 'success' });
+    this.telemetry?.gauge('last_reconciliation_timestamp_seconds', Date.now() / 1000);
   }
 
   override async onDestroy() {

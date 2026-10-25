@@ -27,6 +27,7 @@ jobs:
       - name: Start isolated test services
         run: docker compose -p commonplace --profile test up -d --wait postgres-test redis-test
       - run: npm run typecheck
+      - run: npm audit --omit=dev --audit-level=high
       - run: npm test
       - run: npm run test:integration
       - run: npm run build
@@ -46,6 +47,11 @@ jobs:
         run: npm run test:e2e
       - name: Packaged Redis outage and gateway failover verification
         run: npm run test:cluster:packaged
+      - name: Validate operational alerts
+        run: |
+          docker run --rm --network none -v "$PWD/ops/prometheus:/etc/prometheus:ro" --entrypoint /bin/promtool prom/prometheus:v3.15.1 check config --syntax-only /etc/prometheus/prometheus.yml
+          docker run --rm --network none -v "$PWD/ops/prometheus:/etc/prometheus:ro" --entrypoint /bin/promtool prom/prometheus:v3.15.1 check rules /etc/prometheus/alerts.yml
+          docker run --rm --network none -v "$PWD/ops/prometheus:/etc/prometheus:ro" -w /etc/prometheus --entrypoint /bin/promtool prom/prometheus:v3.15.1 test rules alerts.test.yml
       - name: Upload browser reports
         if: always()
         uses: actions/upload-artifact@v7.0.2
