@@ -20,7 +20,11 @@
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
-    "test:cluster:packaged": "vitest run --config vitest.packaged.config.ts"
+    "test:cluster:packaged": "vitest run --config vitest.packaged.config.ts",
+    "benchmark:build": "tsc -p tsconfig.benchmark.json",
+    "benchmark:smoke": "npm run benchmark:build && node .benchmark-dist/benchmarks/run.js --suite smoke",
+    "benchmark:full": "npm run benchmark:build && node .benchmark-dist/benchmarks/run.js --suite full",
+    "benchmark:summarize": "npm run benchmark:build && node .benchmark-dist/benchmarks/summarize.js"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",

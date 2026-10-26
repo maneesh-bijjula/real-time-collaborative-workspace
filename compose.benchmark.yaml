@@ -1,0 +1,53 @@
+# Dedicated, disposable benchmark services. Random host ports; no application volumes.
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: workspace
+      POSTGRES_PASSWORD: benchmark-disposable-only
+      POSTGRES_DB: workspace_benchmark_test
+    ports: ['127.0.0.1::5432']
+    tmpfs: ['/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U workspace -d workspace_benchmark_test']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  redis:
+    image: redis:8-alpine
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  server1: &server
+    build: { context: ., target: server }
+    environment:
+      HOST: 0.0.0.0
+      DATABASE_URL: postgres://workspace:benchmark-disposable-only@postgres:5432/workspace_benchmark_test
+      REDIS_URL: redis://redis:6379
+      REDIS_PREFIX: commonplace-benchmark
+      METRICS_TOKEN: benchmark-disposable-metrics-only-0123456789
+      ALLOWED_ORIGINS: http://localhost:3100
+    ports: ['127.0.0.1::4000']
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    stop_grace_period: 20s
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:4000/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 2s
+      timeout: 4s
+      retries: 30
+  server2:
+    <<: *server
+  server3:
+    <<: *server
+  server4:
+    <<: *server

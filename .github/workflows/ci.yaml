@@ -47,6 +47,8 @@ jobs:
         run: npm run test:e2e
       - name: Packaged Redis outage and gateway failover verification
         run: npm run test:cluster:packaged
+      - name: Fifty-client benchmark correctness smoke (no performance claim)
+        run: npm run benchmark:smoke
       - name: Validate operational alerts
         run: |
           docker run --rm --network none -v "$PWD/ops/prometheus:/etc/prometheus:ro" --entrypoint /bin/promtool prom/prometheus:v3.15.1 check config --syntax-only /etc/prometheus/prometheus.yml

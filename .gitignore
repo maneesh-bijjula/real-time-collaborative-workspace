@@ -8,6 +8,7 @@ dist/
 playwright-report/
 test-results/
 coverage/
+.benchmark-dist/
 .DS_Store
 *.log
 apps/web/next-env.d.ts

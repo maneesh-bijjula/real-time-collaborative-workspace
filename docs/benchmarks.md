@@ -1,0 +1,52 @@
+# Reproducible collaboration benchmarks
+
+The workload definition is `benchmarks/workloads.ts`. Freeze it before collecting results. `benchmark:full` creates its own four-container deployment, runs every planned profile without dropping slow/missing samples, records failures, and removes only its unique Compose project. It uses random loopback ports and a tmpfs database named `workspace_benchmark_test`. No ordinary application volume participates.
+
+## Workload v1 (frozen before the first full campaign)
+
+| Profile                  | Defined work                                                                                                                                                                                                                                                                 | Threshold scope                                                                                                                |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `shared-richtext-v1`     | One document, approximately 10 KiB initial text across 50 writer-owned paragraphs; 50 simultaneous writers distributed 13/13/12/12 across four independent Node containers. Each writer makes two atomic mutations/second. 30 seconds warm-up, 120 measured; three repeats.  | Primary: every run must have p95 <100 ms, complete offered work/peer samples, valid scheduling and state/presence correctness. |
+| `five-documents-v1`      | Five documents, approximately 10 KiB each, 10 writers/document; 50 total with the same node distribution and rate. 10 seconds warm-up, 30 measured; one run.                                                                                                                 | Separate characterization; cannot replace the shared-document workload.                                                        |
+| `large-richtext-v1`      | One document with 128 KiB initial text, 50 writers, same rates; 10 seconds warm-up, 30 measured; one run.                                                                                                                                                                    | Separate larger-document characterization.                                                                                     |
+| `migration-reconnect-v1` | 50 peers, approximately 10 KiB initial text. Disconnect five rotating peers for two seconds. Each makes eight offline mutations; an online observer makes eight mutations. Preserve provider/Y.Doc/presence clocks; reconnect to different instances. All 30 planned trials. | Primary: every trial <2,000 ms; publish missing/timed-out/slow trials and p50/p95/max.                                         |
+| `large-backlog-v1`       | 128 KiB initial text, 50 peers, 10 affected clients, two seconds offline, 50 mutations/affected client, eight online-observer mutations; five trials.                                                                                                                        | Separate backlog characterization; cannot establish the primary two-second claim.                                              |
+
+Each five-operation cycle contains three small inserts, one four-character deletion, and one eight-character bold-format change. Writer-owned paragraphs support an independent deterministic text/format oracle while sharing the same Yjs rich-text fragment (`default`) and Redis/PostgreSQL document. This characterizes separate paragraphs, not worst-case edits at one position. The initial budget is ASCII text bytes; reports include actual encoded Yjs sizes at start/end.
+
+Every client uses the application's provider, `CollaborationSession`, and `DatabaseSaveTracker`. Save checks remain enabled during traffic. User presence and relative-position cursors refresh every fourth mutation (two seconds at the primary rate), alongside provider heartbeats. The harness does not raise server limits or change persistence/repair/backoff settings. Servers use the final Docker server target; controller and server Node versions are recorded.
+
+## Measurement and correctness
+
+One controller uses `performance.now()` for all source and recipient timestamps. No inter-host clock subtraction is assumed. Writers are evenly staggered across each 500 ms period. Timing starts immediately before the source transaction. Each remote recipient of that document contributes a sample when the transaction's final sequence witness applies. The witness is a bounded per-writer Y.Map updated last in the **same atomic transaction**, making delete/format-only operations observable. Its overhead is included. Source observers and other-document recipients are excluded. Each primary repeat expects 12,000 operations and 588,000 peer samples: 36,000 operations and 1,764,000 samples in total.
+
+Raw operation records contain scheduled/actual source times, actor/node/document indices, sequence/kind, and Yjs update bytes excluding the transport envelope. Raw sample tuples are `[operationIndex, recipientIndex, milliseconds]`. Quantiles use nearest rank, `ceil(p*N)`, with no trimming. Run-level, same-node, cross-node, all 16 node-pair and pooled distributions are available; pooled percentiles never override failed repeats. Missing operations/samples fail. Every operation's scheduling lag must stay below 500 ms and measured work must finish within the nominal window plus one second. Offered/actual throughput and scheduling lag are separate from latency.
+
+After traffic drains, all peers must match an independently replayed rich-text oracle, including formatting, and have equal complete Yjs snapshots including deletion sets. State vectors alone are insufficient. All expected participants must be visible. Unexpected load-profile disconnects, authentication/policy failures, missing samples or unresolved persistence checks fail that run. Quiescence-to-confirmed-save time and write/save histograms are reported separately; neither is a propagation percentile.
+
+Reconnect timing starts immediately before explicit `connect()` calls to healthy, already-running alternate instances. It ends only when **all 50 peers**, including the online observer, agree on text, formatting, deletion state, expected presence and synchronized provider state. Polling/validation overhead is included; no further edit triggers recovery. This is controlled network availability restoration. It excludes silent failure detection, browser offline events, page reload/IndexedDB replay, dependency restart and automatic gateway failover. Existing four-process/packaged tests cover process loss and subscriber/Redis recovery separately; their deadlines are not these percentiles.
+
+## Run and inspect
+
+Prerequisites: locked dependencies, Docker/Compose with a running engine, and memory for four Node servers, PostgreSQL/Redis and the 50-client controller. From the repository root:
+
+```sh
+npm ci
+npm run benchmark:smoke
+npm run benchmark:full -- --output test-results/benchmarks/my-campaign
+npm run benchmark:summarize -- test-results/benchmarks/my-campaign --check
+```
+
+Use a new output directory; overwrites are refused. The smoke uses the same 50 clients/four instances and correctness machinery, short windows and two reconnect trials. Ordinary CI runs it for wiring/correctness, **without performance claims**. Full campaigns take roughly 11–15 minutes plus builds/cleanup. Primary acceptance requires a clean versioned tree; dirty exploratory results remain evidence of that tree but cannot establish the target.
+
+The summarizer decompresses raw data, rejects duplicate/invalid sample memberships, recomputes distributions/node pairs, and rejects saved/raw mismatches. `--check` fails incomplete or failed primary evidence. Per-run summaries sit alongside compressed operation/sample JSONL and telemetry JSONL. Telemetry contains per-node RSS/event-loop delay, persistence/dependency/repair counters/histograms, Docker CPU/memory/network/block I/O samples, controller CPU/RSS/event-loop statistics, and PostgreSQL/Redis snapshots for load runs. These sampled counters are context, not a CPU profile or per-operation database trace.
+
+The manifest identifies commit/dirty state, hashes of workload/harness/server/config/lockfile inputs, host hardware/OS/Node, Docker allocation/version, image IDs/digests, and four distinct container host PIDs. Hashes distinguish later evidence/documentation-only commits from behavior changes. Rerun affected primary profiles if measured inputs change. Keep failed campaigns when tuning and explain the change.
+
+The manual **Reproducible benchmark campaign** GitHub workflow runs the full suite and summary checks and uploads evidence on failure. Shared CI hardware differs from local hardware; each result belongs to its recorded environment. Ordinary-CI smoke does not enforce latency thresholds.
+
+Normal completion and caught failures remove only the unique `commonplace-bench-*` project, never using `down -v`. A hard-killed controller cannot guarantee cleanup; its manifest records the project. Verify ownership before using `docker compose -p <recorded-project> -f compose.benchmark.yaml down`. Never purge unrelated services or volumes.
+
+## Interpretation
+
+This single-host provider/Yjs workload measures source mutation to peer model application, including controller scheduling and network/server work. It excludes browser rendering/layout, human typing perception, WAN latency, multi-host deployment, identity features, and dependency/gateway high availability. The defined profiles do not establish arbitrary-document capacity or universal reconnect bounds. Sprint evidence will publish measured results and their limits; the resume and other projects remain unchanged.

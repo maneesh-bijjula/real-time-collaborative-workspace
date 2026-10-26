@@ -1,0 +1,26 @@
+name: Reproducible benchmark campaign
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  benchmark:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run benchmark:full -- --output test-results/benchmarks/full
+      - name: Recompute from raw samples and enforce primary targets
+        if: always()
+        run: npm run benchmark:summarize -- test-results/benchmarks/full --check
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: benchmark-results
+          path: test-results/benchmarks/full/
+          if-no-files-found: error

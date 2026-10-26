@@ -5,5 +5,6 @@ package-lock.json
 playwright-report
 test-results
 coverage
+.benchmark-dist
 apps/web/AGENTS.md
 apps/web/next-env.d.ts
