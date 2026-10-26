@@ -154,7 +154,7 @@ export async function analyze(directory: string) {
   const primaryReconnect = rejoins.filter(
     (r) => r.profile.id === reconnect.id && JSON.stringify(r.profile) === JSON.stringify(reconnect),
   );
-  const primaryTargetsPassed =
+  const primaryTargetsPassed = Boolean(
     manifest.suite === 'full' &&
     !manifest.source.dirty &&
     !manifest.fatal &&
@@ -163,7 +163,8 @@ export async function analyze(directory: string) {
     new Set(primaries.map((r) => r.name)).size === primary.repeats &&
     primaries.every((r) => r.passed) &&
     primaryReconnect.length === 1 &&
-    primaryReconnect[0]!.passed;
+    primaryReconnect[0]!.passed,
+  );
   return {
     schemaVersion: 1,
     source: manifest.source,

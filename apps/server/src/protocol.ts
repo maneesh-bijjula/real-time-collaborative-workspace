@@ -145,20 +145,80 @@ function validateAwareness(bytes: Uint8Array) {
   }
   if (hasContent(decoder)) throw new PolicyError('malformed');
 }
-export function validateDocumentUpdate(document: Y.Doc, frame: Frame, policy: ResourcePolicy) {
-  if (!frame.payload || frame.syncType === 0 || (frame.type !== 0 && frame.type !== 4)) return;
-  // Stage untrusted updates in a disposable CRDT before touching the live
-  // document. Rejected/decode-failing updates cannot partially mutate peers.
-  const probe = new Y.Doc();
-  try {
-    Y.applyUpdate(probe, Y.encodeStateAsUpdate(document));
-    Y.applyUpdate(probe, frame.payload);
-    if (Y.encodeStateAsUpdate(probe).length > policy.maxDocumentBytes)
-      throw new PolicyError('document_size');
-  } catch (error) {
-    if (error instanceof PolicyError) throw error;
-    throw new PolicyError('malformed_update');
-  } finally {
-    probe.destroy();
+/** One reusable staging document per loaded document, never per client/frame.
+ * Mirroring accepted live updates avoids rebuilding the entire CRDT for every
+ * keystroke. Admission still serializes/stages and measures the exact encoding.
+ */
+export class DocumentAdmission {
+  private readonly entries = new WeakMap<
+    Y.Doc,
+    { probe: Y.Doc; busy: boolean; dispose: () => void }
+  >();
+
+  prepare(document: Y.Doc, frame: Frame, policy: ResourcePolicy): () => void {
+    if (!frame.payload || frame.syncType === 0 || (frame.type !== 0 && frame.type !== 4))
+      return () => {};
+    let entry = this.entries.get(document);
+    if (entry?.busy) {
+      entry.dispose();
+      entry = undefined;
+    }
+    if (!entry) {
+      const probe = new Y.Doc();
+      try {
+        Y.applyUpdate(probe, Y.encodeStateAsUpdate(document));
+      } catch {
+        probe.destroy();
+        throw new PolicyError('malformed_update');
+      }
+      const mirror = (update: Uint8Array) => {
+        try {
+          Y.applyUpdate(probe, update);
+        } catch {
+          created.dispose();
+        }
+      };
+      const created = {
+        probe,
+        busy: false,
+        dispose: () => {
+          if (this.entries.get(document) !== created) return;
+          this.entries.delete(document);
+          document.off('update', mirror);
+          document.off('destroy', created.dispose);
+          probe.destroy();
+        },
+      };
+      entry = created;
+      this.entries.set(document, entry);
+      document.on('update', mirror);
+      document.on('destroy', entry.dispose);
+    }
+    const staged = entry;
+    staged.busy = true;
+    try {
+      Y.applyUpdate(staged.probe, frame.payload);
+      if (Y.encodeStateAsUpdate(staged.probe).length > policy.maxDocumentBytes)
+        throw new PolicyError('document_size');
+    } catch (error) {
+      staged.dispose();
+      if (error instanceof PolicyError) throw error;
+      throw new PolicyError('malformed_update');
+    }
+    return () => {
+      if (this.entries.get(document) !== staged) return;
+      // A closed/failed message must not leave speculative edits or deletions
+      // in the next admission. Snapshots include deletion sets. Pending causal
+      // gaps are not represented by snapshots, so discard those probes too.
+      if (
+        staged.probe.store.pendingStructs ||
+        staged.probe.store.pendingDs ||
+        document.store.pendingStructs ||
+        document.store.pendingDs ||
+        !Y.equalSnapshots(Y.snapshot(staged.probe), Y.snapshot(document))
+      )
+        staged.dispose();
+      else staged.busy = false;
+    };
   }
 }

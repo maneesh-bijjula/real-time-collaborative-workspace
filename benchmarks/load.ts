@@ -105,6 +105,10 @@ export async function load(
       mutate(client.doc, writer, client.sequence, group.documents[client.document]!.actors);
       active = undefined;
       if (client.sequence % 4 === 0) group.pulse(client);
+      if ((i + 1) % (profile.writers * profile.rate * 15) === 0)
+        console.log(
+          `${name}: ${i + 1}/${total} source operations; ${observed}/${expected} measured peer samples observed`,
+        );
     }
     actualWindowMs = performance.now() - began - profile.warmupSeconds * 1000;
     try {

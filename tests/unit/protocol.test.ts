@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import * as Y from 'yjs';
 import * as encoding from 'lib0/encoding';
-import { decodeFrame, validateDocumentUpdate } from '../../apps/server/src/protocol.js';
+import { decodeFrame, DocumentAdmission } from '../../apps/server/src/protocol.js';
 import { policySchema } from '../../apps/server/src/policy.js';
 import { frame, sync, auth } from '../helpers/wire';
 const id = '16d3f83f-b3eb-42a4-9f81-66d93dced721',
@@ -61,7 +61,7 @@ describe('untrusted binary protocol', () => {
     const before = Y.snapshot(original);
     const decoded = decodeFrame(sync(id, 2, Y.encodeStateAsUpdate(incoming)), policy);
     expect(() =>
-      validateDocumentUpdate(original, decoded, { ...policy, maxDocumentBytes: 100 }),
+      new DocumentAdmission().prepare(original, decoded, { ...policy, maxDocumentBytes: 100 }),
     ).toThrow();
     expect(Y.equalSnapshots(before, Y.snapshot(original))).toBe(true);
     original.destroy();
@@ -74,5 +74,102 @@ describe('untrusted binary protocol', () => {
       decodeFrame(sync(id, 2, Y.encodeStateAsUpdate(doc)), { ...policy, maxUpdateStructs: 2 }),
     ).toThrow();
     doc.destroy();
+  });
+  it('mirrors accepted peer updates before the next cached admission', () => {
+    const live = new Y.Doc(),
+      a = new Y.Doc(),
+      b = new Y.Doc();
+    const admission = new DocumentAdmission();
+    a.getText('body').insert(0, 'a'.repeat(40));
+    const first = decodeFrame(sync(id, 2, Y.encodeStateAsUpdate(a)), policy);
+    const finish = admission.prepare(live, first, policy);
+    Y.applyUpdate(live, first.payload!);
+    finish();
+    b.getText('body').insert(0, 'b'.repeat(120));
+    Y.applyUpdate(live, Y.encodeStateAsUpdate(b));
+    const before = Y.snapshot(live);
+    expect(() => admission.prepare(live, first, { ...policy, maxDocumentBytes: 100 })).toThrow();
+    expect(Y.equalSnapshots(before, Y.snapshot(live))).toBe(true);
+    live.destroy();
+    a.destroy();
+    b.destroy();
+  });
+  it('discards an unapplied speculative edit rather than charging another client for it', () => {
+    const live = new Y.Doc(),
+      orphan = new Y.Doc(),
+      legitimate = new Y.Doc();
+    const admission = new DocumentAdmission();
+    orphan.getText('body').insert(0, 'o'.repeat(60));
+    legitimate.getText('body').insert(0, 'l'.repeat(60));
+    const bounded = { ...policy, maxDocumentBytes: 120 };
+    admission.prepare(
+      live,
+      decodeFrame(sync(id, 2, Y.encodeStateAsUpdate(orphan)), policy),
+      bounded,
+    )();
+    const next = decodeFrame(sync(id, 2, Y.encodeStateAsUpdate(legitimate)), policy);
+    const finish = admission.prepare(live, next, bounded);
+    Y.applyUpdate(live, next.payload!);
+    finish();
+    expect(live.getText('body').toString()).toBe('l'.repeat(60));
+    live.destroy();
+    orphan.destroy();
+    legitimate.destroy();
+  });
+  it('discards an unapplied deletion even when vector clocks have not changed', () => {
+    const live = new Y.Doc(),
+      deleting = new Y.Doc(),
+      appending = new Y.Doc();
+    live.getText('body').insert(0, 'a'.repeat(100));
+    const seed = Y.encodeStateAsUpdate(live);
+    Y.applyUpdate(deleting, seed);
+    Y.applyUpdate(appending, seed);
+    deleting.getText('body').delete(0, 60);
+    const admission = new DocumentAdmission(),
+      bounded = { ...policy, maxDocumentBytes: seed.length + 30 };
+    admission.prepare(
+      live,
+      decodeFrame(sync(id, 2, Y.encodeStateAsUpdate(deleting)), policy),
+      bounded,
+    )();
+    appending.getText('body').insert(100, 'b'.repeat(60));
+    expect(() =>
+      admission.prepare(
+        live,
+        decodeFrame(sync(id, 2, Y.encodeStateAsUpdate(appending)), policy),
+        bounded,
+      ),
+    ).toThrow();
+    expect(live.getText('body').toString()).toBe('a'.repeat(100));
+    live.destroy();
+    deleting.destroy();
+    appending.destroy();
+  });
+  it('discards causally incomplete probes and rejects oversized/malformed candidates without poisoning later admissions', () => {
+    const live = new Y.Doc(),
+      source = new Y.Doc(),
+      legitimate = new Y.Doc();
+    const changes: Uint8Array[] = [];
+    source.on('update', (update) => changes.push(update));
+    source.getText('body').insert(0, 'first');
+    source.getText('body').insert(5, 'gap');
+    const admission = new DocumentAdmission();
+    admission.prepare(live, decodeFrame(sync(id, 2, changes[1]!), policy), policy)();
+    expect(() =>
+      admission.prepare(
+        live,
+        { document: id, type: 0, syncType: 2, payload: Uint8Array.of(255) },
+        policy,
+      ),
+    ).toThrow();
+    legitimate.getText('body').insert(0, 'legitimate');
+    const next = decodeFrame(sync(id, 2, Y.encodeStateAsUpdate(legitimate)), policy);
+    const finish = admission.prepare(live, next, policy);
+    Y.applyUpdate(live, next.payload!);
+    finish();
+    expect(live.getText('body').toString()).toBe('legitimate');
+    live.destroy();
+    source.destroy();
+    legitimate.destroy();
   });
 });

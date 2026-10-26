@@ -11,7 +11,7 @@ import {
   trustedProxyList,
   type ResourcePolicy,
 } from './policy.js';
-import { decodeFrame, validateDocumentUpdate, PolicyError, type Frame } from './protocol.js';
+import { decodeFrame, DocumentAdmission, PolicyError, type Frame } from './protocol.js';
 import type { Telemetry } from './telemetry.js';
 
 export interface Session {
@@ -49,6 +49,7 @@ export class CollaborationTransport {
   private queuedBytes = 0;
   private queuedMessages = 0;
   private readonly documentWork = new WeakMap<object, Promise<void>>();
+  private readonly admission = new DocumentAdmission();
   private activeSessions = 0;
   draining = false;
   constructor(
@@ -264,6 +265,7 @@ export class CollaborationTransport {
             this.policy.processingTimeoutMs,
           ).unref();
           let release: (() => void) | undefined;
+          let finishAdmission: (() => void) | undefined;
           const mutating =
             (item.frame.type === 0 || item.frame.type === 4) && item.frame.syncType !== 0;
           try {
@@ -279,11 +281,12 @@ export class CollaborationTransport {
               await prior;
             }
             if (!session.closed) {
-              validateDocumentUpdate(document, item.frame, this.policy);
+              finishAdmission = this.admission.prepare(document, item.frame, this.policy);
               session.client.handleMessage(item.data);
               await done;
             }
           } finally {
+            finishAdmission?.();
             release?.();
             clearTimeout(timer);
             session.frameDone = undefined;
