@@ -16,6 +16,7 @@ export class DurableDatabase extends Database {
   private readonly stopping = new AbortController();
   private readonly failures = new Set<string>();
   private readonly checks = new Map<string, Promise<string>>();
+  private readonly decoded = new WeakMap<Y.Doc, { bytes: Buffer | null; snapshot: string }>();
   abandonedSaves = false;
   private readonly dirty = new Map<
     string,
@@ -139,7 +140,12 @@ export class DurableDatabase extends Database {
     this.abandonedSaves = true;
   }
 
-  async onStateless({ payload, documentName, connection }: onStatelessPayload): Promise<void> {
+  async onStateless({
+    payload,
+    documentName,
+    document,
+    connection,
+  }: onStatelessPayload): Promise<void> {
     if (payload.length > 256) return;
     let request: { type?: unknown; requestId?: unknown };
     try {
@@ -163,15 +169,34 @@ export class DurableDatabase extends Database {
     try {
       // Read the committed database state, never the live mutable document or
       // an afterStoreDocument timestamp. Concurrent checks share only an
-      // in-flight read/decode; no settled result is cached across checks.
+      // in-flight read/decode; no read success is cached across checks.
       let checking = this.checks.get(documentName);
       if (!checking) {
         const pending = (async () => {
+          // Always query PostgreSQL first. Reuse only the decode of exactly
+          // identical committed bytes, never a cached read/success or live doc.
+          const state = await this.store.load(documentName);
+          const bytes =
+            state === null ? null : Buffer.from(state.buffer, state.byteOffset, state.byteLength);
+          const cached = this.decoded.get(document);
+          if (
+            cached &&
+            (bytes === null
+              ? cached.bytes === null
+              : cached.bytes !== null && bytes.equals(cached.bytes))
+          )
+            return cached.snapshot;
           const committed = new Y.Doc();
           try {
-            const state = await this.store.load(documentName);
             if (state) Y.applyUpdate(committed, state);
-            return Buffer.from(Y.encodeSnapshot(Y.snapshot(committed))).toString('base64');
+            const snapshot = Buffer.from(Y.encodeSnapshot(Y.snapshot(committed))).toString(
+              'base64',
+            );
+            this.decoded.set(document, {
+              bytes: bytes === null ? null : Buffer.from(bytes),
+              snapshot,
+            });
+            return snapshot;
           } finally {
             committed.destroy();
           }

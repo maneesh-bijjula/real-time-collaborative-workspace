@@ -168,12 +168,12 @@ it('coalesces simultaneous committed-snapshot reads without caching a settled or
     await blocked;
     return state;
   });
-  const responses: { requestId: string; snapshot: string }[] = [];
+  const responses: { requestId: string; snapshot?: string; status: string }[] = [];
   for (const client of [a, b])
     client.provider.on('stateless', ({ payload }: { payload: string }) =>
       responses.push(JSON.parse(payload)),
     );
-  const ids = [randomUUID(), randomUUID(), randomUUID()];
+  const ids = [randomUUID(), randomUUID(), randomUUID(), randomUUID()];
   a.provider.sendStateless(JSON.stringify({ type: 'persistence:check:v1', requestId: ids[0] }));
   b.provider.sendStateless(JSON.stringify({ type: 'persistence:check:v1', requestId: ids[1] }));
   try {
@@ -194,11 +194,17 @@ it('coalesces simultaneous committed-snapshot reads without caching a settled or
     const result = responses.find((r) => r.requestId === ids[2])!;
     expect(
       Y.equalSnapshots(
-        Y.decodeSnapshot(Buffer.from(result.snapshot, 'base64')),
+        Y.decodeSnapshot(Buffer.from(result.snapshot!, 'base64')),
         Y.snapshot(deleted),
       ),
     ).toBe(true);
     expect(reads.mock.calls.length).toBeGreaterThanOrEqual(2);
+    reads.mockRejectedValueOnce(new Error('Injected database read failure'));
+    a.provider.sendStateless(JSON.stringify({ type: 'persistence:check:v1', requestId: ids[3] }));
+    await vi.waitFor(() => expect(responses.some((r) => r.requestId === ids[3])).toBe(true));
+    const failed = responses.find((r) => r.requestId === ids[3])!;
+    expect(failed.status).toBe('retrying');
+    expect(failed.snapshot).toBeUndefined();
   } finally {
     deleted.destroy();
   }

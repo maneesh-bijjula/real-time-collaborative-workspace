@@ -1,0 +1,3 @@
+{
+  "scope": "Failed tuning campaign, not acceptance. Primary repeats 1 and 2 completed without other regression workloads and failed the 100ms target. Regression work began after those failures were established; later repeat/characterization timings may include that contention. All raw samples and missing/failed results are retained. The server images and already-loaded controller modules stayed at the manifest source revision; subsequent local source edits did not change those running images."
+}

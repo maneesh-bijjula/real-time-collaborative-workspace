@@ -29,7 +29,7 @@ Checks run every 500 ms while confirmation is pending and the provider is ready.
 
 ## Snapshot writes and retries
 
-Concurrent authenticated checks for one document can share an in-flight PostgreSQL read and snapshot decode. Each connection receives its own request ID. The entry is removed when the read settles, on success or failure; there is no settled-result/TTL cache. Later checks read PostgreSQL again, and every client still performs the same exact deletion-inclusive current-state comparison. This reduces duplicated reads during synchronized polling without allowing live state or a stale cached success to establish durability.
+Concurrent authenticated checks for one document can share an in-flight PostgreSQL read and snapshot decode. Each connection receives its own request ID. The in-flight entry is removed when the read settles, on success or failure. Later checks read PostgreSQL again. A loaded document can reuse a previously decoded snapshot only when that fresh successful read returns exactly byte-identical committed state, checked with byte equality rather than a timestamp or hash. Changed bytes, including deletion-only changes, require a new decode. Failed reads never reuse cached success. The decode entry is weakly keyed to the loaded document's lifecycle. Every client still performs the same deletion-inclusive current-state comparison; live state and an earlier database success cannot establish a later save.
 
 The existing PostgreSQL schema and binary Yjs state are retained. No data migration is required.
 
