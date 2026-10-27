@@ -4,6 +4,10 @@ Commonplace uses Hocuspocus/Yjs sessions on independent Node processes, Redis Pu
 
 ## Repair protocol
 
+The live path publishes each accepted non-Redis-origin Yjs delta directly in the pinned extension's identifier-prefixed Sync/Update envelope. It does not request a full state-vector/deletion-set exchange for every keystroke. Redis-origin changes are not echoed. Initial loading and periodic repair still use the extension's bidirectional handshake below, preserving compatibility and recovery for missed inserts, formatting and deletion-only changes.
+
+At most 32 delta publications and 16 MiB of payload are retained in flight per instance. PostgreSQL dirty tracking/stores do not await Redis acknowledgement. If Redis is disconnected or that budget fills, publication is deferred to repair, synchronization health becomes unhealthy, and the accepted history remains in the live document and follows the normal persistence contract. No extra unbounded application/offline publication queue is created. The next successful repair recovers deferred history without a new edit. Metrics expose published/failed/deferred counts and retained work. Redis publication alone is never database-save confirmation.
+
 Redis Pub/Sub does not retain messages for disconnected subscribers. Resubscribing alone therefore cannot repair missed changes in an already loaded document. `SynchronizationRedis` adds these steps:
 
 1. On Redis publisher/subscriber readiness, request a repair pass. Also run a periodic pass, by default every 2,000 ms, to cover subscription races and losses while documents stay open.

@@ -15,6 +15,7 @@ import type { DocumentStore } from './documents.js';
 export class DurableDatabase extends Database {
   private readonly stopping = new AbortController();
   private readonly failures = new Set<string>();
+  private readonly checks = new Map<string, Promise<string>>();
   abandonedSaves = false;
   private readonly dirty = new Map<
     string,
@@ -159,17 +160,30 @@ export class DurableDatabase extends Database {
       status: this.failures.has(documentName) ? 'retrying' : 'available',
       snapshot: undefined as string | undefined,
     };
-    const committed = new Y.Doc();
     try {
       // Read the committed database state, never the live mutable document or
-      // an afterStoreDocument timestamp. Snapshots include the deletion set.
-      const state = await this.store.load(documentName);
-      if (state) Y.applyUpdate(committed, state);
-      response.snapshot = Buffer.from(Y.encodeSnapshot(Y.snapshot(committed))).toString('base64');
+      // an afterStoreDocument timestamp. Concurrent checks share only an
+      // in-flight read/decode; no settled result is cached across checks.
+      let checking = this.checks.get(documentName);
+      if (!checking) {
+        const pending = (async () => {
+          const committed = new Y.Doc();
+          try {
+            const state = await this.store.load(documentName);
+            if (state) Y.applyUpdate(committed, state);
+            return Buffer.from(Y.encodeSnapshot(Y.snapshot(committed))).toString('base64');
+          } finally {
+            committed.destroy();
+          }
+        })().finally(() => {
+          if (this.checks.get(documentName) === pending) this.checks.delete(documentName);
+        });
+        this.checks.set(documentName, pending);
+        checking = pending;
+      }
+      response.snapshot = await checking;
     } catch {
       response.status = 'retrying';
-    } finally {
-      committed.destroy();
     }
     connection.sendStateless(JSON.stringify(response));
   }

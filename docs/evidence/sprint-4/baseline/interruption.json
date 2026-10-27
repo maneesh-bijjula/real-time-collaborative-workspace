@@ -1,0 +1,5 @@
+{
+  "at": "2026-10-26T23:37:31.824Z",
+  "reason": "Stopped the remaining baseline campaign after complete repeat 1 demonstrated severe saturation (p95 28442.646ms). Retain raw failed evidence; do not treat the incomplete campaign as acceptance. Beginning controlled profiling/tuning.",
+  "cleanedUp": true
+}

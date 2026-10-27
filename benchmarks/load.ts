@@ -84,6 +84,10 @@ export async function load(
       const scheduledMs =
         Math.floor(i / profile.writers) * period + (writer * period) / profile.writers;
       await sleep(began + scheduledMs - performance.now());
+      if (performance.now() - began - scheduledMs >= 500) {
+        errors.push('offered_load_interrupted');
+        break; // Record missing planned work; never replay a post-sleep flood.
+      }
       const client = group.clients[writer]!;
       client.sequence++;
       if (i >= warmCount) {
@@ -110,7 +114,7 @@ export async function load(
           `${name}: ${i + 1}/${total} source operations; ${observed}/${expected} measured peer samples observed`,
         );
     }
-    actualWindowMs = performance.now() - began - profile.warmupSeconds * 1000;
+    actualWindowMs = Math.max(0, performance.now() - began - profile.warmupSeconds * 1000);
     try {
       await until(() => observed === expected, 10000);
     } catch {
@@ -195,7 +199,7 @@ export async function load(
     })),
     scheduleLagMs: distribution(lag),
     actualWindowMs,
-    actualMutationsPerSecond: operations.length / (actualWindowMs / 1000),
+    actualMutationsPerSecond: actualWindowMs > 0 ? operations.length / (actualWindowMs / 1000) : 0,
     offeredLoadValid,
     updateBytes: distribution(operations.map((op) => op.updateBytes)),
     initialBytes,

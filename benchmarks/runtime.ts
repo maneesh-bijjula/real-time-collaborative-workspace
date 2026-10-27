@@ -1,4 +1,4 @@
-import { execFile } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
 import { promisify } from 'node:util';
 import { createHash, randomUUID } from 'node:crypto';
 import { readFile, readdir, writeFile, mkdir } from 'node:fs/promises';
@@ -18,6 +18,18 @@ if (
 )
   throw new Error('Run benchmark commands from the repository root');
 export const services = ['server1', 'server2', 'server3', 'server4'];
+export async function keepAwake() {
+  if (process.platform !== 'darwin') return false;
+  const child = spawn('/usr/bin/caffeinate', ['-i', '-w', String(process.pid)], {
+    stdio: 'ignore',
+  });
+  await new Promise<void>((resolve, reject) => {
+    child.once('spawn', resolve);
+    child.once('error', reject);
+  });
+  child.unref(); // The assertion ends automatically when this controller exits.
+  return true;
+}
 const operatorToken = 'benchmark-disposable-metrics-only-0123456789';
 export async function command(file: string, args: string[], timeout = 180000): Promise<string> {
   const result = await exec(file, args, { cwd: root, timeout, maxBuffer: 16 * 1024 * 1024 });

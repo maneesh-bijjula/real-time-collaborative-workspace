@@ -4,7 +4,7 @@ import { parseArgs } from 'node:util';
 import { analyze } from './analysis.js';
 import { load } from './load.js';
 import { reconnect as runReconnect } from './reconnect.js';
-import { Deployment, json, outputDirectory, revision, root } from './runtime.js';
+import { Deployment, json, keepAwake, outputDirectory, revision, root } from './runtime.js';
 import {
   primary,
   characterizations,
@@ -34,6 +34,7 @@ const manifest: Record<string, unknown> = {
   source,
   workloadVersion: 1,
   deploymentProject: deployment.project,
+  idleSleepInhibited: await keepAwake(),
   profiles:
     suite === 'full'
       ? [primary, ...characterizations, reconnect, backlog]

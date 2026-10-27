@@ -1,0 +1,2530 @@
+{
+  "results": [
+    {
+      "schemaVersion": 1,
+      "type": "load",
+      "profile": {
+        "id": "shared-richtext-v1",
+        "primary": true,
+        "writers": 50,
+        "documents": 1,
+        "seedTextBytes": 10240,
+        "rate": 2,
+        "warmupSeconds": 30,
+        "measureSeconds": 120,
+        "repeats": 3
+      },
+      "repeat": 1,
+      "name": "shared-richtext-v1-1",
+      "expectedOperations": 12000,
+      "actualOperations": 12000,
+      "expectedSamples": 588000,
+      "latencyMs": {
+        "count": 588000,
+        "p50": 437.5565830000269,
+        "p95": 3592.361124999996,
+        "p99": 4983.279875000007,
+        "max": 6913.016124999995,
+        "expected": 588000,
+        "missing": 0,
+        "passed": false
+      },
+      "sameNodeMs": {
+        "count": 138240,
+        "p50": 262.62916699999187,
+        "p95": 1817.5247499999823,
+        "p99": 2662.942916,
+        "max": 4091.1207920000015
+      },
+      "crossNodeMs": {
+        "count": 449760,
+        "p50": 523.0016250000044,
+        "p95": 3848.7415420000034,
+        "p99": 5194.155791999976,
+        "max": 6913.016124999995
+      },
+      "pairs": [
+        {
+          "source": 0,
+          "recipient": 0,
+          "count": 37440,
+          "p50": 277.6337920000078,
+          "p95": 2231.781333000021,
+          "p99": 2910.678291999997,
+          "max": 4091.1207920000015
+        },
+        {
+          "source": 0,
+          "recipient": 1,
+          "count": 40560,
+          "p50": 529.500624999986,
+          "p95": 4734.251082999981,
+          "p99": 6193.153083000012,
+          "max": 6913.016124999995
+        },
+        {
+          "source": 0,
+          "recipient": 2,
+          "count": 37440,
+          "p50": 543.4372499999881,
+          "p95": 3321.3717080000206,
+          "p99": 4093.6670419999864,
+          "max": 5139.725791999983
+        },
+        {
+          "source": 0,
+          "recipient": 3,
+          "count": 37440,
+          "p50": 495.89716700001736,
+          "p95": 3758.803790999984,
+          "p99": 4748.174708000006,
+          "max": 5788.644583999994
+        },
+        {
+          "source": 1,
+          "recipient": 0,
+          "count": 40560,
+          "p50": 555.5175000000017,
+          "p95": 4205.368625000003,
+          "p99": 5141.947625000001,
+          "max": 6214.56345799999
+        },
+        {
+          "source": 1,
+          "recipient": 1,
+          "count": 37440,
+          "p50": 277.67466699998477,
+          "p95": 2002.6879159999953,
+          "p99": 2878.7603340000205,
+          "max": 4079.294499999989
+        },
+        {
+          "source": 1,
+          "recipient": 2,
+          "count": 37440,
+          "p50": 490.25191700001596,
+          "p95": 3226.402582999988,
+          "p99": 4428.088084000017,
+          "max": 5508.545249999996
+        },
+        {
+          "source": 1,
+          "recipient": 3,
+          "count": 37440,
+          "p50": 565.5994580000115,
+          "p95": 3583.28895799999,
+          "p99": 4630.961625000025,
+          "max": 5451.414499999984
+        },
+        {
+          "source": 2,
+          "recipient": 0,
+          "count": 37440,
+          "p50": 537.167208000028,
+          "p95": 4510.695124999998,
+          "p99": 6017.892624999979,
+          "max": 6756.736875000002
+        },
+        {
+          "source": 2,
+          "recipient": 1,
+          "count": 37440,
+          "p50": 444.51966700001503,
+          "p95": 3855.3517500000016,
+          "p99": 5074.581583000021,
+          "max": 6019.870332999999
+        },
+        {
+          "source": 2,
+          "recipient": 2,
+          "count": 31680,
+          "p50": 239.77562499999476,
+          "p95": 1318.6201669999864,
+          "p99": 1812.2823749999807,
+          "max": 2377.9301249999844
+        },
+        {
+          "source": 2,
+          "recipient": 3,
+          "count": 34560,
+          "p50": 507.64012500000536,
+          "p95": 2988.1006669999915,
+          "p99": 3674.706292000017,
+          "max": 4255.654875000007
+        },
+        {
+          "source": 3,
+          "recipient": 0,
+          "count": 37440,
+          "p50": 526.509625000006,
+          "p95": 4429.227416999987,
+          "p99": 5680.5144169999985,
+          "max": 6498.418416
+        },
+        {
+          "source": 3,
+          "recipient": 1,
+          "count": 37440,
+          "p50": 549.1207919999724,
+          "p95": 3929.8057499999995,
+          "p99": 4915.870916999993,
+          "max": 5992.2073329999985
+        },
+        {
+          "source": 3,
+          "recipient": 2,
+          "count": 34560,
+          "p50": 447.6044589999947,
+          "p95": 2715.2323750000214,
+          "p99": 3209.109709000011,
+          "max": 4012.5826670000097
+        },
+        {
+          "source": 3,
+          "recipient": 3,
+          "count": 31680,
+          "p50": 252.23070800000278,
+          "p95": 1582.6130840000114,
+          "p99": 1999.1867500000226,
+          "max": 2593.5307500000054
+        }
+      ],
+      "scheduleLagMs": {
+        "count": 12000,
+        "p50": 0.08204100000148173,
+        "p95": 30.952458000014303,
+        "p99": 81.44287500000792,
+        "max": 265.3064160000067
+      },
+      "actualWindowMs": 119991.744958,
+      "actualMutationsPerSecond": 100.00687967493339,
+      "offeredLoadValid": true,
+      "updateBytes": {
+        "count": 12000,
+        "p50": 49,
+        "p95": 74,
+        "p99": 74,
+        "max": 74
+      },
+      "initialBytes": [
+        13599
+      ],
+      "finalBytes": [
+        490444
+      ],
+      "correctness": true,
+      "finalSnapshotSha256": "d6077411a56b4381f07c99c8647f38dddbd1920cf225b072181eaf5c60e07df8",
+      "durableQuiescenceMs": 13012.816041000013,
+      "errors": [],
+      "passed": false
+    },
+    {
+      "schemaVersion": 1,
+      "type": "load",
+      "profile": {
+        "id": "shared-richtext-v1",
+        "primary": true,
+        "writers": 50,
+        "documents": 1,
+        "seedTextBytes": 10240,
+        "rate": 2,
+        "warmupSeconds": 30,
+        "measureSeconds": 120,
+        "repeats": 3
+      },
+      "repeat": 2,
+      "name": "shared-richtext-v1-2",
+      "expectedOperations": 12000,
+      "actualOperations": 12000,
+      "expectedSamples": 588000,
+      "latencyMs": {
+        "count": 322375,
+        "p50": 2273.59154100006,
+        "p95": 2966.81562499993,
+        "p99": 3193.1017079999438,
+        "max": 489408.30954200006,
+        "expected": 588000,
+        "missing": 265625,
+        "passed": false
+      },
+      "sameNodeMs": {
+        "count": 98368,
+        "p50": 2173.726208999986,
+        "p95": 2925.1279170000926,
+        "p99": 3141.4742090000072,
+        "max": 489238.33629199996
+      },
+      "crossNodeMs": {
+        "count": 224007,
+        "p50": 2322.863708000048,
+        "p95": 2979.4624580000527,
+        "p99": 3212.6073750000214,
+        "max": 489408.30954200006
+      },
+      "pairs": [
+        {
+          "source": 0,
+          "recipient": 0,
+          "count": 37440,
+          "p50": 2155.5444579999894,
+          "p95": 2830.4280410000356,
+          "p99": 3051.0994169999612,
+          "max": 489238.33629199996
+        },
+        {
+          "source": 0,
+          "recipient": 1,
+          "count": 2704,
+          "p50": 129.6306249999907,
+          "p95": 1082.7292920000036,
+          "p99": 1121.237792,
+          "max": 1146.8254999999772
+        },
+        {
+          "source": 0,
+          "recipient": 2,
+          "count": 34533,
+          "p50": 2258.487709000008,
+          "p95": 2920.8519579999847,
+          "p99": 3122.4890410000226,
+          "max": 489104.3759580001
+        },
+        {
+          "source": 0,
+          "recipient": 3,
+          "count": 37440,
+          "p50": 2502.6139170000097,
+          "p95": 3002.05608400004,
+          "p99": 3221.0142500000075,
+          "max": 489408.30954200006
+        },
+        {
+          "source": 1,
+          "recipient": 0,
+          "count": 3055,
+          "p50": 260.14641699998174,
+          "p95": 2386.2971670000115,
+          "p99": 2944.3076249998994,
+          "max": 489198.817542
+        },
+        {
+          "source": 1,
+          "recipient": 1,
+          "count": 2496,
+          "p50": 73.01524999999674,
+          "p95": 701.9125000000058,
+          "p99": 791.3759999999893,
+          "max": 836.2391669999924
+        },
+        {
+          "source": 1,
+          "recipient": 2,
+          "count": 2793,
+          "p50": 237.58599999998114,
+          "p95": 2277.2411670000292,
+          "p99": 2801.1770839999663,
+          "max": 488969.570209
+        },
+        {
+          "source": 1,
+          "recipient": 3,
+          "count": 2820,
+          "p50": 201.34470799998962,
+          "p95": 2313.7900829999708,
+          "p99": 3159.614624999929,
+          "max": 489328.82641700003
+        },
+        {
+          "source": 2,
+          "recipient": 0,
+          "count": 34528,
+          "p50": 2232.6840000000084,
+          "p95": 2896.6962080000667,
+          "p99": 3084.5178750000196,
+          "max": 3391.257208999945
+        },
+        {
+          "source": 2,
+          "recipient": 1,
+          "count": 2496,
+          "p50": 107.7614590000012,
+          "p95": 887.0487079999875,
+          "p99": 925.6631249999919,
+          "max": 947.4767920000013
+        },
+        {
+          "source": 2,
+          "recipient": 2,
+          "count": 26752,
+          "p50": 2130.5454590000445,
+          "p95": 2860.866458000033,
+          "p99": 3076.8154159999685,
+          "max": 3372.4144589999923
+        },
+        {
+          "source": 2,
+          "recipient": 3,
+          "count": 31872,
+          "p50": 2445.6430829999736,
+          "p95": 2994.94454200007,
+          "p99": 3214.1573749999516,
+          "max": 3408.3013339999598
+        },
+        {
+          "source": 3,
+          "recipient": 0,
+          "count": 37440,
+          "p50": 2460.5032920000376,
+          "p95": 3062.4949999999953,
+          "p99": 3285.68833299994,
+          "max": 489357.48320799996
+        },
+        {
+          "source": 3,
+          "recipient": 1,
+          "count": 2457,
+          "p50": 90.41975000000093,
+          "p95": 1136.7807080000057,
+          "p99": 1213.5878749999974,
+          "max": 1237.681333000015
+        },
+        {
+          "source": 3,
+          "recipient": 2,
+          "count": 31869,
+          "p50": 2307.775249999948,
+          "p95": 2986.035583000048,
+          "p99": 3205.1479590000818,
+          "max": 489128.235875
+        },
+        {
+          "source": 3,
+          "recipient": 3,
+          "count": 31680,
+          "p50": 2270.3428750000894,
+          "p95": 3032.0302089999896,
+          "p99": 3216.5862090000883,
+          "max": 3453.173332999926
+        }
+      ],
+      "scheduleLagMs": {
+        "count": 12000,
+        "p50": 426699.6077500001,
+        "p95": 480175.4114590001,
+        "p99": 484725.435042,
+        "max": 485899.1048750001
+      },
+      "actualWindowMs": 495390.938417,
+      "actualMutationsPerSecond": 24.223293301136017,
+      "offeredLoadValid": false,
+      "updateBytes": {
+        "count": 12000,
+        "p50": 49,
+        "p95": 74,
+        "p99": 74,
+        "max": 74
+      },
+      "initialBytes": [
+        13449
+      ],
+      "finalBytes": [
+        389496
+      ],
+      "correctness": false,
+      "finalSnapshotSha256": "76ae65cca852c2d24c7bfc69375d1dcb2cdd24df42d7fbc6f312161c8283bf51",
+      "durableQuiescenceMs": null,
+      "errors": [
+        "missing_peer_samples",
+        "state_or_presence_divergence",
+        "unconfirmed_postgres_state",
+        "unexpected_connection_loss"
+      ],
+      "passed": false
+    },
+    {
+      "schemaVersion": 1,
+      "type": "load",
+      "profile": {
+        "id": "shared-richtext-v1",
+        "primary": true,
+        "writers": 50,
+        "documents": 1,
+        "seedTextBytes": 10240,
+        "rate": 2,
+        "warmupSeconds": 30,
+        "measureSeconds": 120,
+        "repeats": 3
+      },
+      "repeat": 3,
+      "name": "shared-richtext-v1-3",
+      "expectedOperations": 12000,
+      "actualOperations": 12000,
+      "expectedSamples": 588000,
+      "latencyMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "expected": 588000,
+        "missing": 588000,
+        "passed": false
+      },
+      "sameNodeMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "max": null
+      },
+      "crossNodeMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "max": null
+      },
+      "pairs": [
+        {
+          "source": 0,
+          "recipient": 0,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 0,
+          "recipient": 1,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 0,
+          "recipient": 2,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 0,
+          "recipient": 3,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 1,
+          "recipient": 0,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 1,
+          "recipient": 1,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 1,
+          "recipient": 2,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 1,
+          "recipient": 3,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 2,
+          "recipient": 0,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 2,
+          "recipient": 1,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 2,
+          "recipient": 2,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 2,
+          "recipient": 3,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 3,
+          "recipient": 0,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 3,
+          "recipient": 1,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 3,
+          "recipient": 2,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        },
+        {
+          "source": 3,
+          "recipient": 3,
+          "count": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "max": null
+        }
+      ],
+      "scheduleLagMs": {
+        "count": 12000,
+        "p50": 347897.5056670001,
+        "p95": 400845.5175000001,
+        "p99": 405448.84866699995,
+        "max": 406383.7028330001
+      },
+      "actualWindowMs": 410604.13887499995,
+      "actualMutationsPerSecond": 29.225229031734518,
+      "offeredLoadValid": false,
+      "updateBytes": {
+        "count": 12000,
+        "p50": 49,
+        "p95": 74,
+        "p99": 74,
+        "max": 74
+      },
+      "initialBytes": [
+        13599
+      ],
+      "finalBytes": [
+        107393
+      ],
+      "correctness": false,
+      "finalSnapshotSha256": "48eb89aa07e90fd407be3ffdd388b677de3b9bdd57d9a243162d76d8438fe076",
+      "durableQuiescenceMs": null,
+      "errors": [
+        "missing_peer_samples",
+        "state_or_presence_divergence",
+        "unconfirmed_postgres_state",
+        "unexpected_connection_loss"
+      ],
+      "passed": false
+    },
+    {
+      "schemaVersion": 1,
+      "type": "load",
+      "profile": {
+        "id": "five-documents-v1",
+        "primary": false,
+        "writers": 50,
+        "documents": 5,
+        "seedTextBytes": 10240,
+        "rate": 2,
+        "warmupSeconds": 10,
+        "measureSeconds": 30,
+        "repeats": 1
+      },
+      "repeat": 1,
+      "name": "five-documents-v1-1",
+      "expectedOperations": 3000,
+      "actualOperations": 3000,
+      "expectedSamples": 27000,
+      "latencyMs": {
+        "count": 27000,
+        "p50": 2.903167000040412,
+        "p95": 20.79220899986103,
+        "p99": 65.39099999982864,
+        "max": 155.66354100010358,
+        "expected": 27000,
+        "missing": 0,
+        "passed": true
+      },
+      "sameNodeMs": {
+        "count": 4800,
+        "p50": 1.6331670000217855,
+        "p95": 12.05725000007078,
+        "p99": 35.97533300006762,
+        "max": 123.51916599995457
+      },
+      "crossNodeMs": {
+        "count": 22200,
+        "p50": 3.0971249998547137,
+        "p95": 23.21999999997206,
+        "p99": 68.09474999993108,
+        "max": 155.66354100010358
+      },
+      "pairs": [
+        {
+          "source": 0,
+          "recipient": 0,
+          "count": 1320,
+          "p50": 1.6807499998249114,
+          "p95": 13.5244169998914,
+          "p99": 56.28691600007005,
+          "max": 118.49579200008884
+        },
+        {
+          "source": 0,
+          "recipient": 1,
+          "count": 1980,
+          "p50": 3.2480840000789613,
+          "p95": 30.73570799990557,
+          "p99": 102.15975000010803,
+          "max": 153.47787500009872
+        },
+        {
+          "source": 0,
+          "recipient": 2,
+          "count": 1920,
+          "p50": 3.1300419999752194,
+          "p95": 24.148874999955297,
+          "p99": 70.06300000008196,
+          "max": 137.15554199996404
+        },
+        {
+          "source": 0,
+          "recipient": 3,
+          "count": 1800,
+          "p50": 3.2632500000763685,
+          "p95": 25.37658299994655,
+          "p99": 80.45404199999757,
+          "max": 132.7622080000583
+        },
+        {
+          "source": 1,
+          "recipient": 0,
+          "count": 1980,
+          "p50": 2.9805840000044554,
+          "p95": 18.9550839997828,
+          "p99": 46.371417000191286,
+          "max": 78.50141700007953
+        },
+        {
+          "source": 1,
+          "recipient": 1,
+          "count": 1320,
+          "p50": 1.6707920001354069,
+          "p95": 10.30862500006333,
+          "p99": 24.198750000214204,
+          "max": 49.19879100006074
+        },
+        {
+          "source": 1,
+          "recipient": 2,
+          "count": 1800,
+          "p50": 2.986958999885246,
+          "p95": 20.08270899998024,
+          "p99": 45.690875000087544,
+          "max": 76.95558300008997
+        },
+        {
+          "source": 1,
+          "recipient": 3,
+          "count": 1920,
+          "p50": 3.052625000011176,
+          "p95": 18.753083999967203,
+          "p99": 42.331708000041544,
+          "max": 73.39183300011791
+        },
+        {
+          "source": 2,
+          "recipient": 0,
+          "count": 1920,
+          "p50": 2.990207999944687,
+          "p95": 13.899499999824911,
+          "p99": 49.54774999991059,
+          "max": 154.88345800014213
+        },
+        {
+          "source": 2,
+          "recipient": 1,
+          "count": 1800,
+          "p50": 2.9445420000702143,
+          "p95": 13.699874999932945,
+          "p99": 58.45004200004041,
+          "max": 151.65620800014585
+        },
+        {
+          "source": 2,
+          "recipient": 2,
+          "count": 1080,
+          "p50": 1.5239999999757856,
+          "p95": 7.045665999874473,
+          "p99": 19.861834000097588,
+          "max": 123.51916599995457
+        },
+        {
+          "source": 2,
+          "recipient": 3,
+          "count": 1680,
+          "p50": 3.0058339999523014,
+          "p95": 14.288332999916747,
+          "p99": 53.440417000092566,
+          "max": 155.66354100010358
+        },
+        {
+          "source": 3,
+          "recipient": 0,
+          "count": 1800,
+          "p50": 3.2174170000944287,
+          "p95": 39.14091600012034,
+          "p99": 83.19933400000446,
+          "max": 105.39666599989869
+        },
+        {
+          "source": 3,
+          "recipient": 1,
+          "count": 1920,
+          "p50": 3.340874999994412,
+          "p95": 30.102167000062764,
+          "p99": 102.4499590001069,
+          "max": 144.53150000004098
+        },
+        {
+          "source": 3,
+          "recipient": 2,
+          "count": 1680,
+          "p50": 3.2844160001259297,
+          "p95": 29.57320799981244,
+          "p99": 92.06012499984354,
+          "max": 108.62545799999498
+        },
+        {
+          "source": 3,
+          "recipient": 3,
+          "count": 1080,
+          "p50": 1.6859159998130053,
+          "p95": 16.825124999973923,
+          "p99": 39.438333000056446,
+          "max": 57.66304100002162
+        }
+      ],
+      "scheduleLagMs": {
+        "count": 3000,
+        "p50": 0,
+        "p95": 0.9497500001452863,
+        "p99": 1.8000000000465661,
+        "max": 18.90250000008382
+      },
+      "actualWindowMs": 29990.565125000197,
+      "actualMutationsPerSecond": 100.03145947720716,
+      "offeredLoadValid": true,
+      "updateBytes": {
+        "count": 3000,
+        "p50": 49,
+        "p95": 73,
+        "p99": 74,
+        "max": 74
+      },
+      "initialBytes": [
+        10926,
+        10926,
+        10926,
+        10926,
+        10926
+      ],
+      "finalBytes": [
+        36102,
+        36102,
+        35901,
+        36102,
+        36102
+      ],
+      "correctness": true,
+      "finalSnapshotSha256": "8cb4dc8d354f7585479062207a160b46d8583136f991d3092c5f6cbad4008b93",
+      "durableQuiescenceMs": 577.689916000003,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "schemaVersion": 1,
+      "type": "load",
+      "profile": {
+        "id": "large-richtext-v1",
+        "primary": false,
+        "writers": 50,
+        "documents": 1,
+        "seedTextBytes": 131072,
+        "rate": 2,
+        "warmupSeconds": 10,
+        "measureSeconds": 30,
+        "repeats": 1
+      },
+      "repeat": 1,
+      "name": "large-richtext-v1-1",
+      "expectedOperations": 3000,
+      "actualOperations": 3000,
+      "expectedSamples": 147000,
+      "latencyMs": {
+        "count": 147000,
+        "p50": 10.140499999979511,
+        "p95": 108.92687499988824,
+        "p99": 203.9759170000907,
+        "max": 406.9232919998467,
+        "expected": 147000,
+        "missing": 0,
+        "passed": false
+      },
+      "sameNodeMs": {
+        "count": 34560,
+        "p50": 6.184166999999434,
+        "p95": 70.37133300001733,
+        "p99": 144.38629199983552,
+        "max": 287.6693750000559
+      },
+      "crossNodeMs": {
+        "count": 112440,
+        "p50": 11.48404200002551,
+        "p95": 118.34679100010544,
+        "p99": 217.1799999999348,
+        "max": 406.9232919998467
+      },
+      "pairs": [
+        {
+          "source": 0,
+          "recipient": 0,
+          "count": 9360,
+          "p50": 6.91979099996388,
+          "p95": 85.12208300014026,
+          "p99": 151.8229590000119,
+          "max": 185.74037500005215
+        },
+        {
+          "source": 0,
+          "recipient": 1,
+          "count": 10140,
+          "p50": 11.800792000023648,
+          "p95": 135.3836659998633,
+          "p99": 243.53787499992177,
+          "max": 274.2959999998566
+        },
+        {
+          "source": 0,
+          "recipient": 2,
+          "count": 9360,
+          "p50": 12.121917000040412,
+          "p95": 127.37958300020546,
+          "p99": 176.9726250001695,
+          "max": 215.15049999998882
+        },
+        {
+          "source": 0,
+          "recipient": 3,
+          "count": 9360,
+          "p50": 12.229499999899417,
+          "p95": 133.61624999996275,
+          "p99": 206.74658400006592,
+          "max": 261.9463749998249
+        },
+        {
+          "source": 1,
+          "recipient": 0,
+          "count": 10140,
+          "p50": 9.439042000100017,
+          "p95": 130.45350000006147,
+          "p99": 175.61370800016448,
+          "max": 212.34620799985714
+        },
+        {
+          "source": 1,
+          "recipient": 1,
+          "count": 9360,
+          "p50": 5.182166999904439,
+          "p95": 57.721459000138566,
+          "p99": 137.1130420002155,
+          "max": 180.66137499990873
+        },
+        {
+          "source": 1,
+          "recipient": 2,
+          "count": 9360,
+          "p50": 9.761167000047863,
+          "p95": 105.96612500003539,
+          "p99": 205.44516699993983,
+          "max": 359.5715420001652
+        },
+        {
+          "source": 1,
+          "recipient": 3,
+          "count": 9360,
+          "p50": 9.693958000047132,
+          "p95": 108.44033399992622,
+          "p99": 199.41104199993424,
+          "max": 255.15916700009257
+        },
+        {
+          "source": 2,
+          "recipient": 0,
+          "count": 9360,
+          "p50": 11.301958000054583,
+          "p95": 96.49237500014715,
+          "p99": 196.3927080000285,
+          "max": 385.1765829999931
+        },
+        {
+          "source": 2,
+          "recipient": 1,
+          "count": 9360,
+          "p50": 12.049832999939099,
+          "p95": 107.47166700009257,
+          "p99": 161.40850000013597,
+          "max": 241.8798330000136
+        },
+        {
+          "source": 2,
+          "recipient": 2,
+          "count": 7920,
+          "p50": 6.161583000095561,
+          "p95": 53.89654200011864,
+          "p99": 113.6137920001056,
+          "max": 218.37629200005904
+        },
+        {
+          "source": 2,
+          "recipient": 3,
+          "count": 8640,
+          "p50": 11.537375000072643,
+          "p95": 110.45358400000259,
+          "p99": 247.0720000001602,
+          "max": 406.9232919998467
+        },
+        {
+          "source": 3,
+          "recipient": 0,
+          "count": 9360,
+          "p50": 12.231625000014901,
+          "p95": 133.1146670000162,
+          "p99": 332.9412499999162,
+          "max": 402.08070799987763
+        },
+        {
+          "source": 3,
+          "recipient": 1,
+          "count": 9360,
+          "p50": 12.50670800008811,
+          "p95": 98.1183749998454,
+          "p99": 278.33224999997765,
+          "max": 336.453082999913
+        },
+        {
+          "source": 3,
+          "recipient": 2,
+          "count": 8640,
+          "p50": 13.180124999955297,
+          "p95": 110.11104199988768,
+          "p99": 266.70154200005345,
+          "max": 298.94679199997336
+        },
+        {
+          "source": 3,
+          "recipient": 3,
+          "count": 7920,
+          "p50": 6.759584000101313,
+          "p95": 71.19362500007264,
+          "p99": 168.42725000018254,
+          "max": 287.6693750000559
+        }
+      ],
+      "scheduleLagMs": {
+        "count": 3000,
+        "p50": 0,
+        "p95": 1.0640000000130385,
+        "p99": 3.4244170000310987,
+        "max": 26.015124999918044
+      },
+      "actualWindowMs": 29990.61266699992,
+      "actualMutationsPerSecond": 100.03130090440068,
+      "offeredLoadValid": true,
+      "updateBytes": {
+        "count": 3000,
+        "p50": 49,
+        "p95": 73,
+        "p99": 74,
+        "max": 74
+      },
+      "initialBytes": [
+        134577
+      ],
+      "finalBytes": [
+        258789
+      ],
+      "correctness": true,
+      "finalSnapshotSha256": "892c30fd30087b48188cbda8298786948fbbec77cddb51330aeb7c435e2756bb",
+      "durableQuiescenceMs": 1070.6469169999473,
+      "errors": [],
+      "passed": false
+    },
+    {
+      "schemaVersion": 1,
+      "type": "reconnect",
+      "profile": {
+        "id": "migration-reconnect-v1",
+        "primary": true,
+        "writers": 50,
+        "seedTextBytes": 10240,
+        "affected": 5,
+        "offlineMs": 2000,
+        "mutationsPerActor": 8,
+        "observerMutations": 8,
+        "trials": 30,
+        "deadlineMs": 2000
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "affected": [
+            {
+              "writer": 0,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 1,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 2,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 3,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 4,
+              "from": 0,
+              "to": 1
+            }
+          ],
+          "offlineMs": 2001.0167079998646,
+          "backlogUpdateBytes": 1875,
+          "elapsedMs": 61.38000000012107,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 2,
+          "affected": [
+            {
+              "writer": 5,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 6,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 7,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 8,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 9,
+              "from": 0,
+              "to": 1
+            }
+          ],
+          "offlineMs": 2000.3482500000391,
+          "backlogUpdateBytes": 1855,
+          "elapsedMs": 70.83629200002179,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 3,
+          "affected": [
+            {
+              "writer": 10,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 11,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 12,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 13,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 14,
+              "from": 1,
+              "to": 2
+            }
+          ],
+          "offlineMs": 1999.4003340001218,
+          "backlogUpdateBytes": 1905,
+          "elapsedMs": 58.59108300018124,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 4,
+          "affected": [
+            {
+              "writer": 15,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 16,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 17,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 18,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 19,
+              "from": 1,
+              "to": 2
+            }
+          ],
+          "offlineMs": 2000.7462500000838,
+          "backlogUpdateBytes": 1905,
+          "elapsedMs": 112.63950000004843,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 5,
+          "affected": [
+            {
+              "writer": 20,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 21,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 22,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 23,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 24,
+              "from": 1,
+              "to": 2
+            }
+          ],
+          "offlineMs": 2001.1354160001501,
+          "backlogUpdateBytes": 1905,
+          "elapsedMs": 94.99525000015274,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 6,
+          "affected": [
+            {
+              "writer": 25,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 26,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 27,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 28,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 29,
+              "from": 2,
+              "to": 3
+            }
+          ],
+          "offlineMs": 2000.6432499999646,
+          "backlogUpdateBytes": 1872,
+          "elapsedMs": 61.69366700015962,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 7,
+          "affected": [
+            {
+              "writer": 30,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 31,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 32,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 33,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 34,
+              "from": 2,
+              "to": 3
+            }
+          ],
+          "offlineMs": 2000.465957999928,
+          "backlogUpdateBytes": 1872,
+          "elapsedMs": 79.88641700008884,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 8,
+          "affected": [
+            {
+              "writer": 35,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 36,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 37,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 38,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 39,
+              "from": 3,
+              "to": 0
+            }
+          ],
+          "offlineMs": 2000.5922909998335,
+          "backlogUpdateBytes": 1905,
+          "elapsedMs": 54.205541000002995,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 9,
+          "affected": [
+            {
+              "writer": 40,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 41,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 42,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 43,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 44,
+              "from": 3,
+              "to": 0
+            }
+          ],
+          "offlineMs": 1999.1149169998243,
+          "backlogUpdateBytes": 1905,
+          "elapsedMs": 101.25912500009872,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 10,
+          "affected": [
+            {
+              "writer": 45,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 46,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 47,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 48,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 49,
+              "from": 3,
+              "to": 0
+            }
+          ],
+          "offlineMs": 2000.087041999912,
+          "backlogUpdateBytes": 1905,
+          "elapsedMs": 123.8389169999864,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 11,
+          "affected": [
+            {
+              "writer": 0,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 1,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 2,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 3,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 4,
+              "from": 1,
+              "to": 2
+            }
+          ],
+          "offlineMs": 2000.8126669998746,
+          "backlogUpdateBytes": 1837,
+          "elapsedMs": 115.31783299986273,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 12,
+          "affected": [
+            {
+              "writer": 5,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 6,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 7,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 8,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 9,
+              "from": 1,
+              "to": 2
+            }
+          ],
+          "offlineMs": 1999.3116250000894,
+          "backlogUpdateBytes": 1800,
+          "elapsedMs": 88.73429100005887,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 13,
+          "affected": [
+            {
+              "writer": 10,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 11,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 12,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 13,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 14,
+              "from": 2,
+              "to": 3
+            }
+          ],
+          "offlineMs": 1999.1192499999888,
+          "backlogUpdateBytes": 1795,
+          "elapsedMs": 149.04958300013095,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 14,
+          "affected": [
+            {
+              "writer": 15,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 16,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 17,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 18,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 19,
+              "from": 2,
+              "to": 3
+            }
+          ],
+          "offlineMs": 1999.954125000164,
+          "backlogUpdateBytes": 1795,
+          "elapsedMs": 96.97650000010617,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 15,
+          "affected": [
+            {
+              "writer": 20,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 21,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 22,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 23,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 24,
+              "from": 2,
+              "to": 3
+            }
+          ],
+          "offlineMs": 2000.2324579998385,
+          "backlogUpdateBytes": 1795,
+          "elapsedMs": 114.00129200005904,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 16,
+          "affected": [
+            {
+              "writer": 25,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 26,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 27,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 28,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 29,
+              "from": 3,
+              "to": 0
+            }
+          ],
+          "offlineMs": 1999.9783339998685,
+          "backlogUpdateBytes": 1761,
+          "elapsedMs": 179.93687499989755,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 17,
+          "affected": [
+            {
+              "writer": 30,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 31,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 32,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 33,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 34,
+              "from": 3,
+              "to": 0
+            }
+          ],
+          "offlineMs": 2000.7253750001546,
+          "backlogUpdateBytes": 1761,
+          "elapsedMs": 106.71758299996145,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 18,
+          "affected": [
+            {
+              "writer": 35,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 36,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 37,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 38,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 39,
+              "from": 0,
+              "to": 1
+            }
+          ],
+          "offlineMs": 1999.3238750000019,
+          "backlogUpdateBytes": 1795,
+          "elapsedMs": 82.5546659999527,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 19,
+          "affected": [
+            {
+              "writer": 40,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 41,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 42,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 43,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 44,
+              "from": 0,
+              "to": 1
+            }
+          ],
+          "offlineMs": 2000.2412080001086,
+          "backlogUpdateBytes": 1795,
+          "elapsedMs": 153.74274999997579,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 20,
+          "affected": [
+            {
+              "writer": 45,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 46,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 47,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 48,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 49,
+              "from": 0,
+              "to": 1
+            }
+          ],
+          "offlineMs": 2000.9295000000857,
+          "backlogUpdateBytes": 1795,
+          "elapsedMs": 119.60754100000486,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 21,
+          "affected": [
+            {
+              "writer": 0,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 1,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 2,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 3,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 4,
+              "from": 2,
+              "to": 3
+            }
+          ],
+          "offlineMs": 1999.9146660000551,
+          "backlogUpdateBytes": 1973,
+          "elapsedMs": 135.39258300000802,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 22,
+          "affected": [
+            {
+              "writer": 5,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 6,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 7,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 8,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 9,
+              "from": 2,
+              "to": 3
+            }
+          ],
+          "offlineMs": 1999.590499999933,
+          "backlogUpdateBytes": 1965,
+          "elapsedMs": 176.19495899998583,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 23,
+          "affected": [
+            {
+              "writer": 10,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 11,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 12,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 13,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 14,
+              "from": 3,
+              "to": 0
+            }
+          ],
+          "offlineMs": 2003.8687080000527,
+          "backlogUpdateBytes": 2015,
+          "elapsedMs": 173.50112499995157,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 24,
+          "affected": [
+            {
+              "writer": 15,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 16,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 17,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 18,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 19,
+              "from": 3,
+              "to": 0
+            }
+          ],
+          "offlineMs": 1999.386916999938,
+          "backlogUpdateBytes": 2015,
+          "elapsedMs": 107.85270799999125,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 25,
+          "affected": [
+            {
+              "writer": 20,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 21,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 22,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 23,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 24,
+              "from": 3,
+              "to": 0
+            }
+          ],
+          "offlineMs": 1999.904499999946,
+          "backlogUpdateBytes": 2015,
+          "elapsedMs": 199.2471249999944,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 26,
+          "affected": [
+            {
+              "writer": 25,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 26,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 27,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 28,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 29,
+              "from": 0,
+              "to": 1
+            }
+          ],
+          "offlineMs": 1998.87745800009,
+          "backlogUpdateBytes": 1979,
+          "elapsedMs": 112.49487500009127,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 27,
+          "affected": [
+            {
+              "writer": 30,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 31,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 32,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 33,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 34,
+              "from": 0,
+              "to": 1
+            }
+          ],
+          "offlineMs": 1999.6504579999018,
+          "backlogUpdateBytes": 1979,
+          "elapsedMs": 150.1110420001205,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 28,
+          "affected": [
+            {
+              "writer": 35,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 36,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 37,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 38,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 39,
+              "from": 1,
+              "to": 2
+            }
+          ],
+          "offlineMs": 1999.7627080001403,
+          "backlogUpdateBytes": 2015,
+          "elapsedMs": 195.89004100020975,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 29,
+          "affected": [
+            {
+              "writer": 40,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 41,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 42,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 43,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 44,
+              "from": 1,
+              "to": 2
+            }
+          ],
+          "offlineMs": 2000.1785420000087,
+          "backlogUpdateBytes": 2015,
+          "elapsedMs": 154.90804099990055,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 30,
+          "affected": [
+            {
+              "writer": 45,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 46,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 47,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 48,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 49,
+              "from": 1,
+              "to": 2
+            }
+          ],
+          "offlineMs": 2000.8492910000496,
+          "backlogUpdateBytes": 2015,
+          "elapsedMs": 116.68999999994412,
+          "converged": true,
+          "underTarget": true
+        }
+      ],
+      "completed": 30,
+      "missing": 0,
+      "failed": 0,
+      "timeouts": 0,
+      "durationMs": {
+        "count": 30,
+        "p50": 112.63950000004843,
+        "p95": 195.89004100020975,
+        "p99": 199.2471249999944,
+        "max": 199.2471249999944
+      },
+      "initialBytes": 13599,
+      "finalBytes": 57327,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "schemaVersion": 1,
+      "type": "reconnect",
+      "profile": {
+        "id": "large-backlog-v1",
+        "primary": false,
+        "writers": 50,
+        "seedTextBytes": 131072,
+        "affected": 10,
+        "offlineMs": 2000,
+        "mutationsPerActor": 50,
+        "observerMutations": 8,
+        "trials": 5,
+        "deadlineMs": 2000
+      },
+      "trials": [
+        {
+          "trial": 1,
+          "affected": [
+            {
+              "writer": 0,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 1,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 2,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 3,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 4,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 5,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 6,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 7,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 8,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 9,
+              "from": 0,
+              "to": 1
+            }
+          ],
+          "offlineMs": 1999.0102500000503,
+          "backlogUpdateBytes": 23815,
+          "elapsedMs": 475.46208299999125,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 2,
+          "affected": [
+            {
+              "writer": 10,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 11,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 12,
+              "from": 0,
+              "to": 1
+            },
+            {
+              "writer": 13,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 14,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 15,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 16,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 17,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 18,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 19,
+              "from": 1,
+              "to": 2
+            }
+          ],
+          "offlineMs": 1999.7147079999559,
+          "backlogUpdateBytes": 24257,
+          "elapsedMs": 490.0951669998467,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 3,
+          "affected": [
+            {
+              "writer": 20,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 21,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 22,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 23,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 24,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 25,
+              "from": 1,
+              "to": 2
+            },
+            {
+              "writer": 26,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 27,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 28,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 29,
+              "from": 2,
+              "to": 3
+            }
+          ],
+          "offlineMs": 2000.7850420000032,
+          "backlogUpdateBytes": 23789,
+          "elapsedMs": 497.7267499999143,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 4,
+          "affected": [
+            {
+              "writer": 30,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 31,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 32,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 33,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 34,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 35,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 36,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 37,
+              "from": 2,
+              "to": 3
+            },
+            {
+              "writer": 38,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 39,
+              "from": 3,
+              "to": 0
+            }
+          ],
+          "offlineMs": 2000.9500419998076,
+          "backlogUpdateBytes": 24440,
+          "elapsedMs": 834.1499579998199,
+          "converged": true,
+          "underTarget": true
+        },
+        {
+          "trial": 5,
+          "affected": [
+            {
+              "writer": 40,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 41,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 42,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 43,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 44,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 45,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 46,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 47,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 48,
+              "from": 3,
+              "to": 0
+            },
+            {
+              "writer": 49,
+              "from": 3,
+              "to": 0
+            }
+          ],
+          "offlineMs": 1998.8405410000123,
+          "backlogUpdateBytes": 24440,
+          "elapsedMs": 1194.8049999999348,
+          "converged": true,
+          "underTarget": true
+        }
+      ],
+      "completed": 5,
+      "missing": 0,
+      "failed": 0,
+      "timeouts": 0,
+      "durationMs": {
+        "count": 5,
+        "p50": 497.7267499999143,
+        "p95": 1194.8049999999348,
+        "p99": 1194.8049999999348,
+        "max": 1194.8049999999348
+      },
+      "initialBytes": 134427,
+      "finalBytes": 212745,
+      "errors": [],
+      "passed": true
+    }
+  ],
+  "primaryTargetsPassed": false,
+  "smokePassed": null
+}

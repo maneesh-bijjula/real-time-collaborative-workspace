@@ -1,0 +1,266 @@
+{
+  "scope": "Instrumented diagnosis only, not primary acceptance. Container-local V8 inspector on server1; 45-second CPU capture begins roughly 20 seconds after the load starts. Workload: 30-second warmup, 45-second measurement, same 50 writers/rate/seed as primary.",
+  "sampledMicroseconds": 45092213,
+  "self": [
+    {
+      "function": "(idle)",
+      "file": "",
+      "line": 0,
+      "microseconds": 25811615
+    },
+    {
+      "function": "readAndApplyDeleteSet",
+      "file": "yjs.mjs",
+      "line": 304,
+      "microseconds": 3460413
+    },
+    {
+      "function": "",
+      "file": "yjs.mjs",
+      "line": 216,
+      "microseconds": 1869752
+    },
+    {
+      "function": "write",
+      "file": "yjs.mjs",
+      "line": 10146,
+      "microseconds": 1783356
+    },
+    {
+      "function": "writev",
+      "file": "",
+      "line": 0,
+      "microseconds": 595546
+    },
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "microseconds": 588618
+    },
+    {
+      "function": "getMissing",
+      "file": "yjs.mjs",
+      "line": 9863,
+      "microseconds": 493067
+    },
+    {
+      "function": "tryGcDeleteSet",
+      "file": "yjs.mjs",
+      "line": 3184,
+      "microseconds": 392700
+    },
+    {
+      "function": "readClientsStructRefs",
+      "file": "yjs.mjs",
+      "line": 1381,
+      "microseconds": 344762
+    },
+    {
+      "function": "integrateStructs",
+      "file": "yjs.mjs",
+      "line": 1496,
+      "microseconds": 339212
+    },
+    {
+      "function": "encodeInto",
+      "file": "encoding",
+      "line": 360,
+      "microseconds": 332194
+    },
+    {
+      "function": "integrate",
+      "file": "yjs.mjs",
+      "line": 9910,
+      "microseconds": 313128
+    },
+    {
+      "function": "",
+      "file": "yjs.mjs",
+      "line": 254,
+      "microseconds": 297715
+    },
+    {
+      "function": "(program)",
+      "file": "",
+      "line": 0,
+      "microseconds": 286326
+    },
+    {
+      "function": "writeStructs",
+      "file": "yjs.mjs",
+      "line": 1326,
+      "microseconds": 264870
+    },
+    {
+      "function": "run",
+      "file": "",
+      "line": 0,
+      "microseconds": 259917
+    },
+    {
+      "function": "writeBuffer",
+      "file": "",
+      "line": 0,
+      "microseconds": 246278
+    },
+    {
+      "function": "createDeleteSetFromStructStore",
+      "file": "yjs.mjs",
+      "line": 214,
+      "microseconds": 244533
+    },
+    {
+      "function": "decodeUTF8",
+      "file": "",
+      "line": 0,
+      "microseconds": 230621
+    },
+    {
+      "function": "tryToMergeWithLefts",
+      "file": "yjs.mjs",
+      "line": 3156,
+      "microseconds": 219184
+    }
+  ],
+  "applicationInclusive": [
+    {
+      "function": "",
+      "file": "synchronization.js",
+      "line": 34,
+      "microseconds": 6468234
+    },
+    {
+      "function": "onStateless",
+      "file": "persistence.js",
+      "line": 130,
+      "microseconds": 4615628
+    },
+    {
+      "function": "process",
+      "file": "transport.js",
+      "line": 209,
+      "microseconds": 4319290
+    },
+    {
+      "function": "prepare",
+      "file": "protocol.js",
+      "line": 150,
+      "microseconds": 3748300
+    },
+    {
+      "function": "send",
+      "file": "transport.js",
+      "line": 97,
+      "microseconds": 677103
+    },
+    {
+      "function": "",
+      "file": "protocol.js",
+      "line": 205,
+      "microseconds": 473557
+    },
+    {
+      "function": "store",
+      "file": "documents.js",
+      "line": 60,
+      "microseconds": 297887
+    },
+    {
+      "function": "mirror",
+      "file": "protocol.js",
+      "line": 167,
+      "microseconds": 204762
+    },
+    {
+      "function": "onStoreDocument",
+      "file": "persistence.js",
+      "line": 72,
+      "microseconds": 145453
+    },
+    {
+      "function": "reconcile",
+      "file": "synchronization.js",
+      "line": 101,
+      "microseconds": 124023
+    },
+    {
+      "function": "",
+      "file": "transport.js",
+      "line": 133,
+      "microseconds": 102901
+    },
+    {
+      "function": "onChange",
+      "file": "persistence.js",
+      "line": 51,
+      "microseconds": 44455
+    },
+    {
+      "function": "decodeFrame",
+      "file": "protocol.js",
+      "line": 11,
+      "microseconds": 25080
+    },
+    {
+      "function": "refreshMetrics",
+      "file": "persistence.js",
+      "line": 25,
+      "microseconds": 16518
+    },
+    {
+      "function": "get oldestDirtySeconds",
+      "file": "persistence.js",
+      "line": 19,
+      "microseconds": 10921
+    },
+    {
+      "function": "onAwarenessUpdate",
+      "file": "synchronization.js",
+      "line": 48,
+      "microseconds": 10407
+    },
+    {
+      "function": "load",
+      "file": "documents.js",
+      "line": 54,
+      "microseconds": 8242
+    },
+    {
+      "function": "",
+      "file": "synchronization.js",
+      "line": 32,
+      "microseconds": 6871
+    },
+    {
+      "function": "",
+      "file": "persistence.js",
+      "line": 21,
+      "microseconds": 3888
+    },
+    {
+      "function": "validateAwareness",
+      "file": "protocol.js",
+      "line": 105,
+      "microseconds": 3846
+    },
+    {
+      "function": "reportReady",
+      "file": "transport.js",
+      "line": 351,
+      "microseconds": 2448
+    },
+    {
+      "function": "release",
+      "file": "transport.js",
+      "line": 200,
+      "microseconds": 2040
+    },
+    {
+      "function": "reconcileNow",
+      "file": "synchronization.js",
+      "line": 83,
+      "microseconds": 1682
+    }
+  ]
+}

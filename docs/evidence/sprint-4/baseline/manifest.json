@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "suite": "full",
+  "startedAt": "2026-10-26T23:32:41.586Z",
+  "source": {
+    "commit": "8e9dad79bd76c0706d1a9788484b62215d782e9b",
+    "dirty": "",
+    "sourceSha256": "98064def173c12b905e4905032d7f2343c9d9c0165391b984d0a0595ed94a139",
+    "files": {
+      "Dockerfile": "ad436c78a4bdeecb6334bc8c2b1f0540cdd3c79151bec3754677e3946a95990c",
+      "apps/server/package.json": "51336412241394882068ae6ba3b446e55bf7caadde2ec309759ce29cba71496c",
+      "apps/server/src/app.ts": "703fd3d342a498f7f73626fb7cf211b53be6110dd34d7c7db4b48db1cccdcbd7",
+      "apps/server/src/config.ts": "920ace5f06de98569e56f775376fbb32a7e84b28b67b02aacae69e727c7bb90d",
+      "apps/server/src/documents.ts": "1f7e47895f911dd58a3a4175f60a8332927db79984810d2150c7e63519a44ea1",
+      "apps/server/src/index.ts": "6a20ee46a661a6ffa8a887bbc1081005b8f03d37859c5781ea8aa71cee57a78b",
+      "apps/server/src/migrate.ts": "b6c8beb4555aceffb204d7c6953b38df71bc09ea66cccf86e058fbe7465651c1",
+      "apps/server/src/persistence.ts": "8c5425356790344d036f44ff80922af693b434483f6c7361ea65a8e2799ff970",
+      "apps/server/src/policy.ts": "10401be052b0016921281fac4669358e7cf74468db3839410e08f85ab24cc3e8",
+      "apps/server/src/protocol.ts": "6e776cdff2bd28152bfb99486b2389fac71eb958b3a989d1b732b3c35f9b9245",
+      "apps/server/src/readiness.ts": "d162b7fb427a3f2048d8eea11c955d8afc8397d81e4c2d76e4fb053c38b372d9",
+      "apps/server/src/synchronization.ts": "a4ac175458145f0b2a316618a642b145843a2982793d032d7d974f607d2bdd90",
+      "apps/server/src/telemetry.ts": "d2fb004c37c0ad0c010a3a31506062156010a2a7a4d001dfa62c6dd7aa66b2a1",
+      "apps/server/src/transport.ts": "c1ce280ebe72d14081335b5ea2912d0be961ba9b8ab5f62112bc1aa12bb1c872",
+      "apps/web/lib/collaboration-session.ts": "df32dbc51088a02100693afadb8a6631c628bc55f824c6e0e0ca6f96bca7f87b",
+      "apps/web/lib/database-save.ts": "2f03e99d93aa2aa6ac2d8028b54529be4d748b853e03c4fd59d9879468b8afb4",
+      "benchmarks/analysis.ts": "ac02d10d24c6216e3409060c275af451d0f4afe24424313eefb296f512a869f2",
+      "benchmarks/clients.ts": "fb1a3493b5827dc755bbe66e73f6d7fa040e8a0d7adfb31041e3679b8baecda0",
+      "benchmarks/collector.ts": "322afb7c44223014f3fe57a580dca957cad4345afab93adf5d04be1b24a80098",
+      "benchmarks/load.ts": "5220fd61d36b2a0ed7028c875ce55f8cf3e986512e36607c15e13bb170e334ca",
+      "benchmarks/reconnect.ts": "597c15113c87c0a3f63422e8a1bc0b32dbf2658244f0f9111437227ea7fd45b8",
+      "benchmarks/run.ts": "97857a1e00c5b863f506d9bb1d23539f5a0db5f6118e1d7bf44ec9bb5f69a113",
+      "benchmarks/runtime.ts": "d266bc55733f80e703fc4a7a5c151b2f51bf4758b362844cd9420a118e2f1aa8",
+      "benchmarks/stats.ts": "9c692329a90ebd6806dca12f61fd7215390278120481ec641d0d9e6e34ac08df",
+      "benchmarks/summarize.ts": "61b34b2dd9de14dbceba0e7d3fd28f5e197ee52bed26886a7e275938561e440d",
+      "benchmarks/workloads.ts": "091ffc8573ef000a8a488dde61813d83d6b324b9b4916e16f3876d11ae8aec45",
+      "compose.benchmark.yaml": "bc5fbc85295cf09fc60c731bab1ed5158253cdbc0be3ff644557a831cda3fb85",
+      "package-lock.json": "177628848125e7d614b1b39d1310bf97ead070ef03f4f7ce39eb11a6cc9f744a",
+      "package.json": "ebc852c49e59e6ad3d11f63a62be4aca1109dc772c5aeffdbd8619c2dfc20756",
+      "tsconfig.benchmark.json": "3eeceb8252a07a0fea29a093279f80be1aa3a59c519170f27a4ee744421b89d7"
+    }
+  },
+  "workloadVersion": 1,
+  "deploymentProject": "commonplace-bench-1793057561531-c858d822",
+  "profiles": [
+    {
+      "id": "shared-richtext-v1",
+      "primary": true,
+      "writers": 50,
+      "documents": 1,
+      "seedTextBytes": 10240,
+      "rate": 2,
+      "warmupSeconds": 30,
+      "measureSeconds": 120,
+      "repeats": 3
+    },
+    {
+      "id": "five-documents-v1",
+      "primary": false,
+      "writers": 50,
+      "documents": 5,
+      "seedTextBytes": 10240,
+      "rate": 2,
+      "warmupSeconds": 10,
+      "measureSeconds": 30,
+      "repeats": 1
+    },
+    {
+      "id": "large-richtext-v1",
+      "primary": false,
+      "writers": 50,
+      "documents": 1,
+      "seedTextBytes": 131072,
+      "rate": 2,
+      "warmupSeconds": 10,
+      "measureSeconds": 30,
+      "repeats": 1
+    },
+    {
+      "id": "migration-reconnect-v1",
+      "primary": true,
+      "writers": 50,
+      "seedTextBytes": 10240,
+      "affected": 5,
+      "offlineMs": 2000,
+      "mutationsPerActor": 8,
+      "observerMutations": 8,
+      "trials": 30,
+      "deadlineMs": 2000
+    },
+    {
+      "id": "large-backlog-v1",
+      "primary": false,
+      "writers": 50,
+      "seedTextBytes": 131072,
+      "affected": 10,
+      "offlineMs": 2000,
+      "mutationsPerActor": 50,
+      "observerMutations": 8,
+      "trials": 5,
+      "deadlineMs": 2000
+    }
+  ],
+  "schema": {
+    "operations": "JSONL objects: mutation index, writer/node/document indices, sequence/kind, scheduled/started milliseconds from run start, Yjs update bytes",
+    "samples": "JSONL tuples [operation index, recipient index, source-mutation-to-peer-application milliseconds]; source and other-document recipients excluded",
+    "quantiles": "Nearest rank, ceil(p*N); p95 target is strict <100ms; no outlier trimming. Missing samples fail.",
+    "reconnect": "Explicit healthy-network restoration to full content/format/deletion/presence convergence on all 50 peers. Controlled disconnection; excludes silent failure detection.",
+    "safety": "Own unique Compose project, random loopback ports, tmpfs _test database, no application volumes, no credentials/content in results."
+  },
+  "environment": {
+    "host": {
+      "os": "darwin",
+      "release": "27.0.0",
+      "arch": "arm64",
+      "cpu": "Apple M3",
+      "logicalCpus": 8,
+      "memoryBytes": 8589934592,
+      "node": "v26.3.0"
+    },
+    "docker": {
+      "os": "Docker Desktop",
+      "architecture": "aarch64",
+      "cpus": 8,
+      "memoryBytes": 4108632064,
+      "version": "29.5.3"
+    },
+    "serverNode": "v24.22.1",
+    "processPlacement": "One host: macOS/host Node measurement controller; four independent Node containers and PostgreSQL/Redis in Docker (Linux on CI). No WAN.",
+    "containers": [
+      {
+        "service": "postgres",
+        "image": "sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24",
+        "hostPid": 58417,
+        "cpuLimit": 0,
+        "memoryLimit": 0
+      },
+      {
+        "service": "redis",
+        "image": "sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0",
+        "hostPid": 58418,
+        "cpuLimit": 0,
+        "memoryLimit": 0
+      },
+      {
+        "service": "server1",
+        "image": "sha256:f51eb6303d99630e1959c11541e1d9511d3ab6fa271b3e50787189952b334dd0",
+        "hostPid": 59000,
+        "cpuLimit": 0,
+        "memoryLimit": 0
+      },
+      {
+        "service": "server2",
+        "image": "sha256:a5e20e763f34d773b985f196042591f0e13d59c9582d31f68dd3e739b85bbfbf",
+        "hostPid": 59010,
+        "cpuLimit": 0,
+        "memoryLimit": 0
+      },
+      {
+        "service": "server3",
+        "image": "sha256:bddd3e8f8f2ecd3dd486ed375b6071346a52edcece614268a7e9ae9595faf321",
+        "hostPid": 58999,
+        "cpuLimit": 0,
+        "memoryLimit": 0
+      },
+      {
+        "service": "server4",
+        "image": "sha256:81ab89f4038b5b603a4429022492f94d18dce2d901230f302590d801182a7a88",
+        "hostPid": 59007,
+        "cpuLimit": 0,
+        "memoryLimit": 0
+      }
+    ],
+    "images": [
+      {
+        "id": "sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24",
+        "digests": [
+          "postgres@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24"
+        ],
+        "os": "linux",
+        "architecture": "arm64"
+      },
+      {
+        "id": "sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0",
+        "digests": [
+          "redis@sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0"
+        ],
+        "os": "linux",
+        "architecture": "arm64"
+      },
+      {
+        "id": "sha256:f51eb6303d99630e1959c11541e1d9511d3ab6fa271b3e50787189952b334dd0",
+        "digests": [
+          "commonplace-bench-1793057561531-c858d822-server1@sha256:f51eb6303d99630e1959c11541e1d9511d3ab6fa271b3e50787189952b334dd0"
+        ],
+        "os": "linux",
+        "architecture": "arm64"
+      },
+      {
+        "id": "sha256:a5e20e763f34d773b985f196042591f0e13d59c9582d31f68dd3e739b85bbfbf",
+        "digests": [
+          "commonplace-bench-1793057561531-c858d822-server2@sha256:a5e20e763f34d773b985f196042591f0e13d59c9582d31f68dd3e739b85bbfbf"
+        ],
+        "os": "linux",
+        "architecture": "arm64"
+      },
+      {
+        "id": "sha256:bddd3e8f8f2ecd3dd486ed375b6071346a52edcece614268a7e9ae9595faf321",
+        "digests": [
+          "commonplace-bench-1793057561531-c858d822-server3@sha256:bddd3e8f8f2ecd3dd486ed375b6071346a52edcece614268a7e9ae9595faf321"
+        ],
+        "os": "linux",
+        "architecture": "arm64"
+      },
+      {
+        "id": "sha256:81ab89f4038b5b603a4429022492f94d18dce2d901230f302590d801182a7a88",
+        "digests": [
+          "commonplace-bench-1793057561531-c858d822-server4@sha256:81ab89f4038b5b603a4429022492f94d18dce2d901230f302590d801182a7a88"
+        ],
+        "os": "linux",
+        "architecture": "arm64"
+      }
+    ]
+  }
+}

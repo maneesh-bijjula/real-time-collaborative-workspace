@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "type": "load",
+  "profile": {
+    "id": "shared-richtext-v1",
+    "primary": true,
+    "writers": 50,
+    "documents": 1,
+    "seedTextBytes": 10240,
+    "rate": 2,
+    "warmupSeconds": 30,
+    "measureSeconds": 120,
+    "repeats": 3
+  },
+  "repeat": 3,
+  "name": "shared-richtext-v1-3",
+  "expectedOperations": 12000,
+  "actualOperations": 12000,
+  "expectedSamples": 588000,
+  "latencyMs": {
+    "count": 0,
+    "p50": null,
+    "p95": null,
+    "p99": null,
+    "max": null,
+    "expected": 588000,
+    "missing": 588000,
+    "passed": false
+  },
+  "sameNodeMs": {
+    "count": 0,
+    "p50": null,
+    "p95": null,
+    "p99": null,
+    "max": null
+  },
+  "crossNodeMs": {
+    "count": 0,
+    "p50": null,
+    "p95": null,
+    "p99": null,
+    "max": null
+  },
+  "pairs": [
+    {
+      "source": 0,
+      "recipient": 0,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 0,
+      "recipient": 1,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 0,
+      "recipient": 2,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 0,
+      "recipient": 3,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 1,
+      "recipient": 0,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 1,
+      "recipient": 1,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 1,
+      "recipient": 2,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 1,
+      "recipient": 3,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 2,
+      "recipient": 0,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 2,
+      "recipient": 1,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 2,
+      "recipient": 2,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 2,
+      "recipient": 3,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 3,
+      "recipient": 0,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 3,
+      "recipient": 1,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 3,
+      "recipient": 2,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    {
+      "source": 3,
+      "recipient": 3,
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    }
+  ],
+  "scheduleLagMs": {
+    "count": 12000,
+    "p50": 347897.5056670001,
+    "p95": 400845.5175000001,
+    "p99": 405448.84866699995,
+    "max": 406383.7028330001
+  },
+  "actualWindowMs": 410604.13887499995,
+  "actualMutationsPerSecond": 29.225229031734518,
+  "offeredLoadValid": false,
+  "updateBytes": {
+    "count": 12000,
+    "p50": 49,
+    "p95": 74,
+    "p99": 74,
+    "max": 74
+  },
+  "initialBytes": [
+    13599
+  ],
+  "finalBytes": [
+    107393
+  ],
+  "correctness": false,
+  "finalSnapshotSha256": "48eb89aa07e90fd407be3ffdd388b677de3b9bdd57d9a243162d76d8438fe076",
+  "durableQuiescenceMs": null,
+  "errors": [
+    "missing_peer_samples",
+    "state_or_presence_divergence",
+    "unconfirmed_postgres_state",
+    "unexpected_connection_loss"
+  ],
+  "passed": false
+}

@@ -89,6 +89,11 @@ export class Telemetry {
       ['persistence_attempts_total', 'Snapshot storage attempts', ['result']],
       ['reconciliation_total', 'Reconciliation passes', ['result']],
       [
+        'redis_delta_publications_total',
+        'Delta publishes or deferrals to reconciliation',
+        ['result'],
+      ],
+      [
         'http_requests_total',
         'HTTP responses by fixed route and status class',
         ['route', 'result'],
@@ -109,6 +114,8 @@ export class Telemetry {
       ['documents', 'Loaded and loading documents', []],
       ['authenticating', 'Authentication queries currently in flight', []],
       ['queued_bytes', 'Inbound bytes queued or being processed', []],
+      ['redis_delta_inflight', 'Redis delta publishes currently in flight (maximum 32)', []],
+      ['redis_delta_bytes', 'Retained in-flight Redis delta bytes (maximum 16 MiB)', []],
       ['dirty_documents', 'Documents with uncommitted revisions', []],
       ['persistence_failures', 'Documents whose last storage attempt failed', []],
       ['oldest_dirty_seconds', 'Age of oldest uncommitted revision', []],

@@ -1,7 +1,9 @@
 import { Redis, type Configuration } from '@hocuspocus/extension-redis';
 import {
   OutgoingMessage,
+  isTransactionOrigin,
   type onAwarenessUpdatePayload,
+  type onChangePayload,
   type onConfigurePayload,
 } from '@hocuspocus/server';
 import * as Y from 'yjs';
@@ -15,6 +17,8 @@ export class SynchronizationRedis extends Redis {
   private repair?: Promise<void>;
   private stopped = false;
   private failed = false;
+  private deltaInFlight = 0;
+  private deltaBytes = 0;
   completedRepairs = 0;
   get healthy() {
     return !this.failed;
@@ -55,6 +59,61 @@ export class SynchronizationRedis extends Redis {
   // persistence lock must not skip distinct snapshots on competing instances.
   override async onStoreDocument(): Promise<void> {}
   override async afterStoreDocument(): Promise<void> {}
+
+  override async onChange({ documentName, update, transactionOrigin }: onChangePayload) {
+    if (
+      this.stopped ||
+      (isTransactionOrigin(transactionOrigin) && transactionOrigin.source === 'redis')
+    )
+      return;
+    // The upstream per-edit SyncStep1 makes every peer encode/reapply a full
+    // deletion set. Push the actual delta instead; retain the existing load and
+    // periodic handshakes for missed-message/partition recovery.
+    if (
+      this.pub.status !== 'ready' ||
+      this.deltaInFlight >= 32 ||
+      this.deltaBytes + update.length + 256 > 16 * 1024 * 1024
+    ) {
+      this.telemetry?.count('redis_delta_publications_total', { result: 'deferred' });
+      this.connectionError();
+      return; // Live/committed history remains available to reconciliation.
+    }
+    const identifier = Buffer.from(this.configuration.identifier);
+    const message = new OutgoingMessage(documentName)
+      .createSyncMessage()
+      .writeUpdate(update)
+      .toUint8Array();
+    const payload = Buffer.concat([
+      Buffer.from([identifier.length]),
+      identifier,
+      Buffer.from(message),
+    ]);
+    this.deltaInFlight++;
+    this.deltaBytes += payload.length;
+    this.samplePublications();
+    // Do not await Redis in the onChange hook: dirty tracking and PostgreSQL
+    // stores must continue even when Redis is stalled. Bound retained work and
+    // fail closed to repair, rather than accumulating an offline publish queue.
+    void Promise.resolve()
+      .then(() => this.pub.publish(`${this.configuration.prefix}:${documentName}`, payload))
+      .then(
+        () => this.telemetry?.count('redis_delta_publications_total', { result: 'published' }),
+        () => {
+          this.telemetry?.count('redis_delta_publications_total', { result: 'failed' });
+          this.connectionError();
+        },
+      )
+      .finally(() => {
+        this.deltaInFlight--;
+        this.deltaBytes -= payload.length;
+        this.samplePublications();
+      });
+  }
+
+  private samplePublications() {
+    this.telemetry?.gauge('redis_delta_inflight', this.deltaInFlight);
+    this.telemetry?.gauge('redis_delta_bytes', this.deltaBytes);
+  }
 
   override async onAwarenessUpdate(data: onAwarenessUpdatePayload) {
     const { document, connection, added, updated, removed } = data;
