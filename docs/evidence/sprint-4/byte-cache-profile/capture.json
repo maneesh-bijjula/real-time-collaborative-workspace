@@ -1,0 +1,4 @@
+{
+  "scope": "Instrumented diagnosis only, not primary acceptance. Same 50 writers/rate/seed. 90-second warmup and 30-second measurement; server1 container-local inspector captures approximately seconds 90-110, for 20 seconds. Inspector overhead and diagnostic failure outcomes remain recorded.",
+  "reason": "Find remaining cost at larger document history after delta publication and byte-verified snapshot decoding."
+}

@@ -7,6 +7,7 @@ import {
 } from 'lib0/decoding';
 import * as Y from 'yjs';
 import type { ResourcePolicy } from './policy.js';
+import { DocumentSizer } from './encoded-size.js';
 
 export class PolicyError extends Error {
   constructor(readonly reason: string) {
@@ -150,6 +151,7 @@ function validateAwareness(bytes: Uint8Array) {
  * keystroke. Admission still serializes/stages and measures the exact encoding.
  */
 export class DocumentAdmission {
+  private readonly sizer = new DocumentSizer();
   private readonly entries = new WeakMap<
     Y.Doc,
     { probe: Y.Doc; busy: boolean; dispose: () => void }
@@ -198,7 +200,7 @@ export class DocumentAdmission {
     staged.busy = true;
     try {
       Y.applyUpdate(staged.probe, frame.payload);
-      if (Y.encodeStateAsUpdate(staged.probe).length > policy.maxDocumentBytes)
+      if (this.sizer.size(staged.probe) > policy.maxDocumentBytes)
         throw new PolicyError('document_size');
     } catch (error) {
       staged.dispose();
