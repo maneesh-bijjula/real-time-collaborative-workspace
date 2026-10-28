@@ -2,6 +2,8 @@
 
 Commonplace uses Hocuspocus/Yjs sessions on independent Node processes, Redis Pub/Sub for live fan-out, and PostgreSQL for committed document snapshots. All instances in one deployment must use the same database, Redis endpoint, `REDIS_PREFIX`, editor schema, and application version. No sticky-session routing is required for document convergence. A reconnect can land on any surviving instance; its authenticated Yjs handshake merges that browser's retained changes with the server's state.
 
+Outbound document updates and awareness use the pinned server's fixed 20 ms batching window. Adjacent Yjs updates merge into one lossless update, and awareness keeps the latest state of each participant. A buffered-update total of 64 KiB triggers an early flush; an individual larger update can also flush immediately. This reduces repeated transactions on every connected peer. The timer adds up to 20 ms of intentional scheduling delay, subject to event-loop availability; it is not a latency guarantee. Input admission, per-edit dirty tracking, Redis publication and committed-save confirmation retain their existing rules. The propagation benchmark includes batching delay.
+
 ## Repair protocol
 
 The live path publishes each accepted non-Redis-origin Yjs delta directly in the pinned extension's identifier-prefixed Sync/Update envelope. It does not request a full state-vector/deletion-set exchange for every keystroke. Redis-origin changes are not echoed. Initial loading and periodic repair still use the extension's bidirectional handshake below, preserving compatibility and recovery for missed inserts, formatting and deletion-only changes.

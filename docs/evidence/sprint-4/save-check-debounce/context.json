@@ -1,0 +1,26 @@
+{
+  "interpretation": "Failed campaign. Local first repeat had interrupted offered load; repeats two and three had complete samples but only repeat three passed latency. Raw local data remains in test-results/benchmarks/sprint4-native-debounce-1. No repeat was selected to establish acceptance.",
+  "source": "4143c1b7e18c395ee80b284f8937a8db028e71d8",
+  "ubuntuNativeWorkflow": "https://github.com/maneesh-bijjula/real-time-collaborative-workspace/actions/runs/40613637997",
+  "ubuntuContainerWorkflow": "https://github.com/maneesh-bijjula/real-time-collaborative-workspace/actions/runs/40613635279",
+  "ubuntuNativeP95Ms": [
+    258.56,
+    164.54,
+    170.17
+  ],
+  "ubuntuNativeMissing": [
+    0,
+    86044,
+    129164
+  ],
+  "ubuntuContainerP95Ms": [
+    335.0,
+    323.58,
+    56.46
+  ],
+  "ubuntuContainerMissing": [
+    105154,
+    87906,
+    382249
+  ]
+}

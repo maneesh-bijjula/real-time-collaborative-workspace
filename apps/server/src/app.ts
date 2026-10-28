@@ -73,6 +73,11 @@ export async function createApplication(
     quiet: true,
     debounce: 300,
     maxDebounce: 1000,
+    // A fixed window merges adjacent updates/awareness before peer fan-out.
+    // This bounds intentional delay without waiting for typing to stop; large
+    // buffered updates flush early. Admission and dirty tracking still run per edit.
+    flushDelay: 20,
+    flushMaxBytes: 64 * 1024,
     extensions: [redisExtension, persistence],
     async onAuthenticate({ documentName, token, context }) {
       return transport.authenticate(context.session, documentName, token);
