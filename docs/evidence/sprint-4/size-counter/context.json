@@ -1,0 +1,3 @@
+{
+  "scope": "Failed container campaign. A short container-local CPU diagnostic and read-only SQL/health inspection were performed after its first primary miss; later timings are not controlled acceptance evidence. No OOM/restarts or full filesystem were observed. PostgreSQL statement timeouts, idle transactions, deferred publications and failed persistence were observed. All failed/missing results remain retained. Subsequent fixes evict failed-write clients, allow server-cancellation response grace, bound idle transactions, and increase the newly introduced delta-command count budget to 128 while retaining its 16 MiB byte cap. Existing frame/document/socket/input limits were not increased."
+}

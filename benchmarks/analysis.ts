@@ -159,6 +159,9 @@ export async function analyze(directory: string) {
     !manifest.source.dirty &&
     !manifest.fatal &&
     manifest.cleanedUp &&
+    (manifest.runtime !== 'native' ||
+      (manifest.nativeShutdownCodes?.length === 4 &&
+        manifest.nativeShutdownCodes.every((code: number) => code === 0))) &&
     primaries.length === primary.repeats &&
     new Set(primaries.map((r) => r.name)).size === primary.repeats &&
     primaries.every((r) => r.passed) &&

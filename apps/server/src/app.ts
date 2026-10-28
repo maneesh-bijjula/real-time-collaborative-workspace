@@ -28,7 +28,8 @@ export async function createApplication(
     max: 10,
     connectionTimeoutMillis: 5000,
     statement_timeout: 10000,
-    query_timeout: 10000,
+    query_timeout: 12000,
+    idle_in_transaction_session_timeout: 5000,
   });
   pool.on('error', () => telemetry.log('dependency_failed', 'postgres'));
   try {

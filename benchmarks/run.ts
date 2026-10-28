@@ -15,17 +15,23 @@ import {
 } from './workloads.js';
 
 const { values } = parseArgs({
-  options: { suite: { type: 'string', default: 'smoke' }, output: { type: 'string' } },
+  options: {
+    suite: { type: 'string', default: 'smoke' },
+    output: { type: 'string' },
+    runtime: { type: 'string', default: 'containers' },
+  },
 });
 if (!['smoke', 'full'].includes(values.suite!))
   throw new Error('Use --suite smoke or --suite full');
 const suite = values.suite!;
+if (!['containers', 'native'].includes(values.runtime!))
+  throw new Error('Use --runtime containers or native');
 const path =
   values.output ||
   `test-results/benchmarks/${suite}-${new Date().toISOString().replace(/[:.]/g, '-')}`;
 await mkdir(dirname(resolve(root, path)), { recursive: true });
 const output = await outputDirectory(path);
-const deployment = new Deployment();
+const deployment = new Deployment(values.runtime as 'containers' | 'native');
 const source = await revision();
 const manifest: Record<string, unknown> = {
   schemaVersion: 1,
@@ -33,6 +39,8 @@ const manifest: Record<string, unknown> = {
   startedAt: new Date().toISOString(),
   source,
   workloadVersion: 1,
+  executionVersion: 2,
+  runtime: values.runtime,
   deploymentProject: deployment.project,
   idleSleepInhibited: await keepAwake(),
   profiles:
@@ -106,6 +114,8 @@ try {
   try {
     await deployment.stop();
     manifest.cleanedUp = true;
+    manifest.nativeShutdownCodes = deployment.shutdownCodes;
+    if (deployment.shutdownCodes.some((code) => code !== 0)) failed = true;
   } catch {
     manifest.cleanedUp = false;
     failed = true;

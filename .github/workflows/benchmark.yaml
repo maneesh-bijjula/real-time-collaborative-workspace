@@ -1,6 +1,12 @@
 name: Reproducible benchmark campaign
 on:
   workflow_dispatch:
+    inputs:
+      runtime:
+        description: Four production server containers or four native production Node processes
+        type: choice
+        options: [containers, native]
+        default: containers
 permissions:
   contents: read
 jobs:
@@ -14,7 +20,9 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: npm run benchmark:full -- --output test-results/benchmarks/full
+      - run: npm run benchmark:full -- --output test-results/benchmarks/full --runtime "$BENCHMARK_RUNTIME"
+        env:
+          BENCHMARK_RUNTIME: ${{ inputs.runtime }}
       - name: Recompute from raw samples and enforce primary targets
         if: always()
         run: npm run benchmark:summarize -- test-results/benchmarks/full --check

@@ -3,6 +3,8 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { afterAll, afterEach, beforeAll, expect, it, vi } from 'vitest';
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import * as Y from 'yjs';
+import { Pool } from 'pg';
+import { DocumentStore } from '../../apps/server/src/documents.js';
 import { createApplication } from '../../apps/server/src/app.js';
 import { readConfig } from '../../apps/server/src/config.js';
 import { decodeFrame } from '../../apps/server/src/protocol.js';
@@ -74,6 +76,42 @@ async function stored(app: App, id: string, expected: Y.Doc) {
   }
 }
 
+it('evicts a driver-timed-out write connection so it cannot strand a row lock in the pool', async () => {
+  const document = await first.store.create('Timeout recovery');
+  const pool = new Pool({
+    connectionString: databaseUrl,
+    max: 1,
+    query_timeout: 150,
+    statement_timeout: 0,
+  });
+  const store = new DocumentStore(pool),
+    blocker = await first.pool.connect(),
+    doc = new Y.Doc();
+  doc.getText('body').insert(0, 'survives a timed-out lock wait');
+  try {
+    await blocker.query('BEGIN');
+    await blocker.query('SELECT id FROM documents WHERE id=$1 FOR UPDATE', [document.id]);
+    await expect(store.store(document.id, Y.encodeStateAsUpdate(doc))).rejects.toThrow(
+      'Query read timeout',
+    );
+    await vi.waitFor(() => expect(pool.totalCount).toBe(0));
+    await blocker.query('ROLLBACK');
+    await store.store(document.id, Y.encodeStateAsUpdate(doc));
+    const loaded = new Y.Doc();
+    try {
+      Y.applyUpdate(loaded, (await store.load(document.id))!);
+      expect(loaded.getText('body').toString()).toBe(doc.getText('body').toString());
+    } finally {
+      loaded.destroy();
+    }
+  } finally {
+    await blocker.query('ROLLBACK');
+    blocker.release();
+    doc.destroy();
+    await pool.end();
+  }
+});
+
 it('pushes inserts, formatting and deletion-only deltas to an idle peer without per-edit state-vector exchanges', async () => {
   const document = await first.store.create('Delta fanout');
   const a = await connect(document, firstPort),
@@ -124,13 +162,14 @@ it('bounds stalled delta publications, keeps PostgreSQL progress, and repairs de
     return publish(channel, message);
   });
   try {
-    for (let i = 0; i < 45; i++) {
+    for (let i = 0; i < 145; i++) {
       a.text.insert(a.text.length, 'x');
       await delay(5);
     }
-    await vi.waitFor(() => expect(pending).toBe(32));
+    await vi.waitFor(() => expect(pending).toBe(128));
     const metrics = await first.telemetry.metrics();
-    expect(metrics).toContain('commonplace_redis_delta_inflight 32');
+    expect(metrics).toContain('commonplace_redis_delta_inflight 128');
+    expect(metrics).toMatch(/commonplace_redis_delta_deferrals_total\{reason="capacity"\} [1-9]/);
     expect(metrics).toMatch(
       /commonplace_redis_delta_publications_total\{result="deferred"\} [1-9]/,
     );
@@ -144,7 +183,7 @@ it('bounds stalled delta publications, keeps PostgreSQL progress, and repairs de
   }
   await first.synchronization.reconcileNow();
   await second.synchronization.reconcileNow();
-  await vi.waitFor(() => expect(b.text.toString()).toBe('x'.repeat(45)));
+  await vi.waitFor(() => expect(b.text.toString()).toBe('x'.repeat(145)));
   await vi.waitFor(async () =>
     expect(await first.telemetry.metrics()).toContain('commonplace_redis_delta_inflight 0'),
   );

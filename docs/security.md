@@ -77,6 +77,8 @@ The web adds no-referrer, nosniff, frame denial, restricted object/base/form beh
 
 ## Security verification and maintenance
 
+The exact local state-size check uses the pinned Yjs V1 traversal with a byte-counting encoder to avoid allocating the complete output on each edit. Pending causal/deletion histories use the stock encoder. Equivalence regressions compare against `Y.encodeStateAsUpdate` for rich text, Unicode, JSON/Any/binary values, deletion history, varint boundaries and causal gaps. Revalidate this optimization when upgrading Yjs/lib0; the frame/document/socket/input admission limits are unchanged.
+
 `tests/integration/security.test.ts` exercises hostile frames, size/byte/message/queue limits, concurrent near-limit updates, upgrade/authentication buckets, in-flight authentication timeout cleanup, per-IP/socket/document caps, trusted/untrusted proxy behavior, compressed HTTP rejection, telemetry redaction, and real dependency failures. Unit tests cover protocol/cursor shapes, bounded token buckets, configuration, redaction/cardinality, and paused retry behavior. Browser tests verify wrong-capability denial and export after a real oversized-message close. Packaged tests validate the delivered images and gateway.
 
 The lockfile includes `body-parser` 2.4.0, addressing [GHSA-27r3-jxmh-p828](https://github.com/advisories/GHSA-27r3-jxmh-p828); request decompression is also disabled. CI runs the production dependency audit and fails for high/critical advisories. An audit result is a dated registry check, not proof that every dependency is vulnerability-free. Re-run it when building/deploying updates.

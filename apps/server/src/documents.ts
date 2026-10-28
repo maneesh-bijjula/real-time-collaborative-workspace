@@ -94,6 +94,7 @@ export class DocumentStore {
 
   async store(id: string, state: Uint8Array): Promise<void> {
     const client = await this.pool.connect();
+    let discard = false;
     try {
       await client.query('BEGIN');
       // A successful content commit must flush WAL even if a deployment has
@@ -113,10 +114,19 @@ export class DocumentStore {
       );
       await client.query('COMMIT');
     } catch (error) {
-      await client.query('ROLLBACK');
+      // A driver timeout does not cancel the server statement. Never return a
+      // potentially open transaction to the pool; disconnect releases its locks.
+      discard = true;
+      if (!(error instanceof Error && error.message === 'Query read timeout')) {
+        try {
+          await client.query('ROLLBACK');
+        } catch {
+          /* Destroy the connection below. */
+        }
+      }
       throw error;
     } finally {
-      client.release();
+      client.release(discard);
     }
   }
 }

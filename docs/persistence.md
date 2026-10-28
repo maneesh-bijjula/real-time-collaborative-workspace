@@ -33,6 +33,8 @@ Concurrent authenticated checks for one document can share an in-flight PostgreS
 
 The existing PostgreSQL schema and binary Yjs state are retained. No data migration is required.
 
+Failed-write connections are discarded rather than returned to the pool. A driver read timeout does not cancel the PostgreSQL statement, so that path disconnects directly instead of queuing a rollback behind the timed-out statement. Other failures attempt rollback before discarding the connection. PostgreSQL then releases any remaining transaction/row locks on disconnect. A real locked-row regression verifies that a fresh connection can commit after the timeout. Server statement timeout is 10 seconds, the driver deadline is 12 seconds to allow cancellation responses, and idle transactions have a five-second server timeout. These are failure bounds, not save-latency objectives.
+
 1. Hocuspocus debounces stores for 300 ms, with a one-second maximum debounce.
 2. Each write attempt captures immutable encoded document state before awaiting SQL.
 3. A transaction sets `synchronous_commit=on`, locks the document row, merges its stored CRDT history with the incoming state, and commits.

@@ -71,10 +71,13 @@ export class SynchronizationRedis extends Redis {
     // periodic handshakes for missed-message/partition recovery.
     if (
       this.pub.status !== 'ready' ||
-      this.deltaInFlight >= 32 ||
+      this.deltaInFlight >= 128 ||
       this.deltaBytes + update.length + 256 > 16 * 1024 * 1024
     ) {
       this.telemetry?.count('redis_delta_publications_total', { result: 'deferred' });
+      this.telemetry?.count('redis_delta_deferrals_total', {
+        reason: this.pub.status !== 'ready' ? 'transport' : 'capacity',
+      });
       this.connectionError();
       return; // Live/committed history remains available to reconciliation.
     }
