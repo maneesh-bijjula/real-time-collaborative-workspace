@@ -54,6 +54,10 @@ export class DatabaseSaveTracker {
     // changes. An old response cannot acknowledge a newer editor revision.
     this.requestId = null;
     clearTimeout(this.responseTimer);
+    // A response cannot confirm the current state while edits keep arriving.
+    // Wait for a quiet interval before asking the server for another snapshot.
+    clearTimeout(this.timer);
+    this.timer = undefined;
     this.setState('saving');
     this.schedule();
   };

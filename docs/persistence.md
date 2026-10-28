@@ -25,7 +25,7 @@ The request is scoped to the already-authorized WebSocket document. It does not 
 
 Only a matching response for the current request, with matching document state and an authenticated, synchronized, connected provider with no unacknowledged updates, can produce **Saved to database**. Every document update, including remote updates, invalidates the request and the saved indication synchronously. Connection changes also invalidate confirmation. An old response cannot acknowledge a new editor revision or reconnect session. The server's snapshot comes from committed bytes, not the mutable in-memory document or an `afterStoreDocument` timestamp.
 
-Checks run every 500 ms while confirmation is pending and the provider is ready. A request times out after five seconds and is retried. Checks stop once the current state is confirmed; later document or connection changes restart them. These checks do not force snapshot writes. Save-confirmation latency and collaboration-propagation latency are separate measurements.
+Checks start after 500 ms without document or connection changes while confirmation is pending and the provider is ready. Further changes restart that quiet period and immediately invalidate any prior confirmation. An unanswered request times out after five seconds and is retried; unsuccessful checks are retried after 500 ms. Checks stop once the current state is confirmed. These checks do not force snapshot writes. Save-confirmation latency and collaboration-propagation latency are separate measurements.
 
 ## Snapshot writes and retries
 

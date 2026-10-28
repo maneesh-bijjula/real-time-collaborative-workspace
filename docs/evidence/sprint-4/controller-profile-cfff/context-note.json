@@ -1,0 +1,4 @@
+{
+  "interpretation": "Instrumented native diagnostic only, not acceptance. One shared-document workload; profiling and a concurrent artifact download may affect timing. The source tree also contained evidence-only additions; see context.json.",
+  "source": "cfff3b4819046f9c01298e5e0753e23525a49e44"
+}

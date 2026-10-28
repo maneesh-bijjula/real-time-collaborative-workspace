@@ -1,0 +1,4 @@
+{
+  "interpretation": "Failed full native campaign; a large Git push overlapped the start and could have affected local scheduling. Causation is unproven. Never select individual repeats as acceptance.",
+  "source": "cfff3b4819046f9c01298e5e0753e23525a49e44"
+}

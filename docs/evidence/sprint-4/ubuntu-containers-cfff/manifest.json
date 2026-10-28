@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 1,
+  "suite": "full",
+  "startedAt": "2026-10-28T00:50:33.333Z",
+  "source": {
+    "commit": "cfff3b4819046f9c01298e5e0753e23525a49e44",
+    "dirty": "",
+    "sourceSha256": "4104bdfb3b428a5e9075528095073aac0bc0332219e2716fb4ace1bfa8fb3d82",
+    "files": {
+      "Dockerfile": "ad436c78a4bdeecb6334bc8c2b1f0540cdd3c79151bec3754677e3946a95990c",
+      "apps/server/migrations/001_documents.sql": "727e2b3eb8e3146b3d604ead429d42603e9fd0bfa2ee24f74aeff6cbde96b055",
+      "apps/server/package.json": "51336412241394882068ae6ba3b446e55bf7caadde2ec309759ce29cba71496c",
+      "apps/server/src/app.ts": "8a1f59d540a7fcf7c37ce0945e100a86411490dec9a84de4d44263eb50cd97ed",
+      "apps/server/src/config.ts": "920ace5f06de98569e56f775376fbb32a7e84b28b67b02aacae69e727c7bb90d",
+      "apps/server/src/documents.ts": "871a5d852dc2d0fce4adbc76b1c88f20d490cd54c93683c7ee810904e758d312",
+      "apps/server/src/encoded-size.ts": "53c36eee0da79807becd1c93f30dc256b4a629ae063b65d26cff15c220a0a798",
+      "apps/server/src/index.ts": "6a20ee46a661a6ffa8a887bbc1081005b8f03d37859c5781ea8aa71cee57a78b",
+      "apps/server/src/migrate.ts": "b6c8beb4555aceffb204d7c6953b38df71bc09ea66cccf86e058fbe7465651c1",
+      "apps/server/src/persistence.ts": "2daa1a87694333dcf6a4cc116fcd0c18a24170d477ec9d1bd671be66a58d96e4",
+      "apps/server/src/policy.ts": "10401be052b0016921281fac4669358e7cf74468db3839410e08f85ab24cc3e8",
+      "apps/server/src/protocol.ts": "63f7146df8920a45a6bbe88f75b75a61ca63322173446e9d63869ce41648892d",
+      "apps/server/src/readiness.ts": "d162b7fb427a3f2048d8eea11c955d8afc8397d81e4c2d76e4fb053c38b372d9",
+      "apps/server/src/synchronization.ts": "14c32c13045b0bf168626fdb94d9c93ac65270c7b999046bd62fc5f614bdce86",
+      "apps/server/src/telemetry.ts": "f2210eb0990dc6975efd90dfdbfe3cd87ff344b4b5c1c40ca2922afef954b23d",
+      "apps/server/src/transport.ts": "94c728713cab7bab5d7e5403ef2a551a2d0172a0b900df85da701244e1fee221",
+      "apps/server/tsconfig.json": "638f79f8855559c9d7c1887feb87b2c979fc4197c27f31191876a27563e1f661",
+      "apps/web/lib/collaboration-session.ts": "df32dbc51088a02100693afadb8a6631c628bc55f824c6e0e0ca6f96bca7f87b",
+      "apps/web/lib/database-save.ts": "2f03e99d93aa2aa6ac2d8028b54529be4d748b853e03c4fd59d9879468b8afb4",
+      "benchmarks/analysis.ts": "f4fd37bfb6431be3dda5d87f4df0ddceaa85628b27326b09adf675604816109a",
+      "benchmarks/clients.ts": "fb1a3493b5827dc755bbe66e73f6d7fa040e8a0d7adfb31041e3679b8baecda0",
+      "benchmarks/collector.ts": "322afb7c44223014f3fe57a580dca957cad4345afab93adf5d04be1b24a80098",
+      "benchmarks/load.ts": "3debd84fde96d2f95f990825d6fefd82206f730b1056befbba77ee9e426cf277",
+      "benchmarks/native-server.ts": "c4011cfe1d2544e9a5fd88b960415b37b39ccaf9a852b5aaabec5f286693c1bd",
+      "benchmarks/reconnect.ts": "597c15113c87c0a3f63422e8a1bc0b32dbf2658244f0f9111437227ea7fd45b8",
+      "benchmarks/run.ts": "47c9dd742601956928db533e0e36271f2ecf0f1de690f8eaf76be2aa080e51c2",
+      "benchmarks/runtime.ts": "0685b39984e53c752aa237ed856a45fda7e844bf560720784f86f5d69a8f334b",
+      "benchmarks/stats.ts": "9c692329a90ebd6806dca12f61fd7215390278120481ec641d0d9e6e34ac08df",
+      "benchmarks/summarize.ts": "61b34b2dd9de14dbceba0e7d3fd28f5e197ee52bed26886a7e275938561e440d",
+      "benchmarks/workloads.ts": "091ffc8573ef000a8a488dde61813d83d6b324b9b4916e16f3876d11ae8aec45",
+      "compose.benchmark.yaml": "5d44cd3008ca505ad5b863d6b0de798b3a176867f3af8af9036674b40622d994",
+      "package-lock.json": "177628848125e7d614b1b39d1310bf97ead070ef03f4f7ce39eb11a6cc9f744a",
+      "package.json": "ebc852c49e59e6ad3d11f63a62be4aca1109dc772c5aeffdbd8619c2dfc20756",
+      "tsconfig.benchmark.json": "3eeceb8252a07a0fea29a093279f80be1aa3a59c519170f27a4ee744421b89d7"
+    }
+  },
+  "workloadVersion": 1,
+  "executionVersion": 2,
+  "runtime": "containers",
+  "deploymentProject": "commonplace-bench-1793148633077-bfbcc9a7",
+  "idleSleepInhibited": false,
+  "profiles": [
+    {
+      "id": "shared-richtext-v1",
+      "primary": true,
+      "writers": 50,
+      "documents": 1,
+      "seedTextBytes": 10240,
+      "rate": 2,
+      "warmupSeconds": 30,
+      "measureSeconds": 120,
+      "repeats": 3
+    },
+    {
+      "id": "five-documents-v1",
+      "primary": false,
+      "writers": 50,
+      "documents": 5,
+      "seedTextBytes": 10240,
+      "rate": 2,
+      "warmupSeconds": 10,
+      "measureSeconds": 30,
+      "repeats": 1
+    },
+    {
+      "id": "large-richtext-v1",
+      "primary": false,
+      "writers": 50,
+      "documents": 1,
+      "seedTextBytes": 131072,
+      "rate": 2,
+      "warmupSeconds": 10,
+      "measureSeconds": 30,
+      "repeats": 1
+    },
+    {
+      "id": "migration-reconnect-v1",
+      "primary": true,
+      "writers": 50,
+      "seedTextBytes": 10240,
+      "affected": 5,
+      "offlineMs": 2000,
+      "mutationsPerActor": 8,
+      "observerMutations": 8,
+      "trials": 30,
+      "deadlineMs": 2000
+    },
+    {
+      "id": "large-backlog-v1",
+      "primary": false,
+      "writers": 50,
+      "seedTextBytes": 131072,
+      "affected": 10,
+      "offlineMs": 2000,
+      "mutationsPerActor": 50,
+      "observerMutations": 8,
+      "trials": 5,
+      "deadlineMs": 2000
+    }
+  ],
+  "schema": {
+    "operations": "JSONL objects: mutation index, writer/node/document indices, sequence/kind, scheduled/started milliseconds from run start, Yjs update bytes",
+    "samples": "JSONL tuples [operation index, recipient index, source-mutation-to-peer-application milliseconds]; source and other-document recipients excluded",
+    "quantiles": "Nearest rank, ceil(p*N); p95 target is strict <100ms; no outlier trimming. Missing samples fail.",
+    "reconnect": "Explicit healthy-network restoration to full content/format/deletion/presence convergence on all 50 peers. Controlled disconnection; excludes silent failure detection.",
+    "safety": "Own unique Compose project, random loopback ports, tmpfs _test database, no application volumes, no credentials/content in results."
+  },
+  "environment": {
+    "host": {
+      "os": "linux",
+      "release": "6.17.0-1022-azure",
+      "arch": "x64",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "logicalCpus": 4,
+      "memoryBytes": 16766414848,
+      "node": "v24.21.0"
+    },
+    "docker": {
+      "os": "Ubuntu 24.04.5 LTS",
+      "architecture": "x86_64",
+      "cpus": 4,
+      "memoryBytes": 16766414848,
+      "version": "28.0.4"
+    },
+    "runtime": "containers",
+    "serverNode": "v24.22.1",
+    "nativeProcesses": [],
+    "processPlacement": "One host: controller and four independent Node containers; PostgreSQL/Redis in Docker. No WAN.",
+    "containers": [
+      {
+        "service": "postgres",
+        "image": "sha256:ab20e934b27ba3ff927c1b4c9ff8cf6c32f315f743efe68dd3441182a87fb085",
+        "hostPid": 2755,
+        "cpuLimit": 0,
+        "memoryLimit": 0
+      },
+      {
+        "service": "redis",
+        "image": "sha256:9722accf3e8eeaeb7cd74a86256d6a41b83deb44d508c2988c8e5776bfdb7694",
+        "hostPid": 2753,
+        "cpuLimit": 0,
+        "memoryLimit": 0
+      },
+      {
+        "service": "server1",
+        "image": "sha256:14e7b809e8f2440639595dd063f6170a08b54a20f0eb84070f8ecfb3623ff9b3",
+        "hostPid": 3116,
+        "cpuLimit": 0,
+        "memoryLimit": 0
+      },
+      {
+        "service": "server2",
+        "image": "sha256:14e7b809e8f2440639595dd063f6170a08b54a20f0eb84070f8ecfb3623ff9b3",
+        "hostPid": 3118,
+        "cpuLimit": 0,
+        "memoryLimit": 0
+      },
+      {
+        "service": "server3",
+        "image": "sha256:14e7b809e8f2440639595dd063f6170a08b54a20f0eb84070f8ecfb3623ff9b3",
+        "hostPid": 3117,
+        "cpuLimit": 0,
+        "memoryLimit": 0
+      },
+      {
+        "service": "server4",
+        "image": "sha256:14e7b809e8f2440639595dd063f6170a08b54a20f0eb84070f8ecfb3623ff9b3",
+        "hostPid": 3115,
+        "cpuLimit": 0,
+        "memoryLimit": 0
+      }
+    ],
+    "images": [
+      {
+        "id": "sha256:ab20e934b27ba3ff927c1b4c9ff8cf6c32f315f743efe68dd3441182a87fb085",
+        "digests": [
+          "postgres@sha256:266d3c257594e195b309ae9d1805e54c788f1d7b375f56bf6c367aac6c917e7b"
+        ],
+        "os": "linux",
+        "architecture": "amd64"
+      },
+      {
+        "id": "sha256:9722accf3e8eeaeb7cd74a86256d6a41b83deb44d508c2988c8e5776bfdb7694",
+        "digests": [
+          "redis@sha256:47b08295737773de3b711fb86f13ae802f5074e96a9a2d29f5f80164ac08c046"
+        ],
+        "os": "linux",
+        "architecture": "amd64"
+      },
+      {
+        "id": "sha256:14e7b809e8f2440639595dd063f6170a08b54a20f0eb84070f8ecfb3623ff9b3",
+        "digests": [],
+        "os": "linux",
+        "architecture": "amd64"
+      }
+    ]
+  },
+  "cleanedUp": true,
+  "nativeShutdownCodes": [],
+  "completedAt": "2026-10-28T01:02:31.887Z",
+  "primaryTargetsPassed": false
+}

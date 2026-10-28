@@ -1,0 +1,1083 @@
+{
+  "schemaVersion": 1,
+  "type": "reconnect",
+  "profile": {
+    "id": "migration-reconnect-v1",
+    "primary": true,
+    "writers": 50,
+    "seedTextBytes": 10240,
+    "affected": 5,
+    "offlineMs": 2000,
+    "mutationsPerActor": 8,
+    "observerMutations": 8,
+    "trials": 30,
+    "deadlineMs": 2000
+  },
+  "trials": [
+    {
+      "trial": 1,
+      "affected": [
+        {
+          "writer": 0,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 1,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 2,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 3,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 4,
+          "from": 0,
+          "to": 1
+        }
+      ],
+      "offlineMs": 2000.019910999923,
+      "backlogUpdateBytes": 1875,
+      "elapsedMs": 42.580738999997266,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 2,
+      "affected": [
+        {
+          "writer": 5,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 6,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 7,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 8,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 9,
+          "from": 0,
+          "to": 1
+        }
+      ],
+      "offlineMs": 2000.31766099995,
+      "backlogUpdateBytes": 1855,
+      "elapsedMs": 29.650247000041418,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 3,
+      "affected": [
+        {
+          "writer": 10,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 11,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 12,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 13,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 14,
+          "from": 1,
+          "to": 2
+        }
+      ],
+      "offlineMs": 2000.077065999969,
+      "backlogUpdateBytes": 1905,
+      "elapsedMs": 46.425969999982044,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 4,
+      "affected": [
+        {
+          "writer": 15,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 16,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 17,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 18,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 19,
+          "from": 1,
+          "to": 2
+        }
+      ],
+      "offlineMs": 1999.5321290000575,
+      "backlogUpdateBytes": 1905,
+      "elapsedMs": 58.38896999997087,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 5,
+      "affected": [
+        {
+          "writer": 20,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 21,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 22,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 23,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 24,
+          "from": 1,
+          "to": 2
+        }
+      ],
+      "offlineMs": 1999.658660999965,
+      "backlogUpdateBytes": 1905,
+      "elapsedMs": 46.49048300005961,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 6,
+      "affected": [
+        {
+          "writer": 25,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 26,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 27,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 28,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 29,
+          "from": 2,
+          "to": 3
+        }
+      ],
+      "offlineMs": 1999.250798999914,
+      "backlogUpdateBytes": 1872,
+      "elapsedMs": 43.44021699996665,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 7,
+      "affected": [
+        {
+          "writer": 30,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 31,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 32,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 33,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 34,
+          "from": 2,
+          "to": 3
+        }
+      ],
+      "offlineMs": 1999.2699269999284,
+      "backlogUpdateBytes": 1905,
+      "elapsedMs": 63.22075999993831,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 8,
+      "affected": [
+        {
+          "writer": 35,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 36,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 37,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 38,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 39,
+          "from": 3,
+          "to": 0
+        }
+      ],
+      "offlineMs": 1998.1646390000824,
+      "backlogUpdateBytes": 1905,
+      "elapsedMs": 81.5018380000256,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 9,
+      "affected": [
+        {
+          "writer": 40,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 41,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 42,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 43,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 44,
+          "from": 3,
+          "to": 0
+        }
+      ],
+      "offlineMs": 1999.6281539999181,
+      "backlogUpdateBytes": 1905,
+      "elapsedMs": 75.20555300009437,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 10,
+      "affected": [
+        {
+          "writer": 45,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 46,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 47,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 48,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 49,
+          "from": 3,
+          "to": 0
+        }
+      ],
+      "offlineMs": 2000.1694950000383,
+      "backlogUpdateBytes": 1905,
+      "elapsedMs": 57.066156999906525,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 11,
+      "affected": [
+        {
+          "writer": 0,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 1,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 2,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 3,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 4,
+          "from": 1,
+          "to": 2
+        }
+      ],
+      "offlineMs": 1999.5937310000882,
+      "backlogUpdateBytes": 1837,
+      "elapsedMs": 72.56607800000347,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 12,
+      "affected": [
+        {
+          "writer": 5,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 6,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 7,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 8,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 9,
+          "from": 1,
+          "to": 2
+        }
+      ],
+      "offlineMs": 1998.9853969999822,
+      "backlogUpdateBytes": 1800,
+      "elapsedMs": 66.41217100003269,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 13,
+      "affected": [
+        {
+          "writer": 10,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 11,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 12,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 13,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 14,
+          "from": 2,
+          "to": 3
+        }
+      ],
+      "offlineMs": 2000.1023130000103,
+      "backlogUpdateBytes": 1795,
+      "elapsedMs": 63.77502800000366,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 14,
+      "affected": [
+        {
+          "writer": 15,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 16,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 17,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 18,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 19,
+          "from": 2,
+          "to": 3
+        }
+      ],
+      "offlineMs": 1999.8586949999444,
+      "backlogUpdateBytes": 1795,
+      "elapsedMs": 82.48944300005678,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 15,
+      "affected": [
+        {
+          "writer": 20,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 21,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 22,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 23,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 24,
+          "from": 2,
+          "to": 3
+        }
+      ],
+      "offlineMs": 1998.7318339999765,
+      "backlogUpdateBytes": 1795,
+      "elapsedMs": 67.88929199997801,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 16,
+      "affected": [
+        {
+          "writer": 25,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 26,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 27,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 28,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 29,
+          "from": 3,
+          "to": 0
+        }
+      ],
+      "offlineMs": 1999.380923000048,
+      "backlogUpdateBytes": 1761,
+      "elapsedMs": 79.18962800002191,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 17,
+      "affected": [
+        {
+          "writer": 30,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 31,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 32,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 33,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 34,
+          "from": 3,
+          "to": 0
+        }
+      ],
+      "offlineMs": 1999.0371850000229,
+      "backlogUpdateBytes": 1795,
+      "elapsedMs": 93.96046600001864,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 18,
+      "affected": [
+        {
+          "writer": 35,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 36,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 37,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 38,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 39,
+          "from": 0,
+          "to": 1
+        }
+      ],
+      "offlineMs": 1998.847585999989,
+      "backlogUpdateBytes": 1795,
+      "elapsedMs": 84.33111499994993,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 19,
+      "affected": [
+        {
+          "writer": 40,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 41,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 42,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 43,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 44,
+          "from": 0,
+          "to": 1
+        }
+      ],
+      "offlineMs": 1999.4968479999807,
+      "backlogUpdateBytes": 1795,
+      "elapsedMs": 107.51037199993152,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 20,
+      "affected": [
+        {
+          "writer": 45,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 46,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 47,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 48,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 49,
+          "from": 0,
+          "to": 1
+        }
+      ],
+      "offlineMs": 2000.0092909999657,
+      "backlogUpdateBytes": 1795,
+      "elapsedMs": 83.78961300000083,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 21,
+      "affected": [
+        {
+          "writer": 0,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 1,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 2,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 3,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 4,
+          "from": 2,
+          "to": 3
+        }
+      ],
+      "offlineMs": 1999.1878479999723,
+      "backlogUpdateBytes": 1973,
+      "elapsedMs": 84.81155600002967,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 22,
+      "affected": [
+        {
+          "writer": 5,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 6,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 7,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 8,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 9,
+          "from": 2,
+          "to": 3
+        }
+      ],
+      "offlineMs": 1999.3545939999167,
+      "backlogUpdateBytes": 1965,
+      "elapsedMs": 84.19476500002202,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 23,
+      "affected": [
+        {
+          "writer": 10,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 11,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 12,
+          "from": 2,
+          "to": 3
+        },
+        {
+          "writer": 13,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 14,
+          "from": 3,
+          "to": 0
+        }
+      ],
+      "offlineMs": 1999.4473039999139,
+      "backlogUpdateBytes": 2015,
+      "elapsedMs": 78.59067800000776,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 24,
+      "affected": [
+        {
+          "writer": 15,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 16,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 17,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 18,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 19,
+          "from": 3,
+          "to": 0
+        }
+      ],
+      "offlineMs": 2000.0164129999466,
+      "backlogUpdateBytes": 2015,
+      "elapsedMs": 95.3441359999124,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 25,
+      "affected": [
+        {
+          "writer": 20,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 21,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 22,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 23,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 24,
+          "from": 3,
+          "to": 0
+        }
+      ],
+      "offlineMs": 1999.7478049999336,
+      "backlogUpdateBytes": 2015,
+      "elapsedMs": 83.79404800001066,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 26,
+      "affected": [
+        {
+          "writer": 25,
+          "from": 3,
+          "to": 0
+        },
+        {
+          "writer": 26,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 27,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 28,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 29,
+          "from": 0,
+          "to": 1
+        }
+      ],
+      "offlineMs": 1999.5285010000225,
+      "backlogUpdateBytes": 1979,
+      "elapsedMs": 106.4374110000208,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 27,
+      "affected": [
+        {
+          "writer": 30,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 31,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 32,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 33,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 34,
+          "from": 0,
+          "to": 1
+        }
+      ],
+      "offlineMs": 2000.6732750000665,
+      "backlogUpdateBytes": 2015,
+      "elapsedMs": 98.62584200000856,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 28,
+      "affected": [
+        {
+          "writer": 35,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 36,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 37,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 38,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 39,
+          "from": 1,
+          "to": 2
+        }
+      ],
+      "offlineMs": 1998.964289000025,
+      "backlogUpdateBytes": 2015,
+      "elapsedMs": 144.04651000001468,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 29,
+      "affected": [
+        {
+          "writer": 40,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 41,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 42,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 43,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 44,
+          "from": 1,
+          "to": 2
+        }
+      ],
+      "offlineMs": 1998.8916230000323,
+      "backlogUpdateBytes": 2015,
+      "elapsedMs": 129.25387499993667,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 30,
+      "affected": [
+        {
+          "writer": 45,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 46,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 47,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 48,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "writer": 49,
+          "from": 1,
+          "to": 2
+        }
+      ],
+      "offlineMs": 1999.6600950000575,
+      "backlogUpdateBytes": 2015,
+      "elapsedMs": 103.42541100003291,
+      "converged": true,
+      "underTarget": true
+    }
+  ],
+  "completed": 30,
+  "missing": 0,
+  "failed": 0,
+  "timeouts": 0,
+  "durationMs": {
+    "count": 30,
+    "p50": 79.18962800002191,
+    "p95": 129.25387499993667,
+    "p99": 144.04651000001468,
+    "max": 144.04651000001468
+  },
+  "initialBytes": 13599,
+  "finalBytes": 57394,
+  "errors": [],
+  "passed": true
+}

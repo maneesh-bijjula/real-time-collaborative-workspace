@@ -51,6 +51,19 @@ afterEach(() => {
 });
 
 describe('database save confirmation', () => {
+  it('waits for edits to settle before requesting a fresh committed snapshot', () => {
+    for (let i = 0; i < 10; i++) {
+      doc.getText('body').insert(i, 'x');
+      vi.advanceTimersByTime(200);
+    }
+    expect(provider.sendStateless).not.toHaveBeenCalled();
+    expect(tracker.state).toBe('saving');
+    vi.advanceTimersByTime(300);
+    expect(provider.sendStateless).toHaveBeenCalledTimes(1);
+    reply();
+    expect(tracker.state).toBe('saved');
+  });
+
   it('requires a database response and invalidates immediately on the next edit', () => {
     doc.getText('body').insert(0, 'one');
     expect(tracker.state).toBe('saving');
