@@ -81,3 +81,108 @@ it('matches variable-length clock/client and string boundaries', () => {
     doc.destroy();
   }
 });
+
+it('recounts a foreign client split even when its state vector and deletion set do not change', () => {
+  const sizer = new DocumentSizer(),
+    author = new Y.Doc(),
+    peer = new Y.Doc(),
+    replica = new Y.Doc();
+  author.getText('body').insert(0, 'abcdefghij');
+  const seed = Y.encodeStateAsUpdate(author);
+  Y.applyUpdate(peer, seed);
+  Y.applyUpdate(replica, seed);
+  expect(sizer.size(replica)).toBe(Y.encodeStateAsUpdate(replica).length);
+  const before = Y.snapshot(replica),
+    structs = replica.store.clients.get(author.clientID)!.length;
+  peer.getText('body').insert(5, 'split here');
+  Y.applyUpdate(replica, Y.encodeStateAsUpdate(peer));
+  expect(Y.snapshot(replica).sv.get(author.clientID)).toBe(before.sv.get(author.clientID));
+  expect(Y.equalDeleteSets(Y.snapshot(replica).ds, before.ds)).toBe(true);
+  expect(replica.store.clients.get(author.clientID)!.length).toBeGreaterThan(structs);
+  expect(sizer.size(replica)).toBe(Y.encodeStateAsUpdate(replica).length);
+  author.destroy();
+  peer.destroy();
+  replica.destroy();
+});
+
+it('matches stock encoding during transactions and after nested observer edits', () => {
+  const sizer = new DocumentSizer(),
+    doc = new Y.Doc();
+  const check = () => expect(sizer.size(doc)).toBe(Y.encodeStateAsUpdate(doc).length);
+  doc.on('afterAllTransactions', check);
+  check();
+  doc.getText('body').observe(() => {
+    check();
+    doc.getMap('observer').set('count', doc.getText('body').length);
+  });
+  doc.transact(() => {
+    doc.getText('body').insert(0, 'a'.repeat(300));
+    check();
+  });
+  check();
+  doc.getText('body').delete(20, 200);
+  check();
+  doc.destroy();
+});
+
+it.each([0x86a921, 0x531a4, 0xf814])(
+  'matches stock V1 under concurrent shuffled edits (seed %i)',
+  (seed) => {
+    const sizer = new DocumentSizer(),
+      docs = Array.from({ length: 6 }, (_, i) => {
+        const doc = new Y.Doc({ gc: i % 2 === 0 });
+        doc.clientID = [127, 128, 16383, 16384, 2 ** 30, 0xffffffff][i]!;
+        doc.getText('body');
+        doc.getArray('items');
+        doc.getMap('values');
+        return doc;
+      });
+    let state = seed;
+    const random = (maximum: number) => {
+      state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+      return Math.floor((state / 0x100000000) * maximum);
+    };
+    const check = () => {
+      for (const doc of docs) expect(sizer.size(doc)).toBe(Y.encodeStateAsUpdate(doc).length);
+    };
+    check();
+    for (let step = 0; step < 400; step++) {
+      const source = docs[random(docs.length)]!,
+        text = source.getText('body'),
+        array = source.getArray('items'),
+        values = source.getMap('values');
+      source.transact(() => {
+        switch (random(6)) {
+          case 0:
+            text.insert(random(text.length + 1), ` ${step}漢🙂`);
+            break;
+          case 1:
+            if (text.length) text.delete(random(text.length), 1);
+            break;
+          case 2:
+            if (text.length) text.format(random(text.length), 1, { bold: step % 2 ? true : null });
+            break;
+          case 3:
+            values.set(`key${random(5)}`, {
+              step,
+              bytes: new Uint8Array(random(200)),
+              list: [null, NaN],
+            });
+            break;
+          case 4:
+            array.insert(random(array.length + 1), [step, `value${step}`]);
+            break;
+          default:
+            if (array.length) array.delete(random(array.length), 1);
+        }
+      });
+      const target = docs[random(docs.length)]!;
+      if (target !== source) Y.applyUpdate(target, Y.encodeStateAsUpdate(source));
+      check();
+    }
+    const merged = Y.mergeUpdates(docs.map((doc) => Y.encodeStateAsUpdate(doc)));
+    for (const doc of docs) Y.applyUpdate(doc, merged);
+    check();
+    docs.forEach((doc) => doc.destroy());
+  },
+);

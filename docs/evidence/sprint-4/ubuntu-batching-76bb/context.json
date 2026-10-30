@@ -1,0 +1,6 @@
+{
+  "source": "76bbf777970341d29193dde46a432036450f79fa",
+  "scope": "Both full independent Ubuntu campaigns failed primary latency. Full raw artifacts remain linked from the workflows; summaries preserve all repeats without selection.",
+  "nativeWorkflow": "https://github.com/maneesh-bijjula/real-time-collaborative-workspace/actions/runs/40615341728",
+  "containerWorkflow": "https://github.com/maneesh-bijjula/real-time-collaborative-workspace/actions/runs/40615339310"
+}

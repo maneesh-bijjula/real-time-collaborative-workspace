@@ -1,5 +1,6 @@
 import { createApplication } from '../../apps/server/src/app.js';
 import { readConfig } from '../../apps/server/src/config.js';
+import { once } from 'node:events';
 
 const config = readConfig(process.env);
 if (!new URL(config.databaseUrl).pathname.endsWith('_test'))
@@ -13,20 +14,28 @@ application.store.store = async (...args) => {
 };
 process.send!({ type: 'ready', port: await application.listen(), pid: process.pid });
 
+async function disconnect(client: typeof application.synchronization.pub) {
+  if (client.status === 'end') return;
+  const ended = once(client, 'end');
+  client.disconnect();
+  // ioredis disconnect() returns before its socket close handler changes the
+  // status. A fault acknowledgement must mean the transport is actually down.
+  await ended;
+}
+
 process.on('message', async (message: { id: string; command: string }) => {
   try {
     const redis = application.synchronization;
     switch (message.command) {
       case 'disconnectSubscriber':
-        redis.sub.disconnect();
+        await disconnect(redis.sub);
         break;
       case 'reconnectSubscriber':
         await redis.sub.connect();
         await redis.reconcileNow();
         break;
       case 'disconnectRedis':
-        redis.pub.disconnect();
-        redis.sub.disconnect();
+        await Promise.all([disconnect(redis.pub), disconnect(redis.sub)]);
         break;
       case 'reconnectRedis':
         await Promise.all([redis.pub.connect(), redis.sub.connect()]);
