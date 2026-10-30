@@ -1,0 +1,6 @@
+{
+  "measuredCommit": "68ca5fc5f7755a2e864da9fc20fe7cb90cdd084d",
+  "sourceSha256": "75eeac3be6ab40cf1c13cdf6661aec09d71f0b9aa6c0af56622249a213484a10",
+  "measuredInputsMatch": true,
+  "scope": "Current application, harness, dependency lock and build inputs match the accepted clean-source campaign. README/evidence documentation is outside these measured inputs."
+}

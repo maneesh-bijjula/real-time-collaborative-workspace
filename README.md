@@ -139,7 +139,9 @@ docker compose -p commonplace-verify -f compose.verify.yaml down
 
 This disposable stack uses ports 3100 (web), 4100 (API/WebSockets), and 15434 (test PostgreSQL). Its PostgreSQL data is temporary. `E2E_EXTERNAL=1` directs Playwright to the already-running container application. CI runs both native-production and final-image browser suites. Docker build arguments `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_COLLABORATION_URL` configure browser endpoints at build time.
 
-Functional synchronization and recovery across four independent Node processes and four packaged server containers are tested. The performance targets of 50 active editors at under 100 ms p95 propagation latency and reconnect convergence under two seconds remain unverified. Current tests establish correctness only for their documented small scenarios; Sprint 4 provides the reproducible load/fault benchmark campaign. See [Sprint 2 evidence](docs/evidence/sprint-2.md) and the [four-instance verification commands](docs/synchronization.md#disposable-four-container-deployment).
+Functional synchronization and recovery across four independent Node processes and four packaged server containers are tested. A full Ubuntu/Node 24 native-process benchmark verified 50 protocol writers across four production Node instances at two mutations/second each: three 120-second measured windows produced **46.47, 45.89 and 42.59 ms p95** propagation latency, with all **1,764,000** expected peer samples and correctness checks complete. All 30 controlled reconnect trials converged within two seconds, with a **140.47 ms maximum**. These are source-mutation-to-Yjs-model measurements on the recorded single-host environment; they do not measure browser rendering or WAN latency.
+
+Separate container performance campaigns failed the full primary contract, so these results do not establish Docker capacity. See [Sprint 4 evidence and limitations](docs/evidence/sprint-4.md), the [versioned workload and reproduction commands](docs/benchmarks.md), and the [four-instance packaged verification commands](docs/synchronization.md#disposable-four-container-deployment).
 
 ## Security and operations
 
