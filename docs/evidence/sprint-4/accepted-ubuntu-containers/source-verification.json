@@ -1,0 +1,9 @@
+{
+  "measuredCommit": "d358f4654481f3ef4bf89381be338efbf1d1f44e",
+  "sourceSha256": "e79a8d10cb8e8d2404628918756b686521635bd3cd3fdf641cf81cbf8956d158",
+  "measuredInputsMatch": true,
+  "scope": "Current measured server/harness/build/lock inputs match the accepted Docker campaign. Browser output-directory correction and documentation/evidence are outside these measured inputs.",
+  "nonHarnessInputsUnchangedFromSprint4": 23,
+  "frozenWorkloadUnchanged": true,
+  "reconnectImplementationUnchanged": true
+}

@@ -1,0 +1,274 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "commit": "d358f4654481f3ef4bf89381be338efbf1d1f44e",
+    "dirty": "M playwright.config.ts\n?? docs/evidence/sprint-4/docker-investigation/artifact-retention-incident.json\n?? docs/evidence/sprint-4/docker-investigation/inline-diagnostic-64629ec/isolates-summary.json\n?? docs/evidence/sprint-4/docker-investigation/local-packaged-verification.json\n?? docs/evidence/sprint-4/docker-investigation/packaged-cluster.json\n?? docs/evidence/sprint-4/docker-investigation/packaged-security.json\n?? docs/evidence/sprint-4/docker-investigation/worker-confirmation-d358f46/\n?? docs/evidence/sprint-4/summarize_isolates.py",
+    "sourceSha256": "e79a8d10cb8e8d2404628918756b686521635bd3cd3fdf641cf81cbf8956d158",
+    "files": {
+      "Dockerfile": "ad436c78a4bdeecb6334bc8c2b1f0540cdd3c79151bec3754677e3946a95990c",
+      "apps/server/migrations/001_documents.sql": "727e2b3eb8e3146b3d604ead429d42603e9fd0bfa2ee24f74aeff6cbde96b055",
+      "apps/server/package.json": "51336412241394882068ae6ba3b446e55bf7caadde2ec309759ce29cba71496c",
+      "apps/server/src/app.ts": "ebddf0fd93fd613a67ce3051d3c5c5f7c0b605e9d9196301e9dd1c8a3ad2ef53",
+      "apps/server/src/config.ts": "920ace5f06de98569e56f775376fbb32a7e84b28b67b02aacae69e727c7bb90d",
+      "apps/server/src/documents.ts": "871a5d852dc2d0fce4adbc76b1c88f20d490cd54c93683c7ee810904e758d312",
+      "apps/server/src/encoded-size.ts": "aeb22fb0f186795ca92e65827c73e52979baa3e19ce2c4e1ffce148d0b01eaba",
+      "apps/server/src/index.ts": "6a20ee46a661a6ffa8a887bbc1081005b8f03d37859c5781ea8aa71cee57a78b",
+      "apps/server/src/migrate.ts": "b6c8beb4555aceffb204d7c6953b38df71bc09ea66cccf86e058fbe7465651c1",
+      "apps/server/src/persistence.ts": "2daa1a87694333dcf6a4cc116fcd0c18a24170d477ec9d1bd671be66a58d96e4",
+      "apps/server/src/policy.ts": "10401be052b0016921281fac4669358e7cf74468db3839410e08f85ab24cc3e8",
+      "apps/server/src/protocol.ts": "63f7146df8920a45a6bbe88f75b75a61ca63322173446e9d63869ce41648892d",
+      "apps/server/src/readiness.ts": "d162b7fb427a3f2048d8eea11c955d8afc8397d81e4c2d76e4fb053c38b372d9",
+      "apps/server/src/synchronization.ts": "14c32c13045b0bf168626fdb94d9c93ac65270c7b999046bd62fc5f614bdce86",
+      "apps/server/src/telemetry.ts": "f2210eb0990dc6975efd90dfdbfe3cd87ff344b4b5c1c40ca2922afef954b23d",
+      "apps/server/src/transport.ts": "94c728713cab7bab5d7e5403ef2a551a2d0172a0b900df85da701244e1fee221",
+      "apps/server/tsconfig.json": "638f79f8855559c9d7c1887feb87b2c979fc4197c27f31191876a27563e1f661",
+      "apps/web/lib/collaboration-session.ts": "df32dbc51088a02100693afadb8a6631c628bc55f824c6e0e0ca6f96bca7f87b",
+      "apps/web/lib/database-save.ts": "db5ba5cee07ac972ffd1d03a4ef2c69e3fa2f61ca620632f7de6d2288944a689",
+      "benchmarks/analysis.ts": "e4abd32f77df111fe6273c18615b434b58d88f6edbb98fe76c11a21d743b6115",
+      "benchmarks/clients.ts": "e75c2b8c9bf20cc654c6138bc3159e578a0054aac4d5ccac6f750c5c9b247632",
+      "benchmarks/collector.ts": "0994d0c206c913f01744a4276ac72a69b15ace54483a5b6d5a29308fa546e9ba",
+      "benchmarks/diagnostics.ts": "a0211cdce6fbe2eda4f8053e270bbbcfa99826fd1c371a865a1fc438d97fe282",
+      "benchmarks/load-worker.ts": "4a99085f1462b6b0c7c3d3d1f7d9556d28ea04ee1d2b1415e1d38e49aef5b012",
+      "benchmarks/load.ts": "1c6dbae1ff676c6d8799f083ee0da707252215c22bdf070de4c8c90001275fa0",
+      "benchmarks/native-server.ts": "c4011cfe1d2544e9a5fd88b960415b37b39ccaf9a852b5aaabec5f286693c1bd",
+      "benchmarks/reconnect.ts": "597c15113c87c0a3f63422e8a1bc0b32dbf2658244f0f9111437227ea7fd45b8",
+      "benchmarks/run.ts": "6b64f74719acc4f542bf277dc431d0af6f49fed7aa24acc90b4832a67a004dd5",
+      "benchmarks/runtime.ts": "45ddf6886c46e1b6114c67cce346d4d9a437d872eeb9b88aa1b019f7e9ea4430",
+      "benchmarks/stats.ts": "9c692329a90ebd6806dca12f61fd7215390278120481ec641d0d9e6e34ac08df",
+      "benchmarks/summarize.ts": "61b34b2dd9de14dbceba0e7d3fd28f5e197ee52bed26886a7e275938561e440d",
+      "benchmarks/worker-load.ts": "841e084cf94b26192bb25c093e0809b8e5e83c21230d540cd4813fcd43d01b54",
+      "benchmarks/workloads.ts": "091ffc8573ef000a8a488dde61813d83d6b324b9b4916e16f3876d11ae8aec45",
+      "compose.benchmark.yaml": "5d44cd3008ca505ad5b863d6b0de798b3a176867f3af8af9036674b40622d994",
+      "package-lock.json": "177628848125e7d614b1b39d1310bf97ead070ef03f4f7ce39eb11a6cc9f744a",
+      "package.json": "ebc852c49e59e6ad3d11f63a62be4aca1109dc772c5aeffdbd8619c2dfc20756",
+      "tsconfig.benchmark.json": "3eeceb8252a07a0fea29a093279f80be1aa3a59c519170f27a4ee744421b89d7"
+    }
+  },
+  "suite": "smoke",
+  "primaryTargetsPassed": false,
+  "pooledPrimaryLatencyMs": {
+    "count": 0,
+    "p50": null,
+    "p95": null,
+    "p99": null,
+    "max": null
+  },
+  "loads": [
+    {
+      "name": "smoke-only-v1-1",
+      "profile": {
+        "id": "smoke-only-v1",
+        "primary": false,
+        "writers": 50,
+        "documents": 1,
+        "seedTextBytes": 10240,
+        "rate": 2,
+        "warmupSeconds": 1,
+        "measureSeconds": 3,
+        "repeats": 1
+      },
+      "completeOperations": true,
+      "latencyMs": {
+        "count": 14700,
+        "p50": 14.4793750000008,
+        "p95": 26.951375000000553,
+        "p99": 33.04199999999946,
+        "max": 44.872708000000785,
+        "expected": 14700,
+        "missing": 0,
+        "passed": true
+      },
+      "sameNodeMs": {
+        "count": 3456,
+        "p50": 13.73608299999978,
+        "p95": 25.918374999999287,
+        "p99": 33.24108399999932,
+        "max": 41.40429200000108
+      },
+      "crossNodeMs": {
+        "count": 11244,
+        "p50": 14.737250000000131,
+        "p95": 27.242583000001105,
+        "p99": 33.04199999999946,
+        "max": 44.872708000000785
+      },
+      "pairs": [
+        {
+          "source": 0,
+          "recipient": 0,
+          "count": 936,
+          "p50": 12.759582999999111,
+          "p95": 24.085124999999607,
+          "p99": 26.06487500000003,
+          "max": 27.525417000000743
+        },
+        {
+          "source": 0,
+          "recipient": 1,
+          "count": 1014,
+          "p50": 14.121499999999287,
+          "p95": 25.66975000000093,
+          "p99": 29.162124999998923,
+          "max": 30.924708999998984
+        },
+        {
+          "source": 0,
+          "recipient": 2,
+          "count": 936,
+          "p50": 14.196500000000015,
+          "p95": 25.73162499999853,
+          "p99": 29.881792000000132,
+          "max": 31.785083999999188
+        },
+        {
+          "source": 0,
+          "recipient": 3,
+          "count": 936,
+          "p50": 13.566207999998369,
+          "p95": 24.166666999999507,
+          "p99": 25.62420899999961,
+          "max": 26.476082999999562
+        },
+        {
+          "source": 1,
+          "recipient": 0,
+          "count": 1014,
+          "p50": 14.096832999999606,
+          "p95": 28.02325000000019,
+          "p99": 32.684166999999434,
+          "max": 35.007834
+        },
+        {
+          "source": 1,
+          "recipient": 1,
+          "count": 936,
+          "p50": 13.63129200000003,
+          "p95": 26.114125000000058,
+          "p99": 32.78529200000048,
+          "max": 36.79683399999885
+        },
+        {
+          "source": 1,
+          "recipient": 2,
+          "count": 936,
+          "p50": 13.541999999999462,
+          "p95": 28.774457999999868,
+          "p99": 40.365334000000075,
+          "max": 44.56487500000003
+        },
+        {
+          "source": 1,
+          "recipient": 3,
+          "count": 936,
+          "p50": 13.848540999999386,
+          "p95": 25.807749999999942,
+          "p99": 30.82904200000121,
+          "max": 34.316375000000335
+        },
+        {
+          "source": 2,
+          "recipient": 0,
+          "count": 936,
+          "p50": 15.425999999999476,
+          "p95": 29.330040999999255,
+          "p99": 41.55537499999991,
+          "max": 44.872708000000785
+        },
+        {
+          "source": 2,
+          "recipient": 1,
+          "count": 936,
+          "p50": 15.98108300000058,
+          "p95": 28.241375000001426,
+          "p99": 37.271458000001076,
+          "max": 40.13574999999946
+        },
+        {
+          "source": 2,
+          "recipient": 2,
+          "count": 792,
+          "p50": 13.841583999999784,
+          "p95": 26.884541999999783,
+          "p99": 38.431916999999885,
+          "max": 41.40429200000108
+        },
+        {
+          "source": 2,
+          "recipient": 3,
+          "count": 864,
+          "p50": 15.742999999998574,
+          "p95": 28.043500000001586,
+          "p99": 39.56233299999985,
+          "max": 43.52154100000007
+        },
+        {
+          "source": 3,
+          "recipient": 0,
+          "count": 936,
+          "p50": 15.322415999999066,
+          "p95": 27.98491600000125,
+          "p99": 30.959082999999737,
+          "max": 32.10504199999923
+        },
+        {
+          "source": 3,
+          "recipient": 1,
+          "count": 936,
+          "p50": 15.450833000000785,
+          "p95": 31.96324999999888,
+          "p99": 35.95600000000013,
+          "max": 36.65208300000086
+        },
+        {
+          "source": 3,
+          "recipient": 2,
+          "count": 864,
+          "p50": 15.096332999999504,
+          "p95": 28.138458000001265,
+          "p99": 39.36254199999894,
+          "max": 40.26616699999977
+        },
+        {
+          "source": 3,
+          "recipient": 3,
+          "count": 792,
+          "p50": 14.612374999998792,
+          "p95": 27.14954100000068,
+          "p99": 35.69658299999901,
+          "max": 37.17791699999907
+        }
+      ],
+      "correctness": true,
+      "offeredLoadValid": true,
+      "errors": [],
+      "passed": true
+    }
+  ],
+  "reconnect": [
+    {
+      "profile": {
+        "id": "smoke-reconnect-only-v1",
+        "primary": false,
+        "writers": 50,
+        "seedTextBytes": 10240,
+        "affected": 5,
+        "offlineMs": 200,
+        "mutationsPerActor": 8,
+        "observerMutations": 8,
+        "trials": 2,
+        "deadlineMs": 2000
+      },
+      "completed": 2,
+      "missing": 0,
+      "failed": 0,
+      "durationMs": {
+        "count": 2,
+        "p50": 52.39329199999884,
+        "p95": 65.43162500000108,
+        "p99": 65.43162500000108,
+        "max": 65.43162500000108
+      },
+      "passed": true
+    }
+  ]
+}

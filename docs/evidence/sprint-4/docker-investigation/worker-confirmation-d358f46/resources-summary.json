@@ -1,0 +1,114 @@
+{
+  "scope": "Entire primary load scenarios, including warmup and post-traffic checks. CPU 100% means one logical CPU; container CPU includes its other processes/healthchecks. Interval event-loop p99 maxima are not whole-run p99 values. Controller RSS is measured at scenario completion, not a peak. Native server network/block I/O is not sampled.",
+  "runtime": "containers",
+  "sourceSha256": "e79a8d10cb8e8d2404628918756b686521635bd3cd3fdf641cf81cbf8956d158",
+  "repeats": [
+    {
+      "scenario": "shared-richtext-v1-1",
+      "controller": {
+        "cpuMicroseconds": {
+          "user": 80437621,
+          "system": 8035407
+        },
+        "elapsedMs": 154372.556494,
+        "rssBytes": 1428008960,
+        "eventLoopP99Ms": 13.336575,
+        "eventLoopMaxMs": 199.360511
+      },
+      "servers": {
+        "0": {
+          "cpuMeanPercent": 32.777,
+          "cpuMaxPercent": 49.59,
+          "rssMaxObservedBytes": 283373568.0,
+          "maximumObservedIntervalP99Ms": 202.89945500000002
+        },
+        "1": {
+          "cpuMeanPercent": 33.427,
+          "cpuMaxPercent": 61.52,
+          "rssMaxObservedBytes": 289644544.0,
+          "maximumObservedIntervalP99Ms": 248.250367
+        },
+        "2": {
+          "cpuMeanPercent": 33.7345,
+          "cpuMaxPercent": 63.32,
+          "rssMaxObservedBytes": 281321472.0,
+          "maximumObservedIntervalP99Ms": 348.127231
+        },
+        "3": {
+          "cpuMeanPercent": 31.483,
+          "cpuMaxPercent": 60.61,
+          "rssMaxObservedBytes": 288661504.0,
+          "maximumObservedIntervalP99Ms": 204.99660699999998
+        }
+      },
+      "dependencyCpu": {
+        "postgres": {
+          "meanPercent": 7.5945,
+          "maxPercent": 13.07
+        },
+        "redis": {
+          "meanPercent": 4.654,
+          "maxPercent": 7.87
+        }
+      },
+      "dependenciesBefore": {
+        "postgres": {
+          "numbackends": 26,
+          "xact_commit": 51,
+          "xact_rollback": 0,
+          "blks_read": 224,
+          "blks_hit": 4610,
+          "tup_returned": 2151,
+          "tup_fetched": 2032,
+          "tup_inserted": 93,
+          "tup_updated": 6,
+          "tup_deleted": 0,
+          "temp_bytes": 0,
+          "deadlocks": 0
+        },
+        "redis": {
+          "connected_clients": 9,
+          "blocked_clients": 0,
+          "used_memory": 1550496,
+          "used_memory_peak": 1629000,
+          "total_commands_processed": 355,
+          "instantaneous_ops_per_sec": 184,
+          "total_net_input_bytes": 156018,
+          "total_net_output_bytes": 434830,
+          "rejected_connections": 0,
+          "evicted_keys": 0,
+          "pubsub_channels": 5
+        }
+      },
+      "dependenciesAfter": {
+        "postgres": {
+          "numbackends": 9,
+          "xact_commit": 1692,
+          "xact_rollback": 0,
+          "blks_read": 269,
+          "blks_hit": 184229,
+          "tup_returned": 80449,
+          "tup_fetched": 76259,
+          "tup_inserted": 26657,
+          "tup_updated": 610,
+          "tup_deleted": 26469,
+          "temp_bytes": 0,
+          "deadlocks": 0
+        },
+        "redis": {
+          "connected_clients": 9,
+          "blocked_clients": 0,
+          "used_memory": 1608056,
+          "used_memory_peak": 1917496,
+          "total_commands_processed": 35680,
+          "instantaneous_ops_per_sec": 48,
+          "total_net_input_bytes": 55082758,
+          "total_net_output_bytes": 84612387,
+          "rejected_connections": 0,
+          "evicted_keys": 0,
+          "pubsub_channels": 5
+        }
+      }
+    }
+  ]
+}

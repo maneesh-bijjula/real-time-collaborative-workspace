@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "type": "reconnect",
+  "profile": {
+    "id": "smoke-reconnect-only-v1",
+    "primary": false,
+    "writers": 50,
+    "seedTextBytes": 10240,
+    "affected": 5,
+    "offlineMs": 200,
+    "mutationsPerActor": 8,
+    "observerMutations": 8,
+    "trials": 2,
+    "deadlineMs": 2000
+  },
+  "trials": [
+    {
+      "trial": 1,
+      "affected": [
+        {
+          "writer": 0,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 1,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 2,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 3,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 4,
+          "from": 0,
+          "to": 1
+        }
+      ],
+      "offlineMs": 199.44941599999947,
+      "backlogUpdateBytes": 1842,
+      "elapsedMs": 52.39329199999884,
+      "converged": true,
+      "underTarget": true
+    },
+    {
+      "trial": 2,
+      "affected": [
+        {
+          "writer": 5,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 6,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 7,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 8,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "writer": 9,
+          "from": 0,
+          "to": 1
+        }
+      ],
+      "offlineMs": 200.14845799999966,
+      "backlogUpdateBytes": 1855,
+      "elapsedMs": 65.43162500000108,
+      "converged": true,
+      "underTarget": true
+    }
+  ],
+  "completed": 2,
+  "missing": 0,
+  "failed": 0,
+  "timeouts": 0,
+  "durationMs": {
+    "count": 2,
+    "p50": 52.39329199999884,
+    "p95": 65.43162500000108,
+    "p99": 65.43162500000108,
+    "max": 65.43162500000108
+  },
+  "initialBytes": 13599,
+  "finalBytes": 16421,
+  "errors": [],
+  "passed": true
+}

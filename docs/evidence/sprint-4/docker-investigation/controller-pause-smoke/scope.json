@@ -1,0 +1,13 @@
+{
+  "scope": "Local correctness regression, dirty documentation/output-path tree. Not acceptance.",
+  "injectedCoordinatorPauseMs": 804.5865409999988,
+  "measuredOperations": 300,
+  "peerSamples": 14700,
+  "maximumPropagationMs": 44.872708000000785,
+  "workerTrafficEventLoopMaxMs": [
+    13.901823,
+    13.484031,
+    16.637951,
+    14.278655
+  ]
+}

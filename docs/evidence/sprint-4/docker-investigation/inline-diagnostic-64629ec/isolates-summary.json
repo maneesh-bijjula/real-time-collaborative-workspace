@@ -1,0 +1,20 @@
+{
+  "scope": "Sampled heap maxima are observations, not memory bounds. Worker traffic event-loop maxima end before oracle validation. GC entries are filtered to the traffic interval using the verified common clock. No acceptance decision is inferred from these resource observations.",
+  "runs": [
+    {
+      "scenario": "shared-richtext-v1-1",
+      "replicaClocksAndPlacement": null,
+      "replicas": [],
+      "controllerMaximumCommandLaunchMs": 18.351710000017192,
+      "controllerDiagnosticEntriesDropped": 0,
+      "sourceInterruptions": [
+        {
+          "type": "source_interruption",
+          "atMs": 178073.143255,
+          "scheduledAtMs": 177316.587597,
+          "operation": 13670
+        }
+      ]
+    }
+  ]
+}

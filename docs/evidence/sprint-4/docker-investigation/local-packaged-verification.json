@@ -1,0 +1,24 @@
+{
+  "scope": "Local final-image verification, Node26 controller/macOS arm64; functional tests, no performance acceptance. The initial browser attempt failed before launch because the required Chromium was absent; the full rerun used the required build in a temporary directory.",
+  "browserStats": {
+    "startTime": "2026-11-02T19:46:56.666Z",
+    "duration": 25469.5,
+    "expected": 11,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "packagedSecurityAndFaultTests": {
+    "passed": 2,
+    "failed": 0,
+    "checksFiles": [
+      "packaged-cluster.json",
+      "packaged-security.json"
+    ]
+  },
+  "browserOutputIsolation": "Browser output is test-results/browser; a restored benchmark copy present before the rerun still exists afterwards.",
+  "benchmarkDirectoryPreserved": true,
+  "preservedPreexistingBenchmarkCopy": "test-results/benchmarks/sprint4-campaign-1/manifest.json",
+  "testedBaseCommit": "d358f4654481f3ef4bf89381be338efbf1d1f44e",
+  "localChange": "Browser output-directory correction; no application changes."
+}

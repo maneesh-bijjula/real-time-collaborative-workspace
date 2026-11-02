@@ -2,6 +2,8 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/e2e',
+  // Playwright clears outputDir at startup. Keep benchmark evidence outside it.
+  outputDir: './test-results/browser',
   fullyParallel: false,
   workers: 1,
   retries: process.env.CI ? 1 : 0,

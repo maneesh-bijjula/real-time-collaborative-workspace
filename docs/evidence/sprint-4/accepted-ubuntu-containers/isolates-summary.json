@@ -1,0 +1,503 @@
+{
+  "scope": "Sampled heap maxima are observations, not memory bounds. Worker traffic event-loop maxima end before oracle validation. GC entries are filtered to the traffic interval using the verified common clock. No acceptance decision is inferred from these resource observations.",
+  "runs": [
+    {
+      "scenario": "shared-richtext-v1-1",
+      "replicaClocksAndPlacement": [
+        {
+          "timeOrigin": 1793649006043.546,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        {
+          "timeOrigin": 1793649006043.546,
+          "indices": [
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ]
+        },
+        {
+          "timeOrigin": 1793649006043.546,
+          "indices": [
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37
+          ]
+        },
+        {
+          "timeOrigin": 1793649006043.546,
+          "indices": [
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49
+          ]
+        }
+      ],
+      "replicas": [
+        {
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "maximumSampledTrafficHeapUsedBytes": 179752128,
+          "trafficEventLoopMaxMs": 69.926911,
+          "gcEntriesInTraffic": 169,
+          "maximumObservedGcEntryMs": 33.70541399999638,
+          "diagnosticEntriesDropped": 0
+        },
+        {
+          "indices": [
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ],
+          "maximumSampledTrafficHeapUsedBytes": 182590408,
+          "trafficEventLoopMaxMs": 67.698687,
+          "gcEntriesInTraffic": 171,
+          "maximumObservedGcEntryMs": 26.874466999986907,
+          "diagnosticEntriesDropped": 0
+        },
+        {
+          "indices": [
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37
+          ],
+          "maximumSampledTrafficHeapUsedBytes": 162789104,
+          "trafficEventLoopMaxMs": 59.572223,
+          "gcEntriesInTraffic": 163,
+          "maximumObservedGcEntryMs": 27.84701500000665,
+          "diagnosticEntriesDropped": 0
+        },
+        {
+          "indices": [
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49
+          ],
+          "maximumSampledTrafficHeapUsedBytes": 162209408,
+          "trafficEventLoopMaxMs": 112.787455,
+          "gcEntriesInTraffic": 165,
+          "maximumObservedGcEntryMs": 23.642886999994516,
+          "diagnosticEntriesDropped": 0
+        }
+      ],
+      "controllerMaximumCommandLaunchMs": 23.320676000003004,
+      "controllerDiagnosticEntriesDropped": 0,
+      "sourceInterruptions": []
+    },
+    {
+      "scenario": "shared-richtext-v1-2",
+      "replicaClocksAndPlacement": [
+        {
+          "timeOrigin": 1793649006043.546,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        {
+          "timeOrigin": 1793649006043.546,
+          "indices": [
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ]
+        },
+        {
+          "timeOrigin": 1793649006043.546,
+          "indices": [
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37
+          ]
+        },
+        {
+          "timeOrigin": 1793649006043.546,
+          "indices": [
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49
+          ]
+        }
+      ],
+      "replicas": [
+        {
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "maximumSampledTrafficHeapUsedBytes": 182673216,
+          "trafficEventLoopMaxMs": 137.232383,
+          "gcEntriesInTraffic": 210,
+          "maximumObservedGcEntryMs": 48.50218800001312,
+          "diagnosticEntriesDropped": 0
+        },
+        {
+          "indices": [
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ],
+          "maximumSampledTrafficHeapUsedBytes": 182382960,
+          "trafficEventLoopMaxMs": 192.806911,
+          "gcEntriesInTraffic": 172,
+          "maximumObservedGcEntryMs": 36.93841700005578,
+          "diagnosticEntriesDropped": 0
+        },
+        {
+          "indices": [
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37
+          ],
+          "maximumSampledTrafficHeapUsedBytes": 173336936,
+          "trafficEventLoopMaxMs": 196.083711,
+          "gcEntriesInTraffic": 159,
+          "maximumObservedGcEntryMs": 24.448977999971248,
+          "diagnosticEntriesDropped": 0
+        },
+        {
+          "indices": [
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49
+          ],
+          "maximumSampledTrafficHeapUsedBytes": 174044472,
+          "trafficEventLoopMaxMs": 174.981119,
+          "gcEntriesInTraffic": 159,
+          "maximumObservedGcEntryMs": 11.612609000003431,
+          "diagnosticEntriesDropped": 0
+        }
+      ],
+      "controllerMaximumCommandLaunchMs": 22.84147500002291,
+      "controllerDiagnosticEntriesDropped": 0,
+      "sourceInterruptions": []
+    },
+    {
+      "scenario": "shared-richtext-v1-3",
+      "replicaClocksAndPlacement": [
+        {
+          "timeOrigin": 1793649006043.546,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        {
+          "timeOrigin": 1793649006043.546,
+          "indices": [
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ]
+        },
+        {
+          "timeOrigin": 1793649006043.546,
+          "indices": [
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37
+          ]
+        },
+        {
+          "timeOrigin": 1793649006043.546,
+          "indices": [
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49
+          ]
+        }
+      ],
+      "replicas": [
+        {
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "maximumSampledTrafficHeapUsedBytes": 203827232,
+          "trafficEventLoopMaxMs": 75.300863,
+          "gcEntriesInTraffic": 217,
+          "maximumObservedGcEntryMs": 52.25187099992763,
+          "diagnosticEntriesDropped": 0
+        },
+        {
+          "indices": [
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25
+          ],
+          "maximumSampledTrafficHeapUsedBytes": 190720960,
+          "trafficEventLoopMaxMs": 53.444607,
+          "gcEntriesInTraffic": 171,
+          "maximumObservedGcEntryMs": 15.175298999994993,
+          "diagnosticEntriesDropped": 0
+        },
+        {
+          "indices": [
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37
+          ],
+          "maximumSampledTrafficHeapUsedBytes": 172428416,
+          "trafficEventLoopMaxMs": 103.415807,
+          "gcEntriesInTraffic": 161,
+          "maximumObservedGcEntryMs": 12.772354000015184,
+          "diagnosticEntriesDropped": 0
+        },
+        {
+          "indices": [
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49
+          ],
+          "maximumSampledTrafficHeapUsedBytes": 178214608,
+          "trafficEventLoopMaxMs": 96.534527,
+          "gcEntriesInTraffic": 164,
+          "maximumObservedGcEntryMs": 18.107359000016004,
+          "diagnosticEntriesDropped": 0
+        }
+      ],
+      "controllerMaximumCommandLaunchMs": 23.167758999974467,
+      "controllerDiagnosticEntriesDropped": 0,
+      "sourceInterruptions": []
+    }
+  ]
+}

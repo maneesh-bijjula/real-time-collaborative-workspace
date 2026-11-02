@@ -1,0 +1,60 @@
+{
+  "incident": "Playwright default output-directory cleanup removed ignored test-results, including benchmark copies, during a browser run that failed before launch.",
+  "retained": "All committed evidence and external audit artifacts remain intact. The new inline diagnostic was committed before this incident.",
+  "recovery": [
+    {
+      "source": "docs/evidence/sprint-4/baseline",
+      "target": "test-results/benchmarks/sprint4-campaign-1",
+      "scope": "Available committed files only; may be summary-only, not a recovered full raw campaign."
+    },
+    {
+      "source": "docs/evidence/sprint-4/staging-only",
+      "target": "test-results/benchmarks/sprint4-campaign-2",
+      "scope": "Available committed files only; may be summary-only, not a recovered full raw campaign."
+    },
+    {
+      "source": "docs/evidence/sprint-4/delta-only",
+      "target": "test-results/benchmarks/sprint4-campaign-3",
+      "scope": "Available committed files only; may be summary-only, not a recovered full raw campaign."
+    },
+    {
+      "source": "docs/evidence/sprint-4/byte-cache",
+      "target": "test-results/benchmarks/sprint4-campaign-4",
+      "scope": "Available committed files only; may be summary-only, not a recovered full raw campaign."
+    },
+    {
+      "source": "docs/evidence/sprint-4/size-counter",
+      "target": "test-results/benchmarks/sprint4-campaign-5",
+      "scope": "Available committed files only; may be summary-only, not a recovered full raw campaign."
+    },
+    {
+      "source": "docs/evidence/sprint-4/ubuntu-byte-cache",
+      "target": "test-results/benchmarks/ubuntu-byte-cache",
+      "scope": "Available committed files only; may be summary-only, not a recovered full raw campaign."
+    },
+    {
+      "source": "docs/evidence/sprint-4/ubuntu-size-counter",
+      "target": "test-results/benchmarks/ubuntu-size-counter",
+      "scope": "Available committed files only; may be summary-only, not a recovered full raw campaign."
+    },
+    {
+      "source": "docs/evidence/sprint-4/docker-investigation/inline-diagnostic-64629ec",
+      "target": "test-results/benchmarks/docker-interruption-diagnostic-64629ec",
+      "scope": "Available committed files only; may be summary-only, not a recovered full raw campaign."
+    },
+    {
+      "source": "docs/evidence/sprint-4/current-failed-campaigns/local-native",
+      "target": "test-results/benchmarks/sprint4-client-cache-native-1",
+      "scope": "Available committed files only; may be summary-only, not a recovered full raw campaign."
+    },
+    {
+      "source": "docs/evidence/sprint-4/current-failed-campaigns/local-containers",
+      "target": "test-results/benchmarks/sprint4-client-cache-container-1",
+      "scope": "Available committed files only; may be summary-only, not a recovered full raw campaign."
+    }
+  ],
+  "limitation": "Local-only raw campaigns and new local smoke artifacts without another retained copy could not be recovered; no recovered summary is represented as raw evidence. GitHub campaigns can be downloaded again.",
+  "prevention": "playwright.config.ts now uses test-results/browser, so routine browser cleanup does not remove test-results/benchmarks.",
+  "restoredUbuntuRawWorkflow": "https://github.com/maneesh-bijjula/real-time-collaborative-workspace/actions/runs/40983865196",
+  "restoredUbuntuRawPath": "test-results/benchmarks/ubuntu-current-containers"
+}
