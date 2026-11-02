@@ -4,9 +4,13 @@ dist/
 .env
 .env.*
 !.env.example
+!.env.release.example
 *.tsbuildinfo
 playwright-report/
 test-results/
+.backups/
+.release-tmp/
+.release-dist/
 coverage/
 .benchmark-dist/
 .DS_Store

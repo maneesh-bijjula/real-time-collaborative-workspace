@@ -93,6 +93,7 @@ export async function revision() {
     'apps/server/tsconfig.json',
     'package-lock.json',
     'Dockerfile',
+    '.dockerignore',
     'compose.benchmark.yaml',
     'tsconfig.benchmark.json',
     'apps/web/lib/collaboration-session.ts',

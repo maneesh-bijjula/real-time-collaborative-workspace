@@ -4,7 +4,8 @@ services:
     environment:
       REDIS_PREFIX: commonplace-cluster
   server2: &replica
-    build: { context: ., target: server }
+    build:
+      { context: ., target: server, args: { SOURCE_REVISION: '${SOURCE_REVISION:-uncommitted}' } }
     environment:
       HOST: 0.0.0.0
       DATABASE_URL: postgres://workspace:workspace-local@postgres:5432/workspace_verify_test

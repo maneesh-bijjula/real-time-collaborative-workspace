@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-02T22:05:19.492Z",
+  "project": "commonplace-verify",
+  "source": {
+    "commit": "22ce87fae7423e9ad3157a616e2a9d021cc8f254",
+    "dirty": "M .dockerignore\n M .env.example\n M .github/workflows/benchmark.yaml\n M .github/workflows/ci.yaml\n M .gitignore\n M Dockerfile\n M apps/server/package.json\n M apps/server/src/app.ts\n M apps/server/src/index.ts\n M apps/server/src/migrate.ts\n M benchmarks/runtime.ts\n M compose.benchmark.yaml\n M compose.cluster.yaml\n M compose.verify.yaml\n M compose.yaml\n M package.json\n M playwright.config.ts\n M tests/e2e/workspace.spec.ts\n M vitest.integration.config.ts\n?? .env.release.example\n?? .github/workflows/recovery.yaml\n?? apps/server/src/migrate-cli.ts\n?? compose.recovery.yaml\n?? compose.test.yaml\n?? ops/nginx.production.example.conf\n?? scripts/\n?? tests/e2e/restart.spec.ts\n?? tests/integration/migrations.test.ts\n?? tests/operations/\n?? tests/release/\n?? tsconfig.release.json",
+    "lockfileSha256": "177628848125e7d614b1b39d1310bf97ead070ef03f4f7ce39eb11a6cc9f744a"
+  },
+  "allApplicationImagesMatchCleanSource": false,
+  "migrations": [
+    {
+      "name": "001_documents.sql",
+      "checksum": "727e2b3eb8e3146b3d604ead429d42603e9fd0bfa2ee24f74aeff6cbde96b055"
+    }
+  ],
+  "services": [
+    {
+      "service": "gateway",
+      "imageId": "sha256:47928bf67eb62a1863cb08d9ecb52d3e704304ba614eaee17884204677702951",
+      "revision": null,
+      "running": true
+    },
+    {
+      "service": "postgres",
+      "imageId": "sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24",
+      "revision": null,
+      "running": true
+    },
+    {
+      "service": "redis",
+      "imageId": "sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0",
+      "revision": null,
+      "running": true
+    },
+    {
+      "service": "server",
+      "imageId": "sha256:3410a6c8ea4d794944024b140c3ee0f201d50cfa049b668d208eb0dad140f352",
+      "revision": "uncommitted",
+      "running": true
+    },
+    {
+      "service": "server2",
+      "imageId": "sha256:a5ae909f5954852c451c7e27a9730a71386af4a63a8f90f1966d9865921b92f2",
+      "revision": "uncommitted",
+      "running": true
+    },
+    {
+      "service": "server3",
+      "imageId": "sha256:734b885fcf804f7dd4299fc614d6f86244ad9dac8407f0e640de803685b49927",
+      "revision": "uncommitted",
+      "running": true
+    },
+    {
+      "service": "server4",
+      "imageId": "sha256:5ceaa40f7eb415c6db7540133d5318aca44bf9f4e3db946dd76863668f66c0b4",
+      "revision": "uncommitted",
+      "running": true
+    },
+    {
+      "service": "web",
+      "imageId": "sha256:681bed35aa77a6c8165551e4d5618d287b37107cf6221e21486e696a279fb416",
+      "revision": "uncommitted",
+      "running": true
+    }
+  ],
+  "images": [
+    {
+      "id": "sha256:47928bf67eb62a1863cb08d9ecb52d3e704304ba614eaee17884204677702951",
+      "repoDigests": [
+        "nginx@sha256:47928bf67eb62a1863cb08d9ecb52d3e704304ba614eaee17884204677702951"
+      ],
+      "architecture": "arm64",
+      "os": "linux"
+    },
+    {
+      "id": "sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24",
+      "repoDigests": [
+        "postgres@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24"
+      ],
+      "architecture": "arm64",
+      "os": "linux"
+    },
+    {
+      "id": "sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0",
+      "repoDigests": [
+        "redis@sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0"
+      ],
+      "architecture": "arm64",
+      "os": "linux"
+    },
+    {
+      "id": "sha256:3410a6c8ea4d794944024b140c3ee0f201d50cfa049b668d208eb0dad140f352",
+      "repoDigests": [
+        "commonplace-verify-server@sha256:3410a6c8ea4d794944024b140c3ee0f201d50cfa049b668d208eb0dad140f352"
+      ],
+      "architecture": "arm64",
+      "os": "linux"
+    },
+    {
+      "id": "sha256:a5ae909f5954852c451c7e27a9730a71386af4a63a8f90f1966d9865921b92f2",
+      "repoDigests": [
+        "commonplace-verify-server2@sha256:a5ae909f5954852c451c7e27a9730a71386af4a63a8f90f1966d9865921b92f2"
+      ],
+      "architecture": "arm64",
+      "os": "linux"
+    },
+    {
+      "id": "sha256:734b885fcf804f7dd4299fc614d6f86244ad9dac8407f0e640de803685b49927",
+      "repoDigests": [
+        "commonplace-verify-server3@sha256:734b885fcf804f7dd4299fc614d6f86244ad9dac8407f0e640de803685b49927"
+      ],
+      "architecture": "arm64",
+      "os": "linux"
+    },
+    {
+      "id": "sha256:5ceaa40f7eb415c6db7540133d5318aca44bf9f4e3db946dd76863668f66c0b4",
+      "repoDigests": [
+        "commonplace-verify-server4@sha256:5ceaa40f7eb415c6db7540133d5318aca44bf9f4e3db946dd76863668f66c0b4"
+      ],
+      "architecture": "arm64",
+      "os": "linux"
+    },
+    {
+      "id": "sha256:681bed35aa77a6c8165551e4d5618d287b37107cf6221e21486e696a279fb416",
+      "repoDigests": [
+        "commonplace-verify-web@sha256:681bed35aa77a6c8165551e4d5618d287b37107cf6221e21486e696a279fb416"
+      ],
+      "architecture": "arm64",
+      "os": "linux"
+    }
+  ],
+  "scope": "Read-only image/source inventory. It does not certify external TLS, secrets, backup policy or deployment health; use the release and recovery checks."
+}

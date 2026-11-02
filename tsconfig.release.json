@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.benchmark.json",
+  "compilerOptions": { "outDir": ".release-dist" },
+  "include": ["tests/release/**/*.ts"]
+}

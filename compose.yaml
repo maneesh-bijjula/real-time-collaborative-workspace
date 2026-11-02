@@ -6,11 +6,11 @@ services:
     environment:
       POSTGRES_USER: workspace
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-workspace-local}
-      POSTGRES_DB: workspace
+      POSTGRES_DB: ${POSTGRES_DB:-workspace}
     ports: ['127.0.0.1:${POSTGRES_PORT:-5433}:5432']
     volumes: ['postgres-data:/var/lib/postgresql/data']
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U workspace -d workspace']
+      test: ['CMD-SHELL', 'pg_isready -U workspace -d "$${POSTGRES_DB}"']
       interval: 3s
       timeout: 3s
       retries: 20
@@ -23,17 +23,19 @@ services:
       timeout: 3s
       retries: 20
   server:
-    build: { context: ., target: server }
+    image: ${COMMONPLACE_SERVER_IMAGE:-commonplace-server:local}
+    build:
+      { context: ., target: server, args: { SOURCE_REVISION: '${SOURCE_REVISION:-uncommitted}' } }
     environment:
       HOST: 0.0.0.0
-      DATABASE_URL: postgres://workspace:${POSTGRES_PASSWORD:-workspace-local}@postgres:5432/workspace
+      DATABASE_URL: postgres://workspace:${POSTGRES_PASSWORD:-workspace-local}@postgres:5432/${POSTGRES_DB:-workspace}
       REDIS_URL: redis://redis:6379
       METRICS_TOKEN: ${METRICS_TOKEN:-}
       TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:-}
       REDIS_PREFIX: ${REDIS_PREFIX:-commonplace}
       REDIS_RECONCILE_INTERVAL_MS: ${REDIS_RECONCILE_INTERVAL_MS:-2000}
-      ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
-    ports: ['127.0.0.1:4000:4000']
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+    ports: ['127.0.0.1:${API_PORT:-4000}:4000']
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
@@ -50,8 +52,15 @@ services:
       timeout: 4s
       retries: 20
   web:
-    build: { context: ., target: web }
-    ports: ['127.0.0.1:3000:3000']
+    image: ${COMMONPLACE_WEB_IMAGE:-commonplace-web:local}
+    build:
+      context: .
+      target: web
+      args:
+        SOURCE_REVISION: ${SOURCE_REVISION:-uncommitted}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
+        NEXT_PUBLIC_COLLABORATION_URL: ${NEXT_PUBLIC_COLLABORATION_URL:-ws://localhost:4000/collaboration}
+    ports: ['127.0.0.1:${WEB_PORT:-3000}:3000']
     depends_on:
       server: { condition: service_healthy }
   postgres-test:

@@ -1,5 +1,18 @@
 import { defineConfig } from '@playwright/test';
 
+let isolatedDatabase = false;
+try {
+  const url = new URL(process.env.DATABASE_URL || '');
+  isolatedDatabase =
+    ['postgres:', 'postgresql:'].includes(url.protocol) && url.pathname.endsWith('_test');
+} catch {
+  /* Report only the fixed guard message. */
+}
+if (process.env.E2E_MANAGED_RUN !== '1' || !isolatedDatabase)
+  throw new Error(
+    'Use npm run test:e2e for owned test services or validated disposable external services',
+  );
+
 export default defineConfig({
   testDir: './tests/e2e',
   // Playwright clears outputDir at startup. Keep benchmark evidence outside it.
@@ -21,9 +34,9 @@ export default defineConfig({
   webServer: process.env.E2E_EXTERNAL
     ? undefined
     : {
-        command: process.env.E2E_PRODUCTION ? 'npm run start:e2e' : 'npm run dev',
-        url: 'http://localhost:3000',
-        reuseExistingServer: !process.env.CI,
+        command: 'npm run start -w apps/web',
+        url: process.env.E2E_BASE_URL!,
+        reuseExistingServer: false,
         timeout: 120_000,
         env: { NEXT_TELEMETRY_DISABLED: '1', HOSTNAME: '127.0.0.1' },
       },

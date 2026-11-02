@@ -16,6 +16,7 @@ A shared writing workspace built with **TypeScript, Next.js, Node.js, Yjs, WebSo
 - Private share links, hashed server-side access tokens, document renaming, search, and text export.
 - Bounded socket/authentication/message/document admission, protected Prometheus metrics, dependency readiness, and structured logs.
 - Responsive interface, Docker services, versioned SQL migrations, and automated CI.
+- Consistent PostgreSQL backup/restore tools, migration/startup recovery checks, and tested packaged restart/recovery procedures.
 
 ## Run with Docker
 
@@ -47,7 +48,7 @@ docker compose up -d postgres redis
 npm run dev
 ```
 
-The defaults match the local service ports above. Optional backend settings are listed in `.env.example`; copy it to `.env` to customize native development. Browser-facing API and WebSocket URLs can be set in `apps/web/.env.local` before building. The backend and frontend must be rebuilt together when changing the collaboration protocol or editor schema.
+The defaults match the local service ports above. Optional backend settings are listed in `.env.example`. Compose reads the root `.env`; native workspace commands accept exported variables or `.env` in their working directory. Browser-facing API and WebSocket URLs can be set in `apps/web/.env.local` before building. The backend and frontend must be rebuilt together when changing the collaboration protocol or editor schema.
 
 ## Architecture
 
@@ -109,8 +110,7 @@ Titles are trimmed, limited to 120 characters, and validated before parameterize
 # Pure unit tests; no services required.
 npm test
 
-# Dedicated PostgreSQL and Redis services, then integration tests.
-docker compose --profile test up -d --wait postgres-test redis-test
+# Automatically owned temporary PostgreSQL/Redis, random loopback ports.
 npm run test:integration
 
 # Type-check application and test code.
@@ -119,9 +119,15 @@ npm run typecheck
 # Install Chromium once, then test the interface.
 npx playwright install chromium
 npm run test:e2e
+
+# Backup format/integrity/guard regressions; no services required.
+npm run test:operations
+
+# Real final-image migration, disaster recovery, and restart drill.
+npm run test:release
 ```
 
-Integration tests use `workspace_test` on port 5434 and Redis on port 6381. `TEST_DATABASE_URL` and `TEST_REDIS_URL` override these endpoints; the database name must end in `_test`. The suite clears document data in that dedicated test database. Browser tests start the local application automatically and use its configured development database.
+The default integration and browser commands create unique `commonplace-test-*` projects with tmpfs databases and remove only those services. Inherited development URLs are replaced with owned test endpoints. Browser tests build production code for their random API port, verify that API with a per-run operator secret, and never reuse an existing web server. Direct Playwright invocation is refused; direct Vitest integration invocation requires explicit isolated `TEST_DATABASE_URL` and `TEST_REDIS_URL`. Database names must end in `_test`; integration tests can clear test document data. Test artifacts live below `test-results/`, with browser cleanup confined to `test-results/browser`.
 
 Coverage includes authorization, validation, SQL-like input, concurrent CRDT edits, offline merging, presence cleanup, four-process Redis recovery, transactional snapshot merging, process-crash recovery, text export, search, and mobile layout. GitHub Actions checks production builds, runs native and final-image browser suites, and verifies a real Redis outage plus gateway failover on the disposable four-container topology.
 
@@ -130,20 +136,22 @@ Durability regressions additionally cover deletion-only changes, stale responses
 To test the final Docker images without ordinary application volumes:
 
 ```sh
-docker compose -p commonplace-verify -f compose.verify.yaml up -d --build --wait
+docker compose -p commonplace-verify -f compose.verify.yaml -f compose.cluster.yaml up -d --build --wait
 E2E_EXTERNAL=1 E2E_BASE_URL=http://localhost:3100 \
   DATABASE_URL=postgres://workspace:workspace-local@localhost:15434/workspace_verify_test \
   npm run test:e2e
-docker compose -p commonplace-verify -f compose.verify.yaml down
+docker compose -p commonplace-verify -f compose.verify.yaml -f compose.cluster.yaml down
 ```
 
-This disposable stack uses ports 3100 (web), 4100 (API/WebSockets), and 15434 (test PostgreSQL). Its PostgreSQL data is temporary. `E2E_EXTERNAL=1` directs Playwright to the already-running container application. CI runs both native-production and final-image browser suites. Docker build arguments `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_COLLABORATION_URL` configure browser endpoints at build time.
+This disposable stack uses ports 3100 (web), 4100–4103 (direct APIs/WebSockets), 4200 (gateway), and 15434 (test PostgreSQL). External browser mode validates the named project's actual temporary database, URL/port bindings and cluster endpoints before executing tests. CI runs native-production and all twelve final-image browser cases, including fresh-browser recovery after all servers restart. Docker build arguments `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_COLLABORATION_URL` configure browser endpoints at build time.
 
 Functional synchronization and recovery across four independent Node processes and four packaged server containers are tested. A full Ubuntu/Node 24 native-process benchmark verified 50 protocol writers across four production Node instances at two mutations/second each: three 120-second measured windows produced **46.47, 45.89 and 42.59 ms p95** propagation latency, with all **1,764,000** expected peer samples and correctness checks complete. All 30 controlled reconnect trials converged within two seconds, with a **140.47 ms maximum**. These are source-mutation-to-Yjs-model measurements on the recorded single-host environment; they do not measure browser rendering or WAN latency.
 
 A subsequent full Ubuntu Docker campaign verified the same frozen workload across four production server containers: **41.30, 44.02 and 39.27 ms p95**, all **1,764,000** expected peer samples, and all **30 reconnect trials** passing with a **177.15 ms maximum**. The controller now distributes its 50 replicas across four worker isolates to bound GC stalls; source and recipient timestamps are captured before IPC. Application code, workload, thresholds and correctness checks were preserved. Earlier incomplete Docker campaigns remain failures. The accepted Docker run used a four-CPU Intel host; the native result used a separate AMD host, so they are not a performance comparison or a universal capacity promise. See [Sprint 4 evidence and limitations](docs/evidence/sprint-4.md), the [versioned workload and reproduction commands](docs/benchmarks.md), and the [four-instance packaged verification commands](docs/synchronization.md#disposable-four-container-deployment).
 
 ## Security and operations
+
+Use the [deployment and rollback guide](docs/deployment.md) for source-labeled images, explicit migration preflight, HTTPS/WSS edge setup, upgrades and rollback decisions. The [backup and recovery runbook](docs/disaster-recovery.md) provides `npm run db:backup` and `npm run db:restore`: one consistent PostgreSQL snapshot, a private hashed archive, and restoration only to a new database in a separate deployment. A backup covers its recorded snapshot cutoff, not later edits or lost share links. Regular CI exercises real-image restore, migration/startup failure, preserved formatting/deletions and later confirmed-write restart recovery. The [evidence index](docs/evidence/README.md) maps capabilities and claims to their tests, artifacts and limits.
 
 The default topology is a localhost development setup. Public deployments require HTTPS/WSS, private backend networks, strong independent secrets, exact origin configuration, and correctly restricted trusted proxies. Complete-link holders can read/edit their document; display names are not verified identities. The project does not implement accounts, per-user roles, link revocation, or a distributed quota.
 

@@ -1,0 +1,86 @@
+# Used only by the owned Sprint 5 drill; both databases are disposable tmpfs.
+services:
+  postgres: &postgres
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: workspace
+      POSTGRES_PASSWORD: recovery-fixture-only
+      POSTGRES_DB: workspace_release_test
+    tmpfs: ['/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U workspace -d "$${POSTGRES_DB}"']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  redis: &redis
+    image: redis:8-alpine
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  server: &server
+    build:
+      context: .
+      target: server
+      args: { SOURCE_REVISION: '${SOURCE_REVISION:-uncommitted}' }
+    environment:
+      HOST: 0.0.0.0
+      DATABASE_URL: postgres://workspace:recovery-fixture-only@postgres:5432/workspace_release_test
+      REDIS_URL: redis://redis:6379
+      REDIS_PREFIX: source-release-drill
+      ALLOWED_ORIGINS: http://localhost:3100
+    ports: ['127.0.0.1::4000']
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    stop_grace_period: 20s
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:4000/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 2s
+      timeout: 4s
+      retries: 30
+  postgres-restored:
+    <<: *postgres
+    environment:
+      POSTGRES_USER: workspace
+      POSTGRES_PASSWORD: recovery-fixture-only
+      POSTGRES_DB: postgres
+  redis-restored:
+    <<: *redis
+  redis-blackhole:
+    image: node:24-bookworm-slim
+    command:
+      [
+        'node',
+        '-e',
+        "require('node:net').createServer(s=>s.on('data',()=>{})).listen(6379,'0.0.0.0')",
+      ]
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "const s=require('node:net').connect(6379,'127.0.0.1');s.on('connect',()=>process.exit(0));s.on('error',()=>process.exit(1));setTimeout(()=>process.exit(1),1000)",
+        ]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+  server-restored:
+    <<: *server
+    environment:
+      HOST: 0.0.0.0
+      DATABASE_URL: postgres://workspace:recovery-fixture-only@postgres-restored:5432/workspace_restored_test
+      REDIS_URL: redis://redis-restored:6379
+      REDIS_PREFIX: restored-release-drill
+      ALLOWED_ORIGINS: http://localhost:3100
+    depends_on:
+      postgres-restored: { condition: service_healthy }
+      redis-restored: { condition: service_healthy }

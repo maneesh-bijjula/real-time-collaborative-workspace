@@ -1,0 +1,40 @@
+{
+  "scope": "Local working-tree diagnostics only. Cases evolved while the implementation was developed; passing partial/earlier versions are not selected as final acceptance. Private archives were never copied into this evidence directory. Clean-source CI must validate the complete final contract.",
+  "runs": [
+    {
+      "directory": "commonplace-release-1793655636055-c11810aa",
+      "passed": true,
+      "failedStage": null,
+      "checks": 7,
+      "sourceDirty": true
+    },
+    {
+      "directory": "commonplace-release-1793656094604-089ac138",
+      "passed": false,
+      "failedStage": "consistent_live_backup",
+      "checks": 1,
+      "sourceDirty": true
+    },
+    {
+      "directory": "commonplace-release-1793656299656-5177e9d8",
+      "passed": true,
+      "failedStage": null,
+      "checks": 8,
+      "sourceDirty": true
+    },
+    {
+      "directory": "commonplace-release-1793657123092-d25e25ff",
+      "passed": false,
+      "failedStage": "startup_and_migration_failures",
+      "checks": 2,
+      "sourceDirty": true
+    },
+    {
+      "directory": "commonplace-release-1793657330865-058f5aca",
+      "passed": true,
+      "failedStage": null,
+      "checks": 9,
+      "sourceDirty": true
+    }
+  ]
+}

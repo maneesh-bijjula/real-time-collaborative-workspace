@@ -38,12 +38,15 @@ test('two independent browser sessions edit, format, and see each other', async 
   await page.getByRole('button', { name: 'Share document', exact: true }).click();
   await expect(page.getByRole('status')).toContainText(/link|address/);
   if (process.env.CAPTURE_SCREENSHOTS) {
-    await mkdir('docs/screenshots', { recursive: true });
-    await page.screenshot({ path: 'docs/screenshots/editor.png', fullPage: true });
+    await mkdir('test-results/browser/screenshots', { recursive: true });
+    await page.screenshot({ path: 'test-results/browser/screenshots/editor.png', fullPage: true });
     await page.getByRole('link', { name: 'Back to documents' }).click();
     await expect(page.getByRole('heading', { name: /Your documents/ })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Team launch notes' })).toBeVisible();
-    await page.screenshot({ path: 'docs/screenshots/workspace.png', fullPage: true });
+    await page.screenshot({
+      path: 'test-results/browser/screenshots/workspace.png',
+      fullPage: true,
+    });
   }
   expect(errors).toEqual([]);
   await otherContext.close();
@@ -129,7 +132,7 @@ test('mobile workspace and editor fit the viewport', async ({ page }) => {
     true,
   );
   if (process.env.CAPTURE_SCREENSHOTS)
-    await page.screenshot({ path: 'docs/screenshots/mobile.png', fullPage: true });
+    await page.screenshot({ path: 'test-results/browser/screenshots/mobile.png', fullPage: true });
 });
 
 test('database confirmation includes deletions and survives a fresh browser session', async ({

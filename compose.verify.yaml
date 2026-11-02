@@ -22,7 +22,8 @@ services:
       timeout: 3s
       retries: 20
   server:
-    build: { context: ., target: server }
+    build:
+      { context: ., target: server, args: { SOURCE_REVISION: '${SOURCE_REVISION:-uncommitted}' } }
     environment:
       HOST: 0.0.0.0
       DATABASE_URL: postgres://workspace:workspace-local@postgres:5432/workspace_verify_test
@@ -50,6 +51,7 @@ services:
       context: .
       target: web
       args:
+        SOURCE_REVISION: ${SOURCE_REVISION:-uncommitted}
         NEXT_PUBLIC_API_URL: http://localhost:4100
         NEXT_PUBLIC_COLLABORATION_URL: ws://localhost:4100/collaboration
     ports: ['127.0.0.1:3100:3000']

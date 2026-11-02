@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-11-02T21:48:14.604Z",
+  "project": "commonplace-release-1793656094604-089ac138",
+  "scope": "Disposable final-image functional recovery drill, PostgreSQL 17 logical snapshot. No ordinary application data or volumes. Not a production RPO/RTO guarantee or performance benchmark.",
+  "checks": [
+    "Source document has confirmed rich text, formatting and deletion-only state; archive restoration will use empty fresh clients."
+  ],
+  "stages": [
+    {
+      "name": "build_and_start_source",
+      "atMs": 118.140625
+    },
+    {
+      "name": "consistent_live_backup",
+      "atMs": 18742.285042
+    }
+  ],
+  "source": {
+    "commit": "22ce87fae7423e9ad3157a616e2a9d021cc8f254",
+    "dirty": "M .gitignore\n M Dockerfile\n M apps/server/package.json\n M apps/server/src/app.ts\n M apps/server/src/index.ts\n M apps/server/src/migrate.ts\n M compose.benchmark.yaml\n M compose.cluster.yaml\n M compose.verify.yaml\n M compose.yaml\n M package.json\n M playwright.config.ts\n M tests/e2e/workspace.spec.ts\n M vitest.integration.config.ts\n?? apps/server/src/migrate-cli.ts\n?? compose.recovery.yaml\n?? compose.test.yaml\n?? scripts/\n?? tests/e2e/restart.spec.ts\n?? tests/integration/migrations.test.ts\n?? tests/operations/\n?? tests/release/\n?? tsconfig.release.json",
+    "revisionLabel": "uncommitted"
+  },
+  "images": [
+    {
+      "service": "postgres",
+      "image": "sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24"
+    },
+    {
+      "service": "postgres-restored",
+      "image": "sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24"
+    },
+    {
+      "service": "redis",
+      "image": "sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0"
+    },
+    {
+      "service": "redis-restored",
+      "image": "sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0"
+    },
+    {
+      "service": "server",
+      "image": "sha256:3a329c053b4d1b94373ceb1f7a62fb25b6a1ff9a6084e41e984428051551137a",
+      "revision": "uncommitted"
+    }
+  ],
+  "failedStage": "consistent_live_backup",
+  "cleanedUp": true,
+  "completedAt": "2026-11-02T21:48:49.899Z",
+  "passed": false
+}

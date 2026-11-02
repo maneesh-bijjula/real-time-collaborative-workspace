@@ -10,6 +10,8 @@ COPY apps/server apps/server
 RUN npm run build -w apps/server
 
 FROM node:24-bookworm-slim AS server
+ARG SOURCE_REVISION=uncommitted
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
 ENV NODE_ENV=production HOST=0.0.0.0
 WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
@@ -27,6 +29,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build -w apps/web
 
 FROM node:24-bookworm-slim AS web
+ARG SOURCE_REVISION=uncommitted
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
 ENV NODE_ENV=production HOSTNAME=0.0.0.0 PORT=3000 NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
 COPY --from=web-build --chown=node:node /app/apps/web/.next/standalone ./

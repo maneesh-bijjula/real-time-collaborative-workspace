@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-11-02T22:05:23.092Z",
+  "project": "commonplace-release-1793657123092-d25e25ff",
+  "scope": "Disposable final-image functional recovery drill, PostgreSQL 17 logical snapshot. No ordinary application data or volumes. Not a production RPO/RTO guarantee or performance benchmark.",
+  "checks": [
+    "Source document has confirmed rich text, formatting and deletion-only state; archive restoration will use empty fresh clients.",
+    "Online custom-format backup and manifest share one exported repeatable-read snapshot; a later committed document is outside that cut. Private directory/file modes are 0700/0600."
+  ],
+  "stages": [
+    {
+      "name": "build_and_start_source",
+      "atMs": 99.191667
+    },
+    {
+      "name": "consistent_live_backup",
+      "atMs": 20125.883125
+    },
+    {
+      "name": "startup_and_migration_failures",
+      "atMs": 20799.879584
+    }
+  ],
+  "source": {
+    "commit": "22ce87fae7423e9ad3157a616e2a9d021cc8f254",
+    "dirty": "M .dockerignore\n M .env.example\n M .github/workflows/benchmark.yaml\n M .github/workflows/ci.yaml\n M .gitignore\n M Dockerfile\n M apps/server/package.json\n M apps/server/src/app.ts\n M apps/server/src/index.ts\n M apps/server/src/migrate.ts\n M benchmarks/runtime.ts\n M compose.benchmark.yaml\n M compose.cluster.yaml\n M compose.verify.yaml\n M compose.yaml\n M package.json\n M playwright.config.ts\n M tests/e2e/workspace.spec.ts\n M vitest.integration.config.ts\n?? .env.release.example\n?? .github/workflows/recovery.yaml\n?? apps/server/src/migrate-cli.ts\n?? compose.recovery.yaml\n?? compose.test.yaml\n?? ops/nginx.production.example.conf\n?? scripts/\n?? tests/e2e/restart.spec.ts\n?? tests/integration/migrations.test.ts\n?? tests/operations/\n?? tests/release/\n?? tsconfig.release.json",
+    "revisionLabel": "uncommitted"
+  },
+  "images": [
+    {
+      "service": "postgres",
+      "image": "sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24"
+    },
+    {
+      "service": "postgres-restored",
+      "image": "sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24"
+    },
+    {
+      "service": "redis",
+      "image": "sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0"
+    },
+    {
+      "service": "redis-restored",
+      "image": "sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0"
+    },
+    {
+      "service": "server",
+      "image": "sha256:04d3cc5b4033e01b4745f975fb0ee4b51940f9b552a7fe7c84f87e340e9cd4ea",
+      "revision": "uncommitted"
+    }
+  ],
+  "backup": {
+    "schemaVersion": 1,
+    "complete": true,
+    "format": "postgres-custom",
+    "createdAt": "2026-11-02T22:05:43.781Z",
+    "toolVersion": "pg_dump (PostgreSQL) 17.11",
+    "sourceProject": "commonplace-release-1793657123092-d25e25ff",
+    "sourceService": "postgres",
+    "database": "workspace_release_test",
+    "snapshotAt": "2026-11-02T22:05:43.552897+00:00",
+    "postgresMajor": 17,
+    "encoding": "UTF8",
+    "documentCount": "1",
+    "migrations": [
+      {
+        "name": "001_documents.sql",
+        "checksum": "727e2b3eb8e3146b3d604ead429d42603e9fd0bfa2ee24f74aeff6cbde96b055"
+      }
+    ],
+    "archiveBytes": 3449,
+    "archiveSha256": "35976c160e2c559de79758e88f23a45821af4195e6f98479bebcd43b15511d0f"
+  },
+  "failedStage": "startup_and_migration_failures",
+  "failureLocation": {
+    "line": 150,
+    "column": 5
+  },
+  "cleanedUp": true,
+  "completedAt": "2026-11-02T22:05:47.112Z",
+  "passed": false
+}

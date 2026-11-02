@@ -4,6 +4,11 @@ node_modules
 **/.next
 **/dist
 .env*
+**/.env*
+.backups
+.release-tmp
+.release-dist
+**/*.dump*
 playwright-report
 test-results
 coverage

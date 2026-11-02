@@ -1,0 +1,23 @@
+# Owned by scripts/test.mjs. Random loopback ports; no application volumes.
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: workspace
+      POSTGRES_PASSWORD: isolated-tests-only
+      POSTGRES_DB: workspace_isolated_test
+    ports: ['127.0.0.1::5432']
+    tmpfs: ['/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U workspace -d workspace_isolated_test']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  redis:
+    image: redis:8-alpine
+    ports: ['127.0.0.1::6379']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 2s
+      timeout: 3s
+      retries: 30

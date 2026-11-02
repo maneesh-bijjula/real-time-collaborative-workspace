@@ -34,10 +34,10 @@ export async function createApplication(
   pool.on('error', () => telemetry.log('dependency_failed', 'postgres'));
   try {
     await migrate(pool);
-  } catch {
+  } catch (error) {
     await pool.end();
     telemetry.close();
-    throw new Error('Database initialization failed');
+    throw error;
   }
   const store = new DocumentStore(pool);
   const persistence = new DurableDatabase(store, telemetry);
@@ -274,7 +274,19 @@ export async function createApplication(
     persistence,
     async listen(): Promise<number> {
       await redisExtension.pub.ping();
-      await collaborationServer.listen();
+      // The pinned upstream listen promise handles onListen-hook failures but
+      // not HTTP bind errors. Contain those before Node treats them as uncaught.
+      await new Promise<void>((resolve, reject) => {
+        const failed = () => {
+          server.off('error', failed);
+          reject(new Error('Collaboration listener failed'));
+        };
+        server.once('error', failed);
+        void collaborationServer.listen().then(() => {
+          server.off('error', failed);
+          resolve();
+        }, failed);
+      });
       const address = server.address();
       if (!address || typeof address === 'string') throw new Error('Server has no TCP address');
       await readiness.check();
