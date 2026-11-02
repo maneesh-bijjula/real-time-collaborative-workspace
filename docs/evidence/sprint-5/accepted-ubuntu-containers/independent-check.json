@@ -1,0 +1,50 @@
+{
+  "scope": "Independent recomputation of raw operation/sample coverage, membership, source scheduling and latency percentiles. State, presence, connections and committed-save correctness are checked by the versioned harness; latency tuples alone cannot independently reconstruct them.",
+  "verifierSha256": "49091cf645b62c0821d1e974d8e788020d8247c126ef5c578b03a15f63bc32bb",
+  "measuredCommit": "e9283a92be298cef425164fa706056460dd3a009",
+  "sourceSha256": "1c14f5c12d5acb2e8aa33d2991902bd3af286345748231ae60e6929febec57cb",
+  "loads": [
+    {
+      "name": "shared-richtext-v1-1",
+      "operations": 12000,
+      "samples": 588000,
+      "p95Ms": 67.25235500000417,
+      "maximumSourceLagMs": 252.35314700001618
+    },
+    {
+      "name": "shared-richtext-v1-2",
+      "operations": 12000,
+      "samples": 588000,
+      "p95Ms": 57.84201600000961,
+      "maximumSourceLagMs": 50.193490999983624
+    },
+    {
+      "name": "shared-richtext-v1-3",
+      "operations": 12000,
+      "samples": 588000,
+      "p95Ms": 58.13329299999168,
+      "maximumSourceLagMs": 67.45601900003385
+    },
+    {
+      "name": "five-documents-v1-1",
+      "operations": 3000,
+      "samples": 27000,
+      "p95Ms": 24.20635599992238,
+      "maximumSourceLagMs": 8.254010000033304
+    },
+    {
+      "name": "large-richtext-v1-1",
+      "operations": 3000,
+      "samples": 147000,
+      "p95Ms": 27.742515000049025,
+      "maximumSourceLagMs": 15.530621999991126
+    }
+  ],
+  "reconnect": {
+    "trials": 30,
+    "p95Ms": 155.60392899997532,
+    "maxMs": 177.59676300000865
+  },
+  "primarySamples": 1764000,
+  "passed": true
+}

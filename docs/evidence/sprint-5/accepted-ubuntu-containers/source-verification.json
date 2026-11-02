@@ -1,0 +1,23 @@
+{
+  "measuredCommit": "e9283a92be298cef425164fa706056460dd3a009",
+  "sourceSha256": "1c14f5c12d5acb2e8aa33d2991902bd3af286345748231ae60e6929febec57cb",
+  "measuredInputsMatchDeliveryTree": true,
+  "verifiedInputFiles": 39,
+  "unchangedBenchmarkFilesFromSprint4": [
+    "benchmarks/analysis.ts",
+    "benchmarks/clients.ts",
+    "benchmarks/collector.ts",
+    "benchmarks/diagnostics.ts",
+    "benchmarks/load-worker.ts",
+    "benchmarks/load.ts",
+    "benchmarks/native-server.ts",
+    "benchmarks/reconnect.ts",
+    "benchmarks/run.ts",
+    "benchmarks/stats.ts",
+    "benchmarks/summarize.ts",
+    "benchmarks/worker-load.ts",
+    "benchmarks/workloads.ts"
+  ],
+  "benchmarkRuntimeChange": "Adds .dockerignore to measured-input fingerprints. Compose passes the source revision label. Workload, thresholds, correctness, scheduling and missing-sample checks are unchanged.",
+  "scope": "Every recorded measured input matches the delivery tree. Closure documentation/evidence and Git archive-ignore rules are outside these measured inputs. Each image ID and environment is recorded separately; no image identity or isolated performance comparison with earlier campaigns is claimed."
+}

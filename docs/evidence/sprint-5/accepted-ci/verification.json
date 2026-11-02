@@ -1,0 +1,27 @@
+{
+  "sourceCommit": "e9283a92be298cef425164fa706056460dd3a009",
+  "workflow": "https://github.com/maneesh-bijjula/real-time-collaborative-workspace/actions/runs/41537655871",
+  "conclusion": "success",
+  "tests": {
+    "unit": 98,
+    "operations": 6,
+    "integration": 84,
+    "nativeProductionBrowser": {
+      "passed": 10,
+      "containerOnlySkipped": 2
+    },
+    "packagedBrowser": 12,
+    "packagedFault": 2,
+    "releaseRecoveryChecks": 9
+  },
+  "otherChecks": [
+    "types",
+    "production dependency audit",
+    "production builds",
+    "50-client correctness/controller isolation smoke",
+    "strict image/source match",
+    "Prometheus config/rules/fixtures",
+    "production proxy syntax"
+  ],
+  "scope": "Clean-source regular CI evidence. Browser smoke and functional recovery do not establish capacity, public deployment, or production RPO/RTO. Private database archives are excluded."
+}

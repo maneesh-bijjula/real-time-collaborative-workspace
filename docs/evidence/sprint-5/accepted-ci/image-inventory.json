@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-02T22:35:28.557Z",
+  "project": "commonplace-verify",
+  "source": {
+    "commit": "e9283a92be298cef425164fa706056460dd3a009",
+    "dirty": "",
+    "lockfileSha256": "177628848125e7d614b1b39d1310bf97ead070ef03f4f7ce39eb11a6cc9f744a"
+  },
+  "allApplicationImagesMatchCleanSource": true,
+  "migrations": [
+    {
+      "name": "001_documents.sql",
+      "checksum": "727e2b3eb8e3146b3d604ead429d42603e9fd0bfa2ee24f74aeff6cbde96b055"
+    }
+  ],
+  "services": [
+    {
+      "service": "gateway",
+      "imageId": "sha256:88f52f3d58a505b7e1ad96ca6969478517bcccb58418e75a54223271a64da7df",
+      "revision": null,
+      "running": true
+    },
+    {
+      "service": "postgres",
+      "imageId": "sha256:ab20e934b27ba3ff927c1b4c9ff8cf6c32f315f743efe68dd3441182a87fb085",
+      "revision": null,
+      "running": true
+    },
+    {
+      "service": "redis",
+      "imageId": "sha256:9722accf3e8eeaeb7cd74a86256d6a41b83deb44d508c2988c8e5776bfdb7694",
+      "revision": null,
+      "running": true
+    },
+    {
+      "service": "server",
+      "imageId": "sha256:c1abcb4bf072aa73419a065a6577a18730567774c9512dce8596fe2bd355d6cb",
+      "revision": "e9283a92be298cef425164fa706056460dd3a009",
+      "running": true
+    },
+    {
+      "service": "server2",
+      "imageId": "sha256:c1abcb4bf072aa73419a065a6577a18730567774c9512dce8596fe2bd355d6cb",
+      "revision": "e9283a92be298cef425164fa706056460dd3a009",
+      "running": true
+    },
+    {
+      "service": "server3",
+      "imageId": "sha256:c1abcb4bf072aa73419a065a6577a18730567774c9512dce8596fe2bd355d6cb",
+      "revision": "e9283a92be298cef425164fa706056460dd3a009",
+      "running": true
+    },
+    {
+      "service": "server4",
+      "imageId": "sha256:c1abcb4bf072aa73419a065a6577a18730567774c9512dce8596fe2bd355d6cb",
+      "revision": "e9283a92be298cef425164fa706056460dd3a009",
+      "running": true
+    },
+    {
+      "service": "web",
+      "imageId": "sha256:0239ba2194356b120a0d243437bdd1b244ddf58f1ff5a3d923e15a628c7148eb",
+      "revision": "e9283a92be298cef425164fa706056460dd3a009",
+      "running": true
+    }
+  ],
+  "images": [
+    {
+      "id": "sha256:88f52f3d58a505b7e1ad96ca6969478517bcccb58418e75a54223271a64da7df",
+      "repoDigests": [
+        "nginx@sha256:0e52bd054126cdc040b1276c0af347aeb02a41b9cfe305d6094767ac30e97949"
+      ],
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "id": "sha256:ab20e934b27ba3ff927c1b4c9ff8cf6c32f315f743efe68dd3441182a87fb085",
+      "repoDigests": [
+        "postgres@sha256:266d3c257594e195b309ae9d1805e54c788f1d7b375f56bf6c367aac6c917e7b"
+      ],
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "id": "sha256:9722accf3e8eeaeb7cd74a86256d6a41b83deb44d508c2988c8e5776bfdb7694",
+      "repoDigests": [
+        "redis@sha256:21090af93f8324db2f0f0f4f38a7c60369d47d917e000c3423d89d2ae2883537"
+      ],
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "id": "sha256:c1abcb4bf072aa73419a065a6577a18730567774c9512dce8596fe2bd355d6cb",
+      "repoDigests": [],
+      "architecture": "amd64",
+      "os": "linux"
+    },
+    {
+      "id": "sha256:0239ba2194356b120a0d243437bdd1b244ddf58f1ff5a3d923e15a628c7148eb",
+      "repoDigests": [],
+      "architecture": "amd64",
+      "os": "linux"
+    }
+  ],
+  "scope": "Read-only image/source inventory. It does not certify external TLS, secrets, backup policy or deployment health; use the release and recovery checks."
+}

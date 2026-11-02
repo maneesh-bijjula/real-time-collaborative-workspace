@@ -9,6 +9,8 @@ dist/
 playwright-report/
 test-results/
 .backups/
+*.dump
+*.dump.partial
 .release-tmp/
 .release-dist/
 coverage/

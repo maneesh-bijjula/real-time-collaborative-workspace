@@ -1,0 +1,15 @@
+{
+  "id": 13184679599,
+  "name": "browser-test-reports",
+  "size_in_bytes": 383489,
+  "digest": "sha256:12b937f66c7e02a4ec414746b2082e75f23c248c7d2b257e5b2c3df9ea87d406",
+  "created_at": "2026-11-02T22:35:34Z",
+  "expires_at": "2027-01-31T22:29:10Z",
+  "workflow_run": {
+    "id": 41537655871,
+    "repository_id": 1424919596,
+    "head_repository_id": 1424919596,
+    "head_branch": "main",
+    "head_sha": "e9283a92be298cef425164fa706056460dd3a009"
+  }
+}

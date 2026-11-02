@@ -1,0 +1,15 @@
+{
+  "id": 13185129150,
+  "name": "benchmark-results",
+  "size_in_bytes": 21259708,
+  "digest": "sha256:21f230daeeb46c0f4b30ab96fdf4928db46b75c7f5eba606fb5208f1eda337eb",
+  "created_at": "2026-11-02T22:43:01Z",
+  "expires_at": "2027-01-31T22:29:42Z",
+  "workflow_run": {
+    "id": 41537726458,
+    "repository_id": 1424919596,
+    "head_repository_id": 1424919596,
+    "head_branch": "main",
+    "head_sha": "e9283a92be298cef425164fa706056460dd3a009"
+  }
+}
