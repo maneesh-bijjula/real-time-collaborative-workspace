@@ -9,6 +9,7 @@ import { createWriteStream } from 'node:fs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { resolve } from 'node:path';
+import { trace } from './diagnostics.js';
 
 const exec = promisify(execFile);
 export const root = process.cwd();
@@ -32,8 +33,21 @@ export async function keepAwake() {
 }
 const operatorToken = 'benchmark-disposable-metrics-only-0123456789';
 export async function command(file: string, args: string[], timeout = 180000): Promise<string> {
-  const result = await exec(file, args, { cwd: root, timeout, maxBuffer: 16 * 1024 * 1024 });
-  return result.stdout.trim();
+  const atMs = performance.now();
+  const pending = exec(file, args, { cwd: root, timeout, maxBuffer: 16 * 1024 * 1024 });
+  const launchMs = performance.now() - atMs;
+  try {
+    return (await pending).stdout.trim();
+  } finally {
+    // Record command category only, never arguments containing configuration.
+    trace({
+      type: 'command',
+      command: file + ':' + args[0],
+      atMs,
+      launchMs,
+      elapsedMs: performance.now() - atMs,
+    });
+  }
 }
 export async function sleep(ms: number) {
   if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms));

@@ -1,10 +1,19 @@
 import { mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
+import { Session } from 'node:inspector';
 import { analyze } from './analysis.js';
 import { load } from './load.js';
 import { reconnect as runReconnect } from './reconnect.js';
-import { Deployment, json, keepAwake, outputDirectory, revision, root } from './runtime.js';
+import {
+  Deployment,
+  gzipLines,
+  json,
+  keepAwake,
+  outputDirectory,
+  revision,
+  root,
+} from './runtime.js';
 import {
   primary,
   characterizations,
@@ -21,8 +30,8 @@ const { values } = parseArgs({
     runtime: { type: 'string', default: 'containers' },
   },
 });
-if (!['smoke', 'full'].includes(values.suite!))
-  throw new Error('Use --suite smoke or --suite full');
+if (!['smoke', 'full', 'diagnostic'].includes(values.suite!))
+  throw new Error('Use --suite smoke, full or diagnostic');
 const suite = values.suite!;
 if (!['containers', 'native'].includes(values.runtime!))
   throw new Error('Use --runtime containers or native');
@@ -39,14 +48,16 @@ const manifest: Record<string, unknown> = {
   startedAt: new Date().toISOString(),
   source,
   workloadVersion: 1,
-  executionVersion: 2,
+  executionVersion: 3,
   runtime: values.runtime,
   deploymentProject: deployment.project,
   idleSleepInhibited: await keepAwake(),
   profiles:
     suite === 'full'
       ? [primary, ...characterizations, reconnect, backlog]
-      : [smokeLoad, smokeReconnect],
+      : suite === 'diagnostic'
+        ? [{ ...primary, repeats: 1 }]
+        : [smokeLoad, smokeReconnect],
   schema: {
     operations:
       'JSONL objects: mutation index, writer/node/document indices, sequence/kind, scheduled/started milliseconds from run start, Yjs update bytes',
@@ -69,7 +80,21 @@ try {
   await deployment.start();
   manifest.environment = await deployment.environment();
   await json(`${output}/manifest.json`, manifest);
-  for (const profile of suite === 'full' ? [primary, ...characterizations] : [smokeLoad]) {
+  const profiler = suite === 'diagnostic' ? new Session() : undefined;
+  profiler?.connect();
+  if (profiler) {
+    await new Promise<void>((resolve, reject) =>
+      profiler.post('Profiler.enable', (e) => (e ? reject(e) : resolve())),
+    );
+    await new Promise<void>((resolve, reject) =>
+      profiler.post('Profiler.start', (e) => (e ? reject(e) : resolve())),
+    );
+  }
+  for (const profile of suite === 'full'
+    ? [primary, ...characterizations]
+    : suite === 'diagnostic'
+      ? [{ ...primary, repeats: 1 }]
+      : [smokeLoad]) {
     for (let repeat = 1; repeat <= profile.repeats; repeat++) {
       console.log(`Running ${profile.id} ${repeat}/${profile.repeats}`);
       stage = `${profile.id}-${repeat}`;
@@ -91,7 +116,18 @@ try {
       });
     }
   }
-  for (const profile of suite === 'full' ? [reconnect, backlog] : [smokeReconnect]) {
+  if (profiler) {
+    const profile = await new Promise<unknown>((resolve, reject) =>
+      profiler.post('Profiler.stop', (e, value) => (e ? reject(e) : resolve(value.profile))),
+    );
+    profiler.disconnect();
+    await gzipLines(`${output}/controller.cpuprofile.jsonl.gz`, [profile]);
+  }
+  for (const profile of suite === 'full'
+    ? [reconnect, backlog]
+    : suite === 'diagnostic'
+      ? []
+      : [smokeReconnect]) {
     stage = profile.id;
     const result = await runReconnect(deployment, profile, output);
     results.push(result);

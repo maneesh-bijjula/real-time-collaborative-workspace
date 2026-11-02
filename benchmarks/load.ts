@@ -5,6 +5,7 @@ import { Collector } from './collector.js';
 import { Deployment, gzipLines, json, sleep, until } from './runtime.js';
 import { mutate, nodeFor, type LoadProfile, type Mutation } from './workloads.js';
 import { distribution, latencyAcceptance } from './stats.js';
+import { trace } from './diagnostics.js';
 
 export type Operation = {
   index: number;
@@ -76,6 +77,7 @@ export async function load(
     }
     collector.start();
     began = performance.now();
+    trace({ type: 'traffic_start', atMs: began });
     const period = 1000 / profile.rate;
     const warmCount = warmRounds * profile.writers;
     const total = (warmRounds + measuredRounds) * profile.writers;
@@ -85,6 +87,12 @@ export async function load(
         Math.floor(i / profile.writers) * period + (writer * period) / profile.writers;
       await sleep(began + scheduledMs - performance.now());
       if (performance.now() - began - scheduledMs >= 500) {
+        trace({
+          type: 'source_interruption',
+          atMs: performance.now(),
+          scheduledAtMs: began + scheduledMs,
+          operation: i,
+        });
         errors.push('offered_load_interrupted');
         break; // Record missing planned work; never replay a post-sleep flood.
       }
@@ -115,6 +123,7 @@ export async function load(
         );
     }
     actualWindowMs = Math.max(0, performance.now() - began - profile.warmupSeconds * 1000);
+    trace({ type: 'traffic_end', atMs: performance.now(), operations: operations.length });
     try {
       await until(() => observed === expected, 10000);
     } catch {

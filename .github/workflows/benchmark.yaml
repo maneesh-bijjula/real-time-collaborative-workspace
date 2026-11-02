@@ -7,6 +7,11 @@ on:
         type: choice
         options: [containers, native]
         default: containers
+      suite:
+        description: Full acceptance campaign or one instrumented primary repeat (diagnostic only)
+        type: choice
+        options: [full, diagnostic]
+        default: full
 permissions:
   contents: read
 jobs:
@@ -20,11 +25,12 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: npm run benchmark:full -- --output test-results/benchmarks/full --runtime "$BENCHMARK_RUNTIME"
+      - run: npm run benchmark:build && node .benchmark-dist/benchmarks/run.js --suite "$BENCHMARK_SUITE" --output test-results/benchmarks/full --runtime "$BENCHMARK_RUNTIME"
         env:
           BENCHMARK_RUNTIME: ${{ inputs.runtime }}
+          BENCHMARK_SUITE: ${{ inputs.suite }}
       - name: Recompute from raw samples and enforce primary targets
-        if: always()
+        if: always() && inputs.suite != 'diagnostic'
         run: npm run benchmark:summarize -- test-results/benchmarks/full --check
       - uses: actions/upload-artifact@v7.0.2
         if: always()

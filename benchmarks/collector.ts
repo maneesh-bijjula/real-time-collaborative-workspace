@@ -1,5 +1,6 @@
 import { performance, monitorEventLoopDelay } from 'node:perf_hooks';
 import { Deployment, sleep } from './runtime.js';
+import { Diagnostics } from './diagnostics.js';
 
 export class Collector {
   private stopped = false;
@@ -7,13 +8,22 @@ export class Collector {
   private readonly lag = monitorEventLoopDelay({ resolution: 10 });
   private readonly cpu = process.cpuUsage();
   private tasks: Promise<void>[] = [];
+  private readonly diagnostics = new Diagnostics();
   readonly samples: unknown[] = [];
   constructor(private readonly deployment: Deployment) {}
   start() {
     this.lag.enable();
+    this.diagnostics.start();
     const loop = async (type: 'metrics' | 'resources', period: number) => {
       while (!this.stopped) {
         const at = performance.now() - this.started;
+        if (type === 'metrics')
+          this.diagnostics.record({
+            type: 'controller',
+            atMs: performance.now(),
+            cpuMicroseconds: process.cpuUsage(),
+            memory: process.memoryUsage(),
+          });
         try {
           this.samples.push({ atMs: at, type, values: await this.deployment[type]() });
         } catch {
@@ -31,6 +41,7 @@ export class Collector {
     this.lag.disable();
     return {
       samples: this.samples,
+      diagnostics: this.diagnostics.stop(),
       controller: {
         cpuMicroseconds: process.cpuUsage(this.cpu),
         elapsedMs: performance.now() - this.started,

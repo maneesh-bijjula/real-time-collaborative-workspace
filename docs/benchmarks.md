@@ -50,6 +50,16 @@ The manifest identifies commit/dirty state, hashes of workload/harness/server/co
 
 The manual **Reproducible benchmark campaign** GitHub workflow selects either runtime, runs the full suite and summary checks, and uploads evidence on failure. Its default remains containers. Shared CI hardware differs from local hardware; each result belongs to its recorded environment. Ordinary-CI smoke uses the container runtime and does not enforce latency thresholds.
 
+For diagnosis before another full campaign, select the workflow's `diagnostic`
+suite or run `npm run benchmark:build` followed by
+`node .benchmark-dist/benchmarks/run.js --suite diagnostic --runtime containers --output test-results/benchmarks/new-diagnostic`.
+This runs one unchanged primary-length load repeat with a controller CPU profile;
+it cannot establish acceptance. Scenario telemetry also includes a bounded
+controller memory/CPU timeline, GC pauses of at least 50 ms, command launch and
+completion durations, and source interruption timestamps on the same monotonic
+clock. Dropped diagnostic entries are counted. Diagnostic instrumentation does
+not relax scheduling, sample coverage, correctness or latency checks.
+
 Normal completion and caught failures remove only the unique `commonplace-bench-*` project, never using `down -v`. A hard-killed controller cannot guarantee cleanup; its manifest records the project. Verify ownership before using `docker compose -p <recorded-project> -f compose.benchmark.yaml down`. Never purge unrelated services or volumes.
 
 ## Interpretation
