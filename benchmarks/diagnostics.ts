@@ -1,4 +1,4 @@
-import { PerformanceObserver, performance } from 'node:perf_hooks';
+import { PerformanceObserver } from 'node:perf_hooks';
 
 // One bounded scenario at a time. Timestamps share performance.now() with the
 // source scheduler; no wall-clock or host/container clock subtraction.
@@ -11,8 +11,7 @@ export class Diagnostics {
   private dropped = 0;
   private readonly observer = new PerformanceObserver((list) => {
     for (const entry of list.getEntries())
-      if (entry.duration >= 50)
-        this.record({ type: 'gc', atMs: entry.startTime, durationMs: entry.duration });
+      this.record({ type: 'gc', atMs: entry.startTime, durationMs: entry.duration });
   });
   start() {
     current = this;

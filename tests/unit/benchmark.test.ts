@@ -1,17 +1,131 @@
 import { describe, it, expect } from 'vitest';
+import { mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { gzipSync } from 'node:zlib';
 import * as Y from 'yjs';
 import { distribution, latencyAcceptance } from '../../benchmarks/stats';
-import { acceptSample } from '../../benchmarks/analysis';
+import {
+  acceptSample,
+  analyze,
+  offeredLoadValid,
+  validateOperation,
+} from '../../benchmarks/analysis';
 import {
   completeStateEqual,
   mutate,
   nodeFor,
   richState,
   seedDocument,
+  smokeLoad,
 } from '../../benchmarks/workloads';
 import type { Operation } from '../../benchmarks/load';
 
 describe('benchmark measurement integrity', () => {
+  it('rejects missing source holes and recipient samples from raw files, and refuses a forged scheduling pass', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'commonplace-raw-check-'));
+    const profile = { ...smokeLoad, writers: 2, warmupSeconds: 1, measureSeconds: 1 };
+    const all: Operation[] = Array.from({ length: 4 }, (_, index) => ({
+      index,
+      writer: index % 2,
+      node: 0,
+      document: 0,
+      sequence: 3 + Math.floor(index / 2),
+      kind: index < 2 ? 'insert' : 'format',
+      scheduledMs: 1000 + index * 250,
+      startedMs: 1000 + index * 250,
+      updateBytes: 42,
+    }));
+    async function fixture(operations: Operation[], sampleIndices: number[], forged = false) {
+      const result = {
+        type: 'load',
+        name: 'fixture',
+        profile,
+        correctness: true,
+        errors: [],
+        actualWindowMs: 1251,
+        actualOperations: operations.length,
+        expectedOperations: 4,
+        expectedSamples: 4,
+        offeredLoadValid: forged || offeredLoadValid(operations, profile, 1251),
+        scheduleLagMs: distribution(
+          operations.map((op) => Math.max(0, op.startedMs - op.scheduledMs)),
+        ),
+        latencyMs: latencyAcceptance(
+          4,
+          sampleIndices.map(() => 1),
+        ),
+      };
+      await writeFile(
+        join(directory, 'manifest.json'),
+        JSON.stringify({ suite: 'smoke', source: { dirty: '' }, cleanedUp: true }),
+      );
+      await writeFile(join(directory, 'results.json'), JSON.stringify({ results: [result] }));
+      await writeFile(
+        join(directory, 'fixture.operations.jsonl.gz'),
+        gzipSync(operations.map((op) => JSON.stringify(op)).join('\n')),
+      );
+      await writeFile(
+        join(directory, 'fixture.samples.jsonl.gz'),
+        gzipSync(sampleIndices.map((i) => JSON.stringify([i, 1 - all[i]!.writer, 1])).join('\n')),
+      );
+      return analyze(directory);
+    }
+    try {
+      expect((await fixture(all, [0, 1, 2, 3])).loads[0]!.passed).toBe(true);
+      const hole = await fixture(
+        all.filter((op) => op.index !== 1),
+        [0, 2, 3],
+      );
+      expect(hole.loads[0]).toMatchObject({
+        completeOperations: false,
+        passed: false,
+        latencyMs: { missing: 1 },
+      });
+      expect((await fixture(all, [0, 1, 2])).loads[0]).toMatchObject({
+        completeOperations: true,
+        passed: false,
+        latencyMs: { missing: 1 },
+      });
+      await expect(
+        fixture(
+          all.map((op) => ({ ...op, startedMs: op.startedMs + 500 })),
+          [0, 1, 2, 3],
+          true,
+        ),
+      ).rejects.toThrow('offered-load summary mismatch');
+    } finally {
+      await rm(directory, { recursive: true });
+    }
+  });
+  it('recomputes offered work and rejects corrupt schedules, actor sequences and 500ms interruptions', () => {
+    const profile = { ...smokeLoad, writers: 2, warmupSeconds: 1, measureSeconds: 1 };
+    const operations: Operation[] = Array.from({ length: 4 }, (_, index) => ({
+      index,
+      writer: index % 2,
+      node: 0,
+      document: 0,
+      sequence: 3 + Math.floor(index / 2),
+      kind: index < 2 ? 'insert' : 'format',
+      scheduledMs: 1000 + index * 250,
+      startedMs: 1000 + index * 250,
+      updateBytes: 42,
+    }));
+    operations.forEach((op, i) => validateOperation(op, i, profile));
+    expect(offeredLoadValid(operations, profile, 751)).toBe(true);
+    expect(offeredLoadValid(operations.slice(1), profile, 751)).toBe(false);
+    expect(offeredLoadValid(operations, profile, 2001)).toBe(false);
+    expect(offeredLoadValid(operations, profile, 749)).toBe(false);
+    for (const change of [
+      { writer: 1 },
+      { sequence: 4 },
+      { scheduledMs: NaN },
+      { scheduledMs: 999 },
+    ])
+      expect(() => validateOperation({ ...operations[0]!, ...change }, 0, profile)).toThrow();
+    const delayed = operations.map((op) => ({ ...op, startedMs: op.startedMs + 500 }));
+    expect(offeredLoadValid(delayed, profile, 1251)).toBe(false);
+  });
   it('uses nearest-rank tails, retains outliers, and fails missing samples or the strict threshold', () => {
     expect(distribution([9, 1, 2, 3, 4, 5, 6, 7, 8, 1000])).toMatchObject({
       count: 10,

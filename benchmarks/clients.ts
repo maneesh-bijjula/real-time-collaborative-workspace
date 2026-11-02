@@ -24,7 +24,8 @@ export type Client = {
   closes: number;
   failures: number;
 };
-type Document = { id: string; token: string; seed: Uint8Array; reference: Y.Doc; actors: number[] };
+export type BenchmarkDocument = { id: string; token: string; seed: Uint8Array; actors: number[] };
+type Document = BenchmarkDocument & { reference: Y.Doc };
 export class Group {
   readonly clients: Client[] = [];
   readonly documents: Document[] = [];
@@ -48,7 +49,7 @@ export class Group {
     });
     provider.setAwarenessField('user', { name: `Editor ${client.index}`, color: '#7856b6' });
   }
-  async create(writers: number, count: number, bytes: number) {
+  async prepare(writers: number, count: number, bytes: number) {
     for (let document = 0; document < count; document++) {
       const response = await fetch(this.endpoints[document % 4] + '/api/documents', {
         method: 'POST',
@@ -66,8 +67,21 @@ export class Group {
         seed: Y.encodeStateAsUpdate(reference),
       });
     }
+  }
+  async create(writers: number, count: number, bytes: number) {
+    await this.prepare(writers, count, bytes);
+    await this.connect(Array.from({ length: writers }, (_, i) => i));
+  }
+  async connect(indices: number[], documents?: BenchmarkDocument[]) {
+    if (documents)
+      for (const document of documents) {
+        const reference = new Y.Doc();
+        Y.applyUpdate(reference, document.seed);
+        this.documents.push({ ...document, reference });
+      }
+    const count = this.documents.length;
     // Seed through the actual application protocol before attaching peers.
-    for (let i = 0; i < writers; i++) {
+    for (const i of indices) {
       const client = {
         index: i,
         node: nodeFor(i),

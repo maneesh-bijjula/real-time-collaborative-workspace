@@ -171,6 +171,49 @@ export async function load(
     ]);
     group.close();
   }
+  return reportLoad(profile, repeat, output, {
+    operations,
+    latencies,
+    initialBytes,
+    finalBytes,
+    completed,
+    durableQuiescenceMs,
+    finalDigest,
+    actualWindowMs,
+    errors,
+  });
+}
+
+export async function reportLoad(
+  profile: LoadProfile,
+  repeat: number,
+  output: string,
+  data: {
+    operations: Operation[];
+    latencies: Float64Array;
+    initialBytes: number[];
+    finalBytes: number[];
+    completed: boolean;
+    durableQuiescenceMs: number | null;
+    finalDigest: string;
+    actualWindowMs: number;
+    errors: string[];
+  },
+) {
+  const {
+    operations,
+    latencies,
+    initialBytes,
+    finalBytes,
+    completed,
+    durableQuiescenceMs,
+    finalDigest,
+    actualWindowMs,
+    errors,
+  } = data;
+  const name = `${profile.id}-${repeat}`;
+  const count = profile.measureSeconds * profile.rate * profile.writers;
+  const expected = count * (profile.writers / profile.documents - 1);
   const samples: number[] = [],
     sameNode: number[] = [],
     crossNode: number[] = [];

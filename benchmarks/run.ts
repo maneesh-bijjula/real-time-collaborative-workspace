@@ -2,8 +2,10 @@ import { mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { Session } from 'node:inspector';
+import { performance } from 'node:perf_hooks';
 import { analyze } from './analysis.js';
 import { load } from './load.js';
+import { workerLoad } from './worker-load.js';
 import { reconnect as runReconnect } from './reconnect.js';
 import {
   Deployment,
@@ -28,11 +30,23 @@ const { values } = parseArgs({
     suite: { type: 'string', default: 'smoke' },
     output: { type: 'string' },
     runtime: { type: 'string', default: 'containers' },
+    clients: { type: 'string', default: 'workers' },
+    'controller-pause-ms': { type: 'string', default: '0' },
   },
 });
 if (!['smoke', 'full', 'diagnostic'].includes(values.suite!))
   throw new Error('Use --suite smoke, full or diagnostic');
 const suite = values.suite!;
+const controllerPauseMs = Number(values['controller-pause-ms']);
+if (
+  !Number.isInteger(controllerPauseMs) ||
+  controllerPauseMs < 0 ||
+  controllerPauseMs > 2000 ||
+  (controllerPauseMs && (suite !== 'smoke' || values.clients !== 'workers'))
+)
+  throw new Error('Controller pause injection is limited to worker correctness smoke (0–2000ms)');
+if (!['inline', 'workers'].includes(values.clients!))
+  throw new Error('Use --clients inline or workers');
 if (!['containers', 'native'].includes(values.runtime!))
   throw new Error('Use --runtime containers or native');
 const path =
@@ -48,7 +62,9 @@ const manifest: Record<string, unknown> = {
   startedAt: new Date().toISOString(),
   source,
   workloadVersion: 1,
-  executionVersion: 3,
+  executionVersion: 4,
+  clientExecution: values.clients,
+  controllerPauseMs,
   runtime: values.runtime,
   deploymentProject: deployment.project,
   idleSleepInhibited: await keepAwake(),
@@ -75,20 +91,23 @@ await json(`${output}/manifest.json`, manifest);
 const results: unknown[] = [];
 let failed = false;
 let stage = 'deployment_start';
+let profiler: Session | undefined;
 try {
   console.log(`Starting ${suite} benchmark; artifacts: ${output}`);
   await deployment.start();
   manifest.environment = await deployment.environment();
   await json(`${output}/manifest.json`, manifest);
-  const profiler = suite === 'diagnostic' ? new Session() : undefined;
+  profiler = suite === 'diagnostic' ? new Session() : undefined;
   profiler?.connect();
   if (profiler) {
+    const session = profiler;
     await new Promise<void>((resolve, reject) =>
-      profiler.post('Profiler.enable', (e) => (e ? reject(e) : resolve())),
+      session.post('Profiler.enable', (e) => (e ? reject(e) : resolve())),
     );
     await new Promise<void>((resolve, reject) =>
-      profiler.post('Profiler.start', (e) => (e ? reject(e) : resolve())),
+      session.post('Profiler.start', (e) => (e ? reject(e) : resolve())),
     );
+    manifest.profileStartedAtMs = performance.now();
   }
   for (const profile of suite === 'full'
     ? [primary, ...characterizations]
@@ -98,7 +117,10 @@ try {
     for (let repeat = 1; repeat <= profile.repeats; repeat++) {
       console.log(`Running ${profile.id} ${repeat}/${profile.repeats}`);
       stage = `${profile.id}-${repeat}`;
-      const result = await load(deployment, profile, repeat, output);
+      const result =
+        values.clients === 'inline'
+          ? await load(deployment, profile, repeat, output)
+          : await workerLoad(deployment, profile, repeat, output, controllerPauseMs);
       results.push(result);
       if (profile.primary && !result.passed) failed = true;
       if (
@@ -117,10 +139,12 @@ try {
     }
   }
   if (profiler) {
+    const session = profiler;
     const profile = await new Promise<unknown>((resolve, reject) =>
-      profiler.post('Profiler.stop', (e, value) => (e ? reject(e) : resolve(value.profile))),
+      session.post('Profiler.stop', (e, value) => (e ? reject(e) : resolve(value.profile))),
     );
     profiler.disconnect();
+    profiler = undefined;
     await gzipLines(`${output}/controller.cpuprofile.jsonl.gz`, [profile]);
   }
   for (const profile of suite === 'full'
@@ -147,6 +171,7 @@ try {
   manifest.failedStage = stage;
   console.error(manifest.fatal);
 } finally {
+  profiler?.disconnect();
   try {
     await deployment.stop();
     manifest.cleanedUp = true;

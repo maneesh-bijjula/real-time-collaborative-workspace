@@ -1,0 +1,44 @@
+{
+  "baselineSource": "64629ec",
+  "workflow": "https://github.com/maneesh-bijjula/real-time-collaborative-workspace/actions/runs/41510389829",
+  "scope": "One instrumented diagnostic repeat; failed; cannot establish acceptance. No server or workload changes from delivery commit.",
+  "interruption": {
+    "type": "source_interruption",
+    "atMs": 178073.143255,
+    "scheduledAtMs": 177316.587597,
+    "operation": 13670
+  },
+  "heapBefore": {
+    "type": "controller",
+    "atMs": 176957.181191,
+    "cpuMicroseconds": {
+      "user": 63053490,
+      "system": 6277838
+    },
+    "memory": {
+      "rss": 1372745728,
+      "heapTotal": 1251229696,
+      "heapUsed": 1116053040,
+      "external": 12873157,
+      "arrayBuffers": 8720035
+    }
+  },
+  "heapAfter": {
+    "type": "controller",
+    "atMs": 178097.232629,
+    "cpuMicroseconds": {
+      "user": 64866040,
+      "system": 6301963
+    },
+    "memory": {
+      "rss": 1386639360,
+      "heapTotal": 1173372928,
+      "heapUsed": 405934520,
+      "external": 9438298,
+      "arrayBuffers": 5285176
+    }
+  },
+  "largestCommandLaunchMs": 18.351710000017192,
+  "interpretation": "Controller GC pressure is implicated by the heap drop and sampled CPU profile around the scheduling interruption. Command launch is not the dominant pause in this diagnostic. This does not establish that all previous failures or remaining server latency have the same cause.",
+  "gcTraceLimitation": "No perf_hooks GC entries at or above the original 50ms trace filter were emitted; no single-GC-duration claim is made. The subsequent trace retains all GC entries."
+}

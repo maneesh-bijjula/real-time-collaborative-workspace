@@ -3,8 +3,45 @@ import { createGunzip } from 'node:zlib';
 import { createInterface } from 'node:readline';
 import { readFile } from 'node:fs/promises';
 import { distribution, latencyAcceptance } from './stats.js';
-import { nodeFor, primary, reconnect } from './workloads.js';
+import { nodeFor, primary, reconnect, type LoadProfile } from './workloads.js';
 import type { Operation } from './load.js';
+
+export function validateOperation(op: Operation, index: number, profile: LoadProfile) {
+  const writer = index % profile.writers;
+  const round = Math.floor(index / profile.writers) + profile.warmupSeconds * profile.rate;
+  const sequence = round + 1;
+  const scheduled =
+    round * (1000 / profile.rate) + (writer * (1000 / profile.rate)) / profile.writers;
+  if (
+    op.index !== index ||
+    index < 0 ||
+    index >= profile.measureSeconds * profile.rate * profile.writers ||
+    op.writer !== writer ||
+    op.node !== nodeFor(writer) ||
+    op.document !== writer % profile.documents ||
+    op.sequence !== sequence ||
+    op.kind !== (sequence % 5 === 0 ? 'delete' : sequence % 5 === 4 ? 'format' : 'insert') ||
+    op.scheduledMs !== scheduled ||
+    !Number.isFinite(op.startedMs) ||
+    !Number.isInteger(op.updateBytes) ||
+    op.updateBytes <= 0
+  )
+    throw new Error('Invalid raw operation');
+}
+
+export function offeredLoadValid(operations: Operation[], profile: LoadProfile, windowMs: number) {
+  return (
+    operations.length === profile.measureSeconds * profile.rate * profile.writers &&
+    Number.isFinite(windowMs) &&
+    windowMs >= 0 &&
+    windowMs <= profile.measureSeconds * 1000 + 1000 &&
+    operations.every(
+      (op, index) =>
+        op.startedMs - op.scheduledMs < 500 &&
+        op.startedMs - profile.warmupSeconds * 1000 <= windowMs,
+    )
+  );
+}
 
 export async function* lines(path: string) {
   const source = createReadStream(path);
@@ -58,29 +95,23 @@ export async function analyze(directory: string) {
   for (const result of saved.results) {
     if (result.type === 'load') {
       const operations: Operation[] = [];
+      const byIndex = new Map<number, Operation>();
       for await (const op of lines(`${directory}/${result.name}.operations.jsonl.gz`)) {
-        if (
-          op.index !== operations.length ||
-          !Number.isInteger(op.writer) ||
-          op.writer < 0 ||
-          op.writer >= result.profile.writers ||
-          op.node !== nodeFor(op.writer) ||
-          op.document !== op.writer % result.profile.documents ||
-          !Number.isFinite(op.startedMs) ||
-          op.updateBytes <= 0
-        )
-          throw new Error('Invalid raw operation');
+        if (!Number.isInteger(op.index) || op.index <= (operations.at(-1)?.index ?? -1))
+          throw new Error('Invalid raw operation order');
+        validateOperation(op, op.index, result.profile);
         operations.push(op);
+        byIndex.set(op.index, op);
       }
       const values: number[] = [],
         same: number[] = [],
         cross: number[] = [];
       const pairs = Array.from({ length: 16 }, () => [] as number[]);
-      const seen = new Uint8Array(operations.length * result.profile.writers);
+      const seen = new Uint8Array(result.expectedOperations * result.profile.writers);
       for await (const [index, recipient, value] of lines(
         `${directory}/${result.name}.samples.jsonl.gz`,
       )) {
-        const op = operations[index];
+        const op = byIndex.get(index);
         acceptSample(op, recipient, value, result.profile.writers, result.profile.documents, seen);
         values.push(value);
         (op!.node === nodeFor(recipient) ? same : cross).push(value);
@@ -93,6 +124,16 @@ export async function analyze(directory: string) {
       const latencyMs = latencyAcceptance(expectedSamples, values);
       if (JSON.stringify(latencyMs) !== JSON.stringify(result.latencyMs))
         throw new Error('Saved/raw latency summary mismatch');
+      const offered = offeredLoadValid(operations, result.profile, result.actualWindowMs);
+      const lag = distribution(operations.map((op) => Math.max(0, op.startedMs - op.scheduledMs)));
+      if (
+        offered !== result.offeredLoadValid ||
+        JSON.stringify(lag) !== JSON.stringify(result.scheduleLagMs) ||
+        result.actualOperations !== operations.length ||
+        result.expectedOperations !== expectedOperations ||
+        result.expectedSamples !== expectedSamples
+      )
+        throw new Error('Saved/raw offered-load summary mismatch');
       const completeOperations =
         operations.length === expectedOperations &&
         Array.from(
@@ -114,13 +155,13 @@ export async function analyze(directory: string) {
           ...distribution(values),
         })),
         correctness: result.correctness,
-        offeredLoadValid: result.offeredLoadValid,
+        offeredLoadValid: offered,
         errors: result.errors,
         passed:
           completeOperations &&
           latencyMs.passed &&
           result.correctness &&
-          result.offeredLoadValid &&
+          offered &&
           result.errors.length === 0,
       };
       loads.push(measured);

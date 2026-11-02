@@ -55,6 +55,45 @@ Local verification passed **96 unit tests**, **76 integration tests**, type chec
 
 ## Failed campaigns and limits
 
+### Docker follow-up investigation (November 2)
+
+The original Docker failures remain failures. A new [instrumented single-repeat
+diagnostic](https://github.com/maneesh-bijjula/real-time-collaborative-workspace/actions/runs/41510389829)
+on `64629ec` reproduced interrupted source scheduling with 10,670/12,000 measured
+operations and 65,170 missing peer samples. Observed p95 was 66.00 ms; that is not
+acceptance. [Retained raw data and CPU profile](sprint-4/docker-investigation/inline-diagnostic-64629ec/)
+and [diagnosis](sprint-4/docker-investigation/diagnosis.json) preserve this result.
+Application and workload inputs were unchanged from the Sprint 4 delivery.
+
+The controller's adjacent heap observations dropped from 1,116,053,040 to
+405,934,520 bytes across the interruption. Its sampled CPU profile shows sustained
+GC activity around that interval; the event-loop maximum was 1,042.81 ms. Command
+launches peaked at 18.35 ms. This implicates controller GC pressure in this
+reproduction, without assigning every historical failure or remaining latency
+cost to the same cause. The original perf-hooks trace emitted no GC event above
+its 50 ms filter, so no single-GC-duration claim is made.
+
+Execution version 4 moves the unchanged 50 load replicas into four worker
+isolates, retaining independent documents/providers, save checks, presence and
+source schedules. A verified common monotonic time origin permits timestamps at
+source mutation and recipient application before IPC. Raw arrivals join source
+records afterwards. Independent rich-text replay runs in each worker, full
+deletion-inclusive snapshots are compared across all workers, and every peer
+still requires database confirmation. The original inline load path remains
+available for diagnosis; reconnect execution is unchanged. Application server
+code, limits, workload v1, missing-sample checks and thresholds are unchanged.
+
+Local packaged correctness smoke passed. A second smoke injected an 802 ms
+coordinator pause while all 300 measured operations and 14,700 peer samples
+completed; maximum propagation was 83.49 ms, showing that delayed IPC did not
+become the sample timestamp. CI now runs this isolation regression. The raw
+checker additionally recomputes scheduling and verifies planned source sequences;
+unit fixtures reject source holes, missing recipient samples and forged saved
+scheduling flags. All 98 unit tests and type checks passed; all 76 existing
+integration tests passed before the harness-only changes. These are functional
+and diagnostic results, not a new Docker capacity claim. A full clean-source
+campaign is still required.
+
 The same-source [Ubuntu container campaign](https://github.com/maneesh-bijjula/real-time-collaborative-workspace/actions/runs/40983865196) failed all three primary repeats because source scheduling interrupted offered traffic. Observed p95 values were 70.59/46.63/62.29 ms, but 87,220/234,563/113,582 planned peer samples were missing, so those percentiles cannot establish the target. [Retained summaries and scope](sprint-4/current-failed-campaigns/context.json) also include failed local native/container campaigns. The local native first repeat had 73,696 missing planned samples; its two later passing repeats are not accepted separately. The local container run was instrumented only after its first primary failure; subsequent timing is diagnostic evidence.
 
 Earlier revisions failed too. Retained stages include [baseline](sprint-4/baseline/), [staging](sprint-4/staging-only/), [delta publication](sprint-4/delta-only/), [byte-verified decoding](sprint-4/byte-cache/), [size counting](sprint-4/size-counter/), [timeout/native comparison](sprint-4/native-local-cfff-quiet/), [save-check debounce](sprint-4/save-check-debounce/context.json) and [pre-cache Ubuntu batching](sprint-4/ubuntu-batching-76bb/context.json). CPU captures and counter diagnostics are labeled diagnostic, not acceptance. Failures and interrupted work remain failures rather than being removed from denominators.
