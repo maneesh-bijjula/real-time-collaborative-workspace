@@ -23,3 +23,9 @@ The [Sprint 4 follow-up report](sprint-4.md#docker-follow-up-investigation-novem
 also retains failed campaigns, the controller-GC diagnosis and the artifact-retention
 incident. Failed or incomplete repeats remain failures. The original resume and
 other projects are not modified as part of this implementation.
+
+The [November 2 feature cross-check](feature-audit-2026-11-02.md) reviews the full
+agreed scope and extends browser coverage for manual sharing, all formatting
+controls, collaborative undo/redo, profile updates, browser-storage failures,
+existing binary caches and concurrent offline-tab compaction. It distinguishes
+the two repaired failure paths from intentionally excluded product features.

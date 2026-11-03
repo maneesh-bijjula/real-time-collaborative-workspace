@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -42,6 +42,8 @@ export function DocumentWorkspace({ id }: { id: string }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [renaming, setRenaming] = useState(false);
   const [draftTitle, setDraftTitle] = useState('');
+  const [manualShare, setManualShare] = useState('');
+  const shareDialog = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     let alive = true;
@@ -87,17 +89,24 @@ export function DocumentWorkspace({ id }: { id: string }) {
     return () => clearTimeout(timer);
   }, [notice]);
 
+  useEffect(() => {
+    if (manualShare) shareDialog.current?.showModal();
+    else shareDialog.current?.close();
+  }, [manualShare]);
+
   function updateProfile(next: Profile) {
     setProfile(next);
     saveProfile(normalizeProfile(next));
   }
   async function share() {
     if (!document) return;
+    const link = window.location.origin + sharePath(document);
     try {
-      await navigator.clipboard.writeText(window.location.origin + sharePath(document));
+      await navigator.clipboard.writeText(link);
       setNotice('Share link copied. Anyone with this link can edit.');
     } catch {
-      setNotice('Copy the complete address from your browser to share this document.');
+      setNotice('');
+      setManualShare(link);
     }
   }
   async function rename(event: React.FormEvent) {
@@ -236,6 +245,29 @@ export function DocumentWorkspace({ id }: { id: string }) {
         </section>
       )}
       <CollaborativeEditor document={document} profile={profile} onNotice={setNotice} />
+      <dialog
+        ref={shareDialog}
+        className="create-dialog"
+        aria-labelledby="manual-share-heading"
+        onCancel={() => setManualShare('')}
+        onClick={(event) => {
+          if (event.target === shareDialog.current) setManualShare('');
+        }}
+      >
+        <h2 id="manual-share-heading">Share document</h2>
+        <p role="status">Copy the private share link below. Anyone with this link can edit.</p>
+        <label htmlFor="manual-share-link">Private share link</label>
+        <input
+          id="manual-share-link"
+          value={manualShare}
+          readOnly
+          autoFocus
+          onFocus={(event) => event.currentTarget.select()}
+        />
+        <button className="button button-primary" onClick={() => setManualShare('')}>
+          Done
+        </button>
+      </dialog>
       {notice && (
         <div className="toast" role="status">
           <Check size={17} />

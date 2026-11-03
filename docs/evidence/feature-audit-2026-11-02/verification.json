@@ -1,0 +1,48 @@
+{
+  "scope": "Local working-tree diagnostics and source hashes, followed by exact pushed-commit CI. This file is not a clean-source CI certificate. No private capability tokens, browser traces or database archives are included.",
+  "baselineCommit": "bc6aa35806e2d4932a6e567486d10ee9090615db",
+  "sourceDirty": true,
+  "changedExecutableInputs": {
+    "apps/web/components/document-workspace.tsx": "79c0b59a346536c22ad1f7aeb20aab17ba0856b72b0b89f22bdd055da0e63c40",
+    "apps/web/components/editor.tsx": "71b42b19fa9c2f5dd193ccc2bff105a2899600e6628de7edc0917924d9ef2861",
+    "apps/web/lib/offline-store.ts": "6a2d130cd0f85421c4120d8540c16d91d79750751f244b53314578838317faad",
+    "tests/e2e/feature-audit.spec.ts": "ad51769c56010ac9e056f2479838135f7d28e45a4a470e28f6e28e42e91f6e1b"
+  },
+  "host": {
+    "os": "Darwin",
+    "architecture": "arm64",
+    "node": "v26.3.0"
+  },
+  "tests": {
+    "unit": 98,
+    "operations": 6,
+    "nativeBrowser": {
+      "passed": 17,
+      "containerOnlySkipped": 2
+    },
+    "packagedBrowser": {
+      "passed": 19,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "packagedFault": 2,
+    "typecheck": true,
+    "productionBuilds": true
+  },
+  "newBrowserRegressions": 7,
+  "reproducedApplicationGaps": [
+    "Clipboard denial while the current document address lacks its remembered capability gives no usable manual share link.",
+    "IndexedDB denial leaves offline availability preparing; the upstream synchronization promise never rejects. Online database saves still succeeded in the reproduction."
+  ],
+  "testCorrections": [
+    "Select the intended text before each formatting toggle instead of assuming a whole-document selection survives a trailing paragraph.",
+    "Count decoded plain text, not XML element/mark names, in the concurrent-cache oracle."
+  ],
+  "preservedBenchmark": {
+    "measuredCommit": "e9283a92be298cef425164fa706056460dd3a009",
+    "sourceSha256": "1c14f5c12d5acb2e8aa33d2991902bd3af286345748231ae60e6929febec57cb",
+    "all39MeasuredInputsMatch": true,
+    "scope": "Protocol-replica timings exclude the changed browser editor/IndexedDB paths. Browser scenarios were rerun; no new performance claim."
+  },
+  "protectedScope": "Only disposable tmpfs services. No ordinary volume deletion, Project 1, CloudDrive or resume edits."
+}

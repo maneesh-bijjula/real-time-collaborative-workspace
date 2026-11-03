@@ -28,6 +28,8 @@ docker compose up --build -d
 
 Open [localhost:3000](http://localhost:3000), create a document, and click **Share document**. Open that complete link in another browser or incognito window to collaborate.
 
+If clipboard access is unavailable, Share document displays the complete private link in a selectable field for manual copying. This also works when the current page was opened using a remembered token and its address has no share key.
+
 | Service            | Local address                  |
 | ------------------ | ------------------------------ |
 | Web interface      | `http://localhost:3000`        |
@@ -81,6 +83,7 @@ Server snapshots are debounced for 300 ms, with a maximum debounce of one second
 - **Changes synced** means the collaboration provider has acknowledged the current updates.
 - **Saved to database** means an authenticated check read committed PostgreSQL state whose Yjs snapshot matches the editor's current state, including deletions. A new local/remote edit or connection change invalidates that confirmation. While online and awaiting confirmation, checks run every 500 ms; checks stop once the current state is confirmed.
 - **Offline copy enabled** means initial IndexedDB restoration completed. It is not a per-edit browser-disk acknowledgement.
+- **Offline copy unavailable** means browser storage could not open or a transaction failed. Online collaboration and database confirmation continue independently; stay online or download your text. The existing cache is retained rather than deleted on failure. Reload after resolving browser permissions or capacity to try local storage again.
 
 Failed writes retry automatically, with exponential backoff and jitter capped at five seconds, even if no further edits occur or the last editor disconnects. Pending saves keep their server document loaded. Changes received through Redis are also scheduled for persistence. The interface shows **Database save delayed; retrying…** when the database check fails or a failed write is pending, and **Database save unconfirmed** while disconnected.
 
@@ -143,13 +146,15 @@ E2E_EXTERNAL=1 E2E_BASE_URL=http://localhost:3100 \
 docker compose -p commonplace-verify -f compose.verify.yaml -f compose.cluster.yaml down
 ```
 
-This disposable stack uses ports 3100 (web), 4100–4103 (direct APIs/WebSockets), 4200 (gateway), and 15434 (test PostgreSQL). External browser mode validates the named project's actual temporary database, URL/port bindings and cluster endpoints before executing tests. CI runs native-production and all twelve final-image browser cases, including fresh-browser recovery after all servers restart. Docker build arguments `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_COLLABORATION_URL` configure browser endpoints at build time.
+This disposable stack uses ports 3100 (web), 4100–4103 (direct APIs/WebSockets), 4200 (gateway), and 15434 (test PostgreSQL). External browser mode validates the named project's actual temporary database, URL/port bindings and cluster endpoints before executing tests. CI runs the complete native-production and final-image browser suites, including fresh-browser recovery after all servers restart. Docker build arguments `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_COLLABORATION_URL` configure browser endpoints at build time.
 
 Functional synchronization and recovery across four independent Node processes and four packaged server containers are tested. A full Ubuntu/Node 24 native-process benchmark verified 50 protocol writers across four production Node instances at two mutations/second each: three 120-second measured windows produced **46.47, 45.89 and 42.59 ms p95** propagation latency, with all **1,764,000** expected peer samples and correctness checks complete. All 30 controlled reconnect trials converged within two seconds, with a **140.47 ms maximum**. These are source-mutation-to-Yjs-model measurements on the recorded single-host environment; they do not measure browser rendering or WAN latency.
 
 A subsequent full Ubuntu Docker campaign verified the same frozen workload across four production server containers: **41.30, 44.02 and 39.27 ms p95**, all **1,764,000** expected peer samples, and all **30 reconnect trials** passing with a **177.15 ms maximum**. The controller now distributes its 50 replicas across four worker isolates to bound GC stalls; source and recipient timestamps are captured before IPC. Application code, workload, thresholds and correctness checks were preserved. Earlier incomplete Docker campaigns remain failures. The accepted Docker run used a four-CPU Intel host; the native result used a separate AMD host, so they are not a performance comparison or a universal capacity promise. See [Sprint 4 evidence and limitations](docs/evidence/sprint-4.md), the [versioned workload and reproduction commands](docs/benchmarks.md), and the [four-instance packaged verification commands](docs/synchronization.md#disposable-four-container-deployment).
 
 The Sprint 5 release recheck on clean source `e9283a9` also passed the full Docker contract on a separate four-CPU AMD Ubuntu runner: **67.25, 57.84 and 58.13 ms p95**, all **1,764,000** expected peer samples, and all **30 reconnect trials** passing with a **177.60 ms maximum**. The unchanged workload, raw evidence, source fingerprint, final-image recovery results and limits are in the [Sprint 5 release report](docs/evidence/sprint-5.md). Results from different sources and hosts are reported separately.
+
+The [November 2 feature cross-check](docs/evidence/feature-audit-2026-11-02.md) maps the full agreed scope to implementation and tests, and records the sharing and browser-storage failure paths repaired after Sprint 5.
 
 ## Security and operations
 

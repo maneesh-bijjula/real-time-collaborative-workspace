@@ -208,4 +208,4 @@ npm run benchmark:full -- --runtime containers --output test-results/benchmarks/
 
 Use a new directory for each campaign. Avoid concurrent builds, pushes and other benchmarks on the host. The harness records source/hardware/Node/image fingerprints, refuses overwrites and cleans up only its own services. Never purge ordinary volumes. The manual GitHub workflow runs either variant and uploads artifacts on failure; container mode remains the default. Artifact hashes can be checked from the accepted campaign directory with `shasum -a 256 -c SHA256SUMS`.
 
-Sprint 5 backup/restore and release closure remain pending. Project 1, CloudDrive and the resume are unchanged.
+This records the Sprint 4 checkpoint. [Sprint 5 backup/restore and release closure](sprint-5.md) were subsequently delivered, followed by the [feature cross-check](feature-audit-2026-11-02.md). Project 1, CloudDrive and the resume remain unchanged.

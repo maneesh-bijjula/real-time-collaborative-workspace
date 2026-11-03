@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import * as Y from 'yjs';
-import { IndexeddbPersistence } from 'y-indexeddb';
+import { OfflineStore, type OfflineCopyState } from '@/lib/offline-store';
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import { DatabaseSaveTracker, type DatabaseSaveState } from '@/lib/database-save';
 import { CollaborationSession } from '@/lib/collaboration-session';
@@ -54,7 +54,7 @@ export function CollaborativeEditor({
   const [status, setStatus] = useState('connecting');
   const [synced, setSynced] = useState(false);
   const [unsynced, setUnsynced] = useState(0);
-  const [localCopy, setLocalCopy] = useState(false);
+  const [localCopy, setLocalCopy] = useState<OfflineCopyState>('loading');
   const [databaseSave, setDatabaseSave] = useState<DatabaseSaveState>('saving');
   const [people, setPeople] = useState<(Profile & { id: number })[]>([]);
 
@@ -62,9 +62,14 @@ export function CollaborativeEditor({
     let disposed = false;
     setDatabaseSave('saving');
     setSynced(false);
-    setLocalCopy(false);
+    setLocalCopy('loading');
     const ydoc = new Y.Doc();
-    const persistence = new IndexeddbPersistence(`commonplace:${document.id}`, ydoc);
+    const persistence = new OfflineStore(`commonplace:${document.id}`, ydoc, (state) => {
+      if (disposed) return;
+      setLocalCopy(state);
+      if (state === 'unavailable')
+        onNotice('Offline storage is unavailable. Stay online or download your text.');
+    });
     const provider = new HocuspocusProvider({
       url: process.env.NEXT_PUBLIC_COLLABORATION_URL || 'ws://localhost:4000/collaboration',
       name: document.id,
@@ -118,14 +123,6 @@ export function CollaborativeEditor({
     window.addEventListener('offline', offline);
     window.addEventListener('online', online);
     setSession({ document: ydoc, provider });
-    persistence.whenSynced
-      .then(() => {
-        if (!disposed) setLocalCopy(true);
-      })
-      .catch(() => {
-        if (!disposed)
-          onNotice('Offline storage is unavailable in this browser. Keep the document online.');
-      });
     return () => {
       disposed = true;
       window.removeEventListener('offline', offline);
@@ -134,7 +131,8 @@ export function CollaborativeEditor({
       database.destroy();
       connectionSession.destroy();
       provider.destroy();
-      void persistence.destroy().finally(() => ydoc.destroy());
+      persistence.destroy();
+      ydoc.destroy();
     };
     // Profile changes are applied to the existing awareness session by the editor.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -224,7 +222,11 @@ export function CollaborativeEditor({
           )}
         </span>
         <span>
-          {localCopy ? 'Offline copy enabled' : 'Preparing offline copy…'}
+          {localCopy === 'available'
+            ? 'Offline copy enabled'
+            : localCopy === 'unavailable'
+              ? 'Offline copy unavailable'
+              : 'Preparing offline copy…'}
           <span className="footer-separator">·</span>Commonplace
         </span>
       </footer>
